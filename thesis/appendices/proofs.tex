@@ -1,0 +1,20 @@
+\chapter{Proofs}
+
+\section{Proof that \ref{eq:exact-est} is unbiased}
+\label{proof:exact-est}
+
+\begin{proof}
+  The result is immediate, we first take the expected value with respect to $P$ that leaves us with the actual $\Delta$ inside the expected value.
+  \begin{align}
+     \bE_{K, (\tau_\star, \theta_\star)_1, \dots, (\tau_\star, \theta_\star)_K}\qty[\widehat{I}] &= \bE_{K, (\tau_\star, \theta_\star)_1, \dots, (\tau_\star, \theta_\star)_K}\qty[\exp\{(\lambda -c)\}\prod_{j=1}^{K}\dfrac{(c - \widehat{\Delta}({\tau_\star}_j))}{\lambda}],\\
+     &= \bE_{K}\qty[\exp\{(\lambda -c)\}\prod_{j=1}^{K}\dfrac{(c - \Delta)}{\lambda}],\\
+     &= \bE_{K}\qty[\exp\{(\lambda -c)\}\qty(\dfrac{(c - \Delta)}{\lambda})^K],
+  \end{align}
+
+  then, we take the expected value with respect to $K\sim \Poi(\lambda)$
+  \begin{align*}
+    \bE_{K, (\tau_\star, \theta_\star)_1, \dots, (\tau_\star, \theta_\star)_K}\qty[\widehat{I}] &= \sum_{i=0}^\infty\bP\qty[K=i]\exp{\lambda -c}\qty(\dfrac{(c - \Delta)}{\lambda})^i,\\
+  &= \sum_{i=0}^\infty\dfrac{e^{-\lambda}\lambda^i}{i!} \exp{\lambda -c}\qty(\dfrac{(c - \Delta)}{\lambda})^i,\\
+  &= e^{-c} \sum_{i=0}^\infty\dfrac{(c - \Delta)}{i!} = e^{-c}e^{c - \Delta} = e^{-\Delta}.
+  \end{align*}
+\end{proof}

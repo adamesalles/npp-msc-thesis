@@ -1,0 +1,441 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Adapted from
+% Github: https://github.com/abntex/abntex2
+% André Pacheco (pacheco.comp@gmail.com)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt, openright, oneside, a4paper, english]{abntex2}
+
+
+
+% ---
+% Pacotes básicos 
+% ---
+\usepackage{lmodern}			% Usa a fonte Latin Modern			
+\usepackage[T1]{fontenc}		% Selecao de codigos de fonte.
+\usepackage[utf8]{inputenc}		% Codificacao do documento (conversão automática dos acentos)
+\usepackage{lastpage}			% Usado pela Ficha catalográfica
+\usepackage{indentfirst}		% Indenta o primeiro parágrafo de cada seção.
+\usepackage{color}				% Controle das cores
+\usepackage{graphicx}			% Inclusão de gráficos
+\usepackage{microtype} 			% para melhorias de justificação
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+%\usepackage{mathtools}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{csquotes}
+\usepackage{makecell}
+
+% \usepackage{subfigure}
+
+%\usepackage{kbordermatrix}
+\usepackage{amsmath}
+
+% \usepackage[portuguese,ruled,lined,linesnumbered]{algorithm2e}
+\usepackage[ruled,lined,linesnumbered]{algorithm2e}
+% \renewcommand{\algorithmcfname}{Algorithm}
+
+\usepackage{multirow}
+
+\usepackage[brazil]{babel}
+\addto\captionsbrazil{%
+\def\bibname{References}%
+\renewcommand{\figurename}{Figure}
+\renewcommand{\tablename}{Table}
+\renewcommand{\listfigurename}{List of Figures}
+\renewcommand{\listtablename}{List of Tables}
+\renewcommand{\contentsname}{Contents}
+\renewcommand\chaptername{Chapter}
+}
+
+\selectlanguage{english}
+
+
+% ---
+		
+% ---
+% Pacotes adicionais, usados apenas no âmbito do Modelo Canônico do abnteX2
+% ---
+\usepackage{lipsum}				% para geração de dummy text
+% ---
+
+% ---
+% Pacotes de citações
+% ---
+%\usepackage{backref}	 % Paginas com as citações na bibl
+%\usepackage[alf,abnt-and-type=&]{abntex2cite}	% Citações padrão ABNT
+\usepackage[alf]{abntex2cite}	% Citações padrão ABNT
+
+
+%\newtheorem{mydef}{Definição}[chapter]
+
+%\usepackage{natbib}
+
+% --- 
+% CONFIGURAÇÕES DE PACOTES
+% --- 
+
+% ---
+% Configurações do pacote backref
+% Usado sem a opção hyperpageref de backref
+%\renewcommand{\backrefpagesname}{Citado na(s) página(s):~}
+% Texto padrão antes do número das páginas
+%\renewcommand{\backref}{}
+% Define os textos da citação
+%\renewcommand*{\backrefalt}[4]{
+%	\ifcase #1 %
+%		Nenhuma citação no texto.%
+%	\or
+%		Citado na página #2.%
+%	\else
+%		Citado #1 vezes nas páginas #2.%
+%	\fi}%
+% ---
+\newtheorem{name}{Printed output}
+
+\selectlanguage{english}
+\renewcommand{\orientadorname}{Supervisor}
+
+
+
+
+
+
+
+% ---
+% Informações de dados para CAPA e FOLHA DE ROSTO
+% ---
+\titulo{Exact Markov Chain Monte Carlo Methods for the Normalized Power Prior}
+\autor{Eduardo Adame}
+\local{Rio de Janeiro}
+\data{2026}
+\orientador{Luiz Max Carvalho, PhD}
+\coorientador{Flávio B. Gonçalves, PhD}
+
+\instituicao{%
+ School of Applied Mathematics \\
+ Fundação Getulio Vargas
+  \par
+ Graduate Program in Applied Mathematics and Data Science}
+\tipotrabalho{Master's Thesis}
+% O preambulo deve conter o tipo do trabalho, o objetivo, 
+% o nome da instituição e a área de concentração 
+\preambulo{Master's Thesis presented to the Graduate Program in Applied Mathematics and Data Science of the School of Applied Mathematics as a requirement to obtain the degree of Master in Applied Mathematics and Data Science.}
+% ---
+
+
+% ---
+% Configurações de aparência do PDF final
+
+% alterando o aspecto da cor azul
+\definecolor{blue}{RGB}{41,5,195}
+
+% informações do PDF
+\makeatletter
+\hypersetup{
+     	%pagebackref=true,
+		pdftitle={\@title}, 
+		pdfauthor={\@author},
+    	pdfsubject={\imprimirpreambulo},
+	    pdfcreator={LaTeX with abnTeX2},
+		pdfkeywords={abnt}{latex}{abntex}{abntex2}{trabalho acadêmico}, 
+		colorlinks=true,       		% false: boxed links; true: colored links
+    	linkcolor=blue,          	% color of internal links
+    	citecolor=blue,        		% color of links to bibliography
+    	filecolor=magenta,      		% color of file links
+		urlcolor=blue,
+		bookmarksdepth=4
+}
+\makeatother
+
+% O tamanho do parágrafo é dado por:
+\setlength{\parindent}{1.3cm}
+
+% Controle do espaçamento entre um parágrafo e outro:
+\setlength{\parskip}{0.2cm}  % tente também \onelineskip
+
+% ---
+% compila o indice
+% ---
+\makeindex
+
+%------------------------------------------------------
+%----------- Personal Definitions ---------------------
+%------------------------------------------------------
+
+\addto\captionsbrazil{
+	\renewcommand{\chapterautorefname}{capítulo}
+	\renewcommand{\sectionautorefname}{seção}
+}	
+
+\input{other/definitions}
+\usepackage{dsfont}
+\usepackage{physics}
+\usepackage{algpseudocode}
+\usepackage{xcolor}
+\usepackage{zref-clever}
+% \usepackage{algorithm2e}
+
+\newif\ifcomments
+\commentstrue % comment out to hide comments
+
+\input{other/commands}
+
+% Norma NBR10.520/2023 - Sobrenomes em minúsculas
+% \renewcommand*{\mkbibnamefamily}[1]{#1}%
+
+% ----
+\begin{document}
+
+% Retira espaço extra obsoleto entre as frases.
+\frenchspacing 
+
+% ----------------------------------------------------------
+% ELEMENTOS PRÉ-TEXTUAIS
+% ----------------------------------------------------------
+\pretextual
+
+% ---
+% Capa
+% ---
+{\LARGE \color{red} PRELIMINARY VERSION ({\selectlanguage{english}\today})}
+\imprimircapa
+% ---
+\cleardoublepage
+
+% ---
+% Folha de rosto
+% (o * indica que haverá a ficha bibliográfica)
+% ---
+\imprimirfolhaderosto
+% ---
+
+% ---
+% Inserir a ficha bibliografica
+% ---
+% \begin{fichacatalografica}
+% 	\begin{figure}
+% 	 \includegraphics[scale=0.9]{ficha2.pdf}
+% 	\end{figure}
+% \end{fichacatalografica}
+
+
+% \begin{folhadeaprovacao}
+%     \begin{figure}
+%      \includegraphics[bb=110 0 0 750]{aprov.pdf}
+%     \end{figure}
+% \end{folhadeaprovacao}
+
+
+% ---
+% Declaração de autoria
+% ---
+\newpage
+\begin{center}
+{\ABNTEXchapterfont\Large\textsc{Statement of Authorship}}
+\end{center}
+
+\vspace*{1cm}
+
+I hereby declare that the thesis submitted is my own work. All direct or indirect
+sources used are acknowledged as references. I further declare that I have not submitted
+this thesis at any other institution in order to obtain a degree. \\
+
+% ---
+
+
+\newpage
+% ---
+% Dedicatória
+% ---
+\begin{dedicatoria}
+  \vspace*{\fill}
+  \centering
+  \noindent
+  \textit{ To anyone who has ever believed in Education as the main way to overcome adversity. } \vspace*{\fill}
+\end{dedicatoria}
+% ---
+
+
+
+% ---
+% Agradecimentos
+% ---
+\begin{agradecimentos}
+
+I would like to thank [many people]
+
+\end{agradecimentos}
+% ---
+
+\newpage
+% ---
+% Epígrafe
+% ---
+\begin{epigrafe}
+    \vspace*{\fill}
+	    \begin{flushright}
+            \noindent
+            \textit{``Agora eu era o herói, e o meu cavalo só falava inglês...''}\\
+            {\tiny \itshape ``Now, I was* the hero, and my horse only spoke* in English...''}
+            
+            From \emph{João e Maria} (1977) by Chico Buarque and Sivuca.
+		\end{flushright}
+\end{epigrafe}
+
+
+% ---
+\newpage
+
+ 
+
+ 
+
+% resumo em português
+\setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
+\begin{resumo}[Abstract]
+ \begin{otherlanguage*}{english}
+
+
+\input{extra/abstract}
+
+
+\end{otherlanguage*}
+\end{resumo}
+
+\newpage
+
+\begin{resumo}[Resumo]
+
+
+\input{extra/abstract-ptbr}
+
+\end{resumo}
+
+\newpage
+
+
+% ---
+% inserir lista de ilustrações
+% ---
+\pdfbookmark[0]{\listfigurename}{lof}
+\listoffigures*
+\cleardoublepage
+% ---
+
+% ---
+% inserir lista de tabelas
+% ---
+\pdfbookmark[0]{\listtablename}{lot}
+\listoftables*
+\cleardoublepage
+% ---
+%\begin{siglas}
+  %\item[MSE] Erro médio quadrático
+  %\item[FLR] Relacionamento Lógico Fuzzy
+%\end{siglas}
+
+% ---
+% inserir o sumario
+% ---
+\pdfbookmark[0]{\contentsname}{toc}
+\tableofcontents*
+\cleardoublepage
+% ---
+
+% ----------------------------------------------------------
+% ELEMENTOS TEXTUAIS
+% ----------------------------------------------------------
+\textual
+
+% ----------------------------------------------------------
+% Introdução (exemplo de capítulo sem numeração, mas presente no Sumário)
+% ----------------------------------------------------------
+\input{chapters/01_introduction}
+
+\input{chapters/02_background}
+
+\input{chapters/03_approximate}
+
+\input{chapters/04_exact}
+
+\input{chapters/05_experiments}
+
+\input{chapters/06_discussion}
+
+
+
+% ----------------------------------------------------------
+% Referências bibliográficas
+% ----------------------------------------------------------
+\citeoption{abnt-etal-list=5}
+\bibliographystyle{abntex2-cite-min}
+\bibliography{bibliography}
+
+
+
+% ----------------------------------------------------------
+% Glossário
+% ----------------------------------------------------------
+%
+% Consulte o manual da classe abntex2 para orientações sobre o glossário.
+%
+%\glossary
+
+% ----------------------------------------------------------
+% Apêndices
+% ----------------------------------------------------------
+
+% ---
+% Inicia os apêndices
+% ---
+\begin{apendicesenv}
+
+% Imprime uma página indicando o início dos apêndices
+%\partapendices
+
+% ----------------------------------------------------------
+\input{appendices/proofs.tex}
+% ----------------------------------------------------------
+% \input{src/appendice}
+
+% ----------------------------------------------------------
+%\chapter{Nullam elementum urna vel imperdiet sodales elit ipsum pharetra ligula
+%ac pretium ante justo a nulla curabitur tristique arcu eu metus}
+% ----------------------------------------------------------
+%\lipsum[55-57]
+
+\end{apendicesenv}
+% ---
+
+
+% ----------------------------------------------------------
+% Anexos
+% ----------------------------------------------------------
+
+% ---
+% Inicia os anexos
+% ---
+%\begin{anexosenv}
+
+% Imprime uma página indicando o início dos anexos
+%\partanexos
+
+
+%\end{anexosenv}
+
+%---------------------------------------------------------------------
+% INDICE REMISSIVO
+%---------------------------------------------------------------------
+\phantompart
+\printindex
+%---------------------------------------------------------------------
+
+\end{document}

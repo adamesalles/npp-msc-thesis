@@ -1,0 +1,17 @@
+In statistical modelling with historical data, a central challenge is how to effectively integrate prior evidence with current observations.
+This issue is particularly pressing in clinical trials and medical applications, where using historical data can improve both the efficiency and robustness of inference.
+A natural Bayesian strategy for this purpose is the use of informative priors.
+Among them, the normalised power prior has attracted significant interest, as it provides a principled way to control the influence of historical information.
+The method introduces a power parameter, $\eta \in [0, 1]$, that governs the degree of borrowing: $\eta = 0$ discards the past data while $\eta = 1$ fully incorporates it.
+This flexibility makes the framework highly appealing in practice.
+Despite its advantages, the power prior posterior distribution is doubly intractable, as it requires evaluation of a normalising constant that depends on $\eta$.
+Existing approaches rely on approximate inference, which often lack theoretical guarantees and explicit convergence properties.
+To overcome these limitations, we propose an exact MCMC algorithm based on pseudo-marginal methods.
+The key idea is to replace the intractable ratio of normalising constants with an unbiased estimator.
+After finding useful identities for the derivative of the log normalising constant, we construct unbiased estimators of log-ratios through Monte Carlo integration, enabling exact acceptance probabilities, by employing the Poisson Estimator Method, within a Metropolis-Hastings or Barker's scheme.
+We evaluate the method on Gaussian models under varying degrees of compatibility between historical and current data.
+Results demonstrate that the algorithm accurately reflects data conflict by shrinking $\eta$ when the datasets are incompatible, while recovering correct posterior behaviour when they are aligned.
+Comparisons with analytical baselines confirm that our method achieves reliable estimates of both model parameters and the power parameter, with efficiency suitable for practical use.
+This provides a rigorous, exact alternative to approximate approaches, offering stronger guarantees for applications such as adaptive clinical trial design.
+
+\textbf{Keywords:} Bayesian Inference; Power Prior; Doubly Intractable Distributions; Exact MCMC; Historical Data Analysis
