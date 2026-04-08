@@ -1,1 +1,138 @@
 \chapter{Experiments}
+
+
+\section{Assessing Exact Methods}
+\comEA{Add the new estimators. Is it methodology? Because it is still an example.}
+
+
+\subsection{Building an estimator}
+
+The most simple approach is the harmonic estimator, since
+
+\begin{equation*}
+    c_0(\eta) = \bE_{\theta\sim\pi_0}\qty[L_0(\theta\mid D_0)^\eta].
+\end{equation*}
+
+Then, we define $\delta_a$ as
+
+\begin{equation}
+    \delta_a(\eta, \theta_1, \dots, \theta_K) = \dfrac{1}{K} \sum_{i=1}^K L_0(\theta_i\mid D_0)^\eta
+\end{equation}
+
+And with this estimator we can then employ a Portkey Barker's~\cite{vats2021} to sample from the power posterior. 
+
+This $\delta_a$ has a major two-sided feature, while it is easy to sample from the initial prior, its efficiency is low due to its large non-informativeness.
+
+In order to improve the efficiency, we can produce an importance sampling estimator by concentrating the probability density around the $\hat{\theta}_{MLE}$, which gives us
+
+\begin{equation*}
+c_0(\eta) = \int_{\theta\in\Theta} L_0(\theta\mid D_0)^\eta \pi_0(\theta)\dd{\theta} = \bE_{\theta\sim\pi_{MLE}}\qty[L_0(\theta\mid D_0)^\eta\dfrac{\pi_0(\theta)}{\pi_{MLE}(\theta)}].    
+\end{equation*}
+
+
+We can then define $\delta_b$ as:
+
+\begin{equation}
+    \delta_b(\eta, \theta_1, \dots, \theta_K) = \dfrac{1}{K} \sum_{i=1}^K L_0(\theta_i\mid D_0)^\eta\dfrac{\pi_0(\theta)}{\pi_{MLE}(\theta)}.
+\end{equation}
+
+\comEA{Different compatibility scenarios.}
+
+\subsection{The choice of $\lambda$ and $c$ for the Gaussian likelihood with known $\Sigma$.}
+
+Considering the functional form of our estimator $\widehat{\Delta}(\eta, \eta') = (\eta' - \eta) \log L_0\qty(D_0\mid\widetilde{\theta})$ and that $L_0$ is the likelihood of $D_0 = \{d_{01}, \dots, d_{0N}\}$ where each $d_{0j} \sim \cN_d(\theta, \Sigma)$ for $j = 1, \dots, N$ with known $\Sigma$, we can find that 
+
+$$\argmax_{\theta \in \Theta} \log L_0\qty(D_0\mid\theta) = \hat{\theta}_{\text{MLE}}= \dfrac{1}{N}\sum_{j=1}^N d_{0j},$$
+
+and, therefore, we have that
+
+$$\max_{\theta \in \Theta} \log L_0\qty(D_0\mid\theta) = -\frac{N d}{2}\log(2\pi) - \frac{N}{2}\log\det\Sigma - \frac{N}{2}\operatorname{tr}(\Sigma^{-1}S),$$
+
+ where $S= \frac{1}{N}\sum_{j=1}^N(x_j - \hat{\theta}_{\text{MLE}})(x_j - \hat{\theta}_{\text{MLE}})^\top$
+ 
+\subsection{The choice of $\lambda$ and $c$ for the exponential family}
+
+\comEA{Produce analytical results for exponential family. I have it somewhere.}
+
+A canonical exponential family has the following density: 
+
+\begin{equation}
+    L(X\mid \theta) = b(X) \exp{\theta^\top t(X) - c(\theta)},\, \theta \in \Theta \subseteq \bR^d,
+\end{equation}
+
+where $\Theta$ is open and connected.
+
+\section{Using Exact Methods as Baseline}
+\comEA{Here I'd like to use the best exact method to assess the quality of the approximate methods}
+
+\section{Numeric Experiments}
+
+\begin{itemize}
+  \item Gaussian model with known covariance.
+  \item Weakly informative initial priors on $\theta$ and $\eta$.
+  \item 4 chains with 5000 iterations each.
+  \item Several scenarios:
+  \begin{itemize}
+    \item Small dimension ($p=3$).
+    \item Agreement vs partial agreement vs conflict between historical and current data.
+  \end{itemize}
+  \item Compare:
+  \begin{itemize}
+    \item Barker's with Poisson estimator (working name: Power estimator).
+    \item Pseudo-marginal with Prior Estimator.
+    \item Pseudo-marginal with Importance Sampling Estimator.
+    \item Baseline with analytical normalizing constant.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Posterior behavior of $\eta$}
+
+\begin{figure}[!h]
+     \centering
+     \includegraphics[width=.4\linewidth]{thesis/figures/ch5/posterior_small.png}
+     \includegraphics[width=.4\linewidth]{thesis/figures/ch5/posterior_medium.png}\\
+     \includegraphics[width=.4\linewidth]{thesis/figures/ch5/posterior_large.png}
+\end{figure}
+
+\begin{table}[h]
+        \centering
+        \begin{tabular}{lccc}
+        \hline
+        Method & Small & Medium & Large \\
+        \hline
+        prior & 0.316 & 0.336 & 0.029 \\
+        importance & 0.096 & 0.122 & 0.027 \\
+        power & 0.097 & 0.034 & 0.022 \\
+        \hline
+        \end{tabular}
+        \caption{Kolmogorov-Smirnov distance between each estimator and the baseline.}
+        \label{tab:ks-comparison}
+\end{table}
+
+% fazer até rodar
+% da normal
+% outro até ficar bom
+% bom olhar a marginal do theta.
+% olhar a correlação do theta com eta
+
+
+\begin{itemize}
+  \item When data agree:
+  \begin{itemize}
+    \item $\eta$ has well-distributed posterior mass.
+    \item Importance and power estimators perform reasonably well.
+    \item The prior estimator is highly inefficient and deviates substantially from the baseline. 
+    \end{itemize}
+    \item When data partially agree:
+  \begin{itemize}
+    \item Posterior mass shifts toward smaller $\eta$.
+    \item Power and importance estimators recover the baseline distribution well.
+    \item The prior estimator exhibits slow mixing.
+  \end{itemize}
+  \item When data conflict:
+  \begin{itemize}
+    \item Posterior concentrates near $\eta \approx 0$ (as expected theoretically).
+    \item All estimators capture the shrinkage effect correctly.
+    \item Differences across methods become smaller as the posterior sharpens.
+  \end{itemize}
+\end{itemize} 

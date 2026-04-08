@@ -1,119 +1,10 @@
 \chapter{Exact inference for the Normalized Power Prior}
 \label{sec:exact}
-\begin{itemize}
-    \item Estimators: Importance
-    \item Scenarios:
-    \item Models:
-\end{itemize}
 
 In this section, we develop exact Markov Chain Monte Carlo methods for inference with the normalized power prior (NPP).
 The key challenge lies in handling the intractable normalizing constant, which we address through  Russian-roulette estimators that preserve the exactness of our sampling scheme.
 
-\section{Barker's Algorithm for Exact Inference}
-
-Barker's algorithm \cite{barker1965} provides an alternative to Metropolis-Hastings that is amenable to Bernoulli factory methods.
-For a target distribution $\pi(\theta)$ and proposal $q(\theta'|\theta)$, Barker's acceptance probability is:
-\begin{equation}
-\alpha_B(\theta, \theta') = \frac{\pi(\theta') q(\theta|\theta')}{\pi(\theta) q(\theta'|\theta) + \pi(\theta') q(\theta|\theta')}
-\end{equation}
-
-While Barker's algorithm has lower efficiency than Metropolis-Hastings in the Peskun ordering, its acceptance probability has a crucial property: it can be expressed as a ratio of products.
-This enables the use of \textit{Bernoulli factory} methods to implement the acceptance decision without explicitly computing $\alpha_B$.
-
-\subsection{The Two-Coin Algorithm}
-
-The fundamental building block is the two-coin algorithm \cite{goncalves2017}.
-Suppose we can factorize the acceptance odds as:
-\begin{equation}
-\frac{\pi(\theta') q(\theta|\theta')}{\pi(\theta) q(\theta'|\theta)} = \frac{c(\theta', \theta) p(\theta', \theta)}{c(\theta, \theta') p(\theta, \theta')}
-\end{equation}
-where $c(\cdot, \cdot)$ is tractable and $p(\cdot, \cdot) \in [0,1]$ is a probability we can simulate.
-
-Then, Barker's acceptance probability becomes:
-\begin{equation}
-\alpha_B(\theta, \theta') = \frac{c(\theta', \theta) p(\theta', \theta)}{c(\theta', \theta) p(\theta', \theta) + c(\theta, \theta') p(\theta, \theta')}
-\end{equation}
-
-The two-coin algorithm generates this probability without computing it explicitly:
-
-\begin{algorithm}[H]
-    % \label{alg:twocoin}
-        Flip coins with probabilities $p(\theta', \theta)$ and $p(\theta, \theta')$\;
-        \uIf{both heads or both tails}{
-        return to step 1\;
-        }
-        \uElseIf{first heads and second tails}{
-        accept (return 1)\;
-        }
-        \uElseIf{first tails and second heads}{
-        reject (return 0)\;
-        }
-    \caption{Two-coin algorithm \froyo{Just the idea}}
-\end{algorithm}
-
-This procedure produces an acceptance event with exactly probability $\alpha_B(\theta, \theta')$.
-
-\section{Divide-and-Conquer Bernoulli Factory (DCBF)}
-
-For models with $n$ observations, the likelihood factorizes as $\pi(\theta|D) \propto \prod_{i=1}^n f_i(\theta)$.
-The vanilla two-coin algorithm requires flipping a coin with probability $p(\theta) = \prod_{i=1}^n p_i(\theta)$.
-As $n$ grows, $p(\theta)$ shrinks exponentially, causing the expected number of loops (ENL) to grow as $O(e^{cn})$ for some constant $c > 0$.
-This exponential cost is prohibitive even for moderate $n$
-
-\subsection{The Coin Merge Procedure}
-
-The DCBF addresses this by hierarchically merging factor coins.
-For two factors with odds $h_1, h_2$ and corresponding probabilities $r_j = h_j/(h_j + g_j)$, we can merge them into a single coin with probability $r_0 = h_0/(h_0 + g_0)$ where $h_0 = h_1 h_2$.
-
-
-\begin{algorithm}[H]
-    Flip coins with probabilities $r_1$ and $r_2$\;
-    \eIf{both return the same value (both 0 or both 1)} 
-    {return that value\;}
-    {return to step 1\;}
-\caption{Coin merge algorithm \froyo{Just the idea (again)}}
-\label{alg:coinmerge}
-\end{algorithm}
-
-\subsection{Hierarchical Factorization}
-
-Given $n$ factors, we organize them in a balanced binary tree of depth $\ell = \lceil \log_2 n \rceil$.
-
-At the leaves, we place individual factors (or small batches).
-At each internal node, we merge the coins from its two children.
-
-\begin{algorithm}[H]
-    \SetKwProg{Fn}{function}{}{end}
-    \Fn{FlipDCBF($\{f_1, \ldots, f_n\}$, level $k$)}
-    {
-        \If{$n = 1$}{\KwRet Flip2Coin($f_1$)\;}
-        Split factors into $\{f_1, \ldots, f_{n/2}\}$ and $\{f_{n/2+1}, \ldots, f_n\}$\;
-        $c_1 \gets$ FlipDCBF(left half, $k+1$)\;
-        $c_2 \gets$ FlipDCBF(right half, $k+1$)\;
-        \KwRet MergeCoins($c_1$, $c_2$)\;
-        }
-\caption{Divide-and-Conquer Bernoulli Factory}
-\end{algorithm}
-
-\subsection{Computational Complexity}
-
-\cite{stumpf2025} prove that under regularity conditions, the expected cost of the DCBF scales as:
-\begin{equation}
-\bE[\text{Cost}] = O(4^\ell \cdot \rho(n, \ell))
-\end{equation}
-where $\rho(n, \ell)$ is the cost of the two-coin algorithm at the leaves with batch size $n/2^\ell$.
-
-For posterior concentration at rate $n^{-1/2}$ with optimal proposal scaling:
-\begin{itemize}
-\item If using likelihood ratio estimators: $\rho(n, \ell) = O(\sqrt{n/2^\ell})$
-\item Setting $4^\ell \propto n$ gives overall cost $O(n^{3/2})$
-\end{itemize}
-
-This is polynomial, compared to the exponential $O(e^{cn})$ cost of vanilla two-coin.
-
-Moreover, this matches or improves upon pseudo-marginal algorithms, which typically require $O(n^2)$ cost.
-
-\section{Application to Normalized Power Prior}
+\section{Barker's Method via Poisson Estimator}
 
 For the NPP, the joint posterior is:
 \begin{equation}
@@ -122,7 +13,7 @@ For the NPP, the joint posterior is:
 
 The challenging term is the normalizing constant:
 \begin{equation}
-c_0(\eta) = \int_\Theta L_0(D_0|\theta)^\eta \pi_0(\theta) d\theta
+c_0(\eta) = \int_\Theta L_0(D_0|\theta)^\eta \pi_0(\theta) \dd{\theta}
 \end{equation}
 
 \subsection{Updating $\theta$ given $\eta$}
@@ -160,7 +51,7 @@ The term $c_0(\eta)/c_0(\eta')$ is intractable but can be estimated using
 
 
 \begin{equation}
-  \frac{d}{d\tau}\log c_0(\tau) = \bE_{\theta\sim\pi_\tau(\theta)} \left[\log L_0(D_0\mid\theta)\right],
+  \dv{\tau}\log c_0(\tau) = \bE_{\theta\sim\pi_\tau(\theta)} \left[\log L_0(D_0\mid\theta)\right],
 \end{equation}
 
 where $\pi_\tau(\theta) \propto L_0(D_0\mid\theta)^\tau \pi_0(\theta)$ is the power posterior at temperature $\tau$.
@@ -203,72 +94,21 @@ In that case, we find
 \end{equation}
 
 
-The choice of $\lambda$ and $c$ is crucial for the efficiency of the estimator. An optimal choice would be to take $\lambda = \sup_{\theta \in \Theta} \widehat{\Delta} - \inf_{\theta \in \Theta} \widehat{\Delta}$ and $c =  \sup_{\theta \in \Theta} \widehat{\Delta}$. Refer to~\autoref{proof:exact-est} for a detailed proof of unbiasedness.
+The choice of $\lambda$ and $c$ is crucial for the efficiency of the estimator. An optimal choice would be to take $\lambda = \sup_{\theta \in \Theta} \widehat{\Delta} - \inf_{\theta \in \Theta} \widehat{\Delta}$ and $c =  \sup_{\theta \in \Theta} \widehat{\Delta}$. Refer to section ~\ref{proof:exact-est} for a detailed proof of unbiasedness.
 
 In order to make proper use of this method with $\widehat{\Delta}(\eta, \eta')$, one would use a prior with finite support.
 We then suggest employing a standard-normal truncated at the 99\% percentiles.
 
-
-\comEA{Add the new estimators}
-
-
-
-\section{Experiments}
-
-
-\subsection{Building an estimator}
-
-The most simple approach is the harmonic estimator, since
-
-\begin{equation*}
-    c_0(\eta) = \bE_{\theta\sim\pi_0}\qty[L_0(\theta\mid D_0)^\eta].
-\end{equation*}
-
-Then, we define $\delta_a$ as
+\subsection{Divide-and-Conquer}
 
 \begin{equation}
-    \delta_a(\eta, \theta_1, \dots, \theta_K) = \dfrac{1}{K} \sum_{i=1}^K L_0(\theta_i\mid D_0)^\eta
+    p(\theta, \eta\mid D, D_0) \propto \dfrac{L(D\mid \theta) L_1 (D_0\mid \theta) \cdots L_\eta (D_0\mid \theta)\pi_A(\eta)\pi_0(\theta)}{c_0(\theta)}
 \end{equation}
 
-And with this estimator we can then employ a Portkey Barker's~\cite{vats2021} to sample from the power posterior. 
+% Dois termos de produto por ramo, dois termos por folha da árvore
 
-This $\delta_a$ has a major two-sided feature, while it is easy to sample from the initial prior, its efficiency is low due to its large non-informativeness.
+\section{Pseudo-marginal via Importance Sampling}
 
-In order to improve the efficiency, we can produce an importance sampling estimator by concentrating the probability density around the $\hat{\theta}_{MLE}$, which gives us
+\section{Other Approaches}
 
-\begin{equation*}
-c_0(\eta) = \int_{\theta\in\Theta} L_0(\theta\mid D_0)^\eta \pi_0(\theta)\dd{\theta} = \bE_{\theta\sim\pi_{MLE}}\qty[L_0(\theta\mid D_0)^\eta\dfrac{\pi_0(\theta)}{\pi_{MLE}(\theta)}].    
-\end{equation*}
-
-
-We can then define $\delta_b$ as:
-
-\begin{equation}
-    \delta_b(\eta, \theta_1, \dots, \theta_K) = \dfrac{1}{K} \sum_{i=1}^K L_0(\theta_i\mid D_0)^\eta\dfrac{\pi_0(\theta)}{\pi_{MLE}(\theta)}.
-\end{equation}
-
-\comEA{Different compatibility scenarios.}
-
-\subsection{The choice of $\lambda$ and $c$ for the Gaussian likelihood with known $\Sigma$.}
-
-Considering the functional form of our estimator $\widehat{\Delta}(\eta, \eta') = (\eta' - \eta) \log L_0\qty(D_0\mid\widetilde{\theta})$ and that $L_0$ is the likelihood of $D_0 = \{d_{01}, \dots, d_{0N}\}$ where each $d_{0j} \sim \cN_d(\theta, \Sigma)$ for $j = 1, \dots, N$ with known $\Sigma$, we can find that 
-
-$$\argmax_{\theta \in \Theta} \log L_0\qty(D_0\mid\theta) = \hat{\theta}_{\text{MLE}}= \dfrac{1}{N}\sum_{j=1}^N d_{0j},$$
-
-and, therefore, we have that
-
-$$\max_{\theta \in \Theta} \log L_0\qty(D_0\mid\theta) = -\frac{N d}{2}\log(2\pi) - \frac{N}{2}\log\det\Sigma - \frac{N}{2}\operatorname{tr}(\Sigma^{-1}S),$$
-
- where $S= \frac{1}{N}\sum_{j=1}^N(x_j - \hat{\theta}_{\text{MLE}})(x_j - \hat{\theta}_{\text{MLE}})^\top$
- 
-\subsection{The choice of $\lambda$ and $c$ for the exponential family}
-
-\comEA{Produce analytical results for exponential family.}
-
-A canonical exponential family has the following density: 
-
-\begin{equation}
-    L(X\mid \theta) = b(X) \exp{\theta^\top t(X) - c(\theta)},\, \theta \in \Theta \subseteq \bR^d,
-\end{equation}
-
-where $\Theta$ is open and connected.
+\subsection{Harmonic Estimator}

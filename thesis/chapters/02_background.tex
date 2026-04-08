@@ -1,1 +1,190 @@
 \chapter{Background}
+
+\section{Bayesian Inference}
+
+\subsection{Principles}
+
+\subsection{Monte Carlo Methods}
+
+\section{Standard MCMC Methods}
+\comEA{Since I know you will ask me what do I mean by standard: we can surely think of a better name}
+
+\subsection{Gibbs Sampling}
+
+\subsection{Metropolis-Hastings}
+
+\section{Doubly Intractable Distributions}
+
+\section{The Normalized Power Prior}
+
+\subsection{Formulation}
+
+Consider the following Bayesian schema:
+
+\begin{equation}
+    p(\theta \mid D) = \dfrac{L(D \mid \theta) \pi_{0}(\theta)}{\int_{\Theta} L(D \mid t) \pi(t) \, \dd t} = \dfrac{L(D \mid \theta) \overbrace{\pi_{0}(\theta)}^{\text{Initial prior}}}{m(D)}.
+\end{equation}
+
+
+\begin{defi}[Power prior]
+    Let $D_0 = \{d_{01}, d_{02}, \dots, d_{0N_0}\}$, $d_{0i} \subseteq \cX^{p}$ be the historical data and let $L_0(D_0 \mid \theta)$ be a likelihood function assumed to be finite for all $\theta \in \Theta \subseteq \bR^p$. Then, the power prior is defined as
+
+    \begin{equation}
+        \label{eq:power-prior}
+        \pi_\eta(\theta \mid D_0) \propto L_0(D_0 \mid \theta)^{\eta} \pi_0(\theta),
+    \end{equation}
+
+    where $\pi_0(\theta)$ is the initial prior distribution of $\theta$ and $\eta$ is the (fixed) power parameter.
+\end{defi}
+
+Then, when we want to accomodate the uncertainty in the choice of $\eta$, we treat it as a random variable and assign a prior distribution to it, indexed by $\phi$. In this case, we find the \textit{unnormalized} power prior as
+
+\begin{equation}
+    \pi^\star(\theta, \eta \mid D_0, \phi) = \pi_\eta(\theta \mid D_0) \pi_A(\eta \mid \phi) \propto L_0(D_0 \mid \theta)^{\eta} \pi_0(\theta) \pi_A(\eta \mid \phi).
+\end{equation}
+
+In order to compute the posterior distribution of $\theta$ and $\eta$, we need to find the normalizing constant (from \eqref{eq:power-prior}) $c_0(\eta)$, which is given by
+
+\begin{equation}
+    \label{eq:normalizing-constant}
+    c_0(\eta) = \int_{\Theta} L_0(D_0 \mid t)^{\eta}\,  \dd P_0(t)
+\end{equation}
+
+and the marginal posterior distribution of $\eta$ as, for a new dataset $D$,
+
+\begin{equation}
+    p(\eta \mid D, D_0, \phi) \propto \dfrac{\pi_A(\eta \mid \phi)}{c_0(\eta)} \int_{\Theta} L(D \mid t) L_0(D_0 \mid t)^{\eta} \, \dd P_0(t).
+\end{equation}
+
+
+Notice that, since both \( c_0(\eta) \) and \( \int_{\Theta} L(D \mid t) L_0(D_0 \mid t)^{\eta} \, \dd P_0(t) \) are intractable, we call this a doubly-intractable posterior. Previous work \cite{adame2025, carvalho2021} have focused on emulating \( \log c_0(\eta) \) and \( \log c'(\eta) = \bE_{\pi_\eta}\qty[\log L_0(D_0\mid \theta)] \) through non-parametric models, which has proven to be more effective than common interpolation methods—particularly when incorporating shape constraints.
+
+Sampling from these posteriors is challenging due to the intractability of standard M-H acceptance probabilities, making approximate methods like auxiliary variable techniques computationally expensive and lacking convergence guarantees; an alternative is unbiased event constructions, which enable exact sampling without evaluating normalizing constants.
+
+For instance, applying Barker's algorithm for MCMC~\cite{vats2021} to sample from a target distribution \( \pi(x) \propto \pi'(x) \) with proposal density \( q(x\mid y) \) has become feasible through Bernoulli factory methods. These methods enable the construction of events with probability \( \alpha_B(x, y) \) when
+\begin{equation}
+\alpha_B(x, y) = \dfrac{\pi(y)q(y\mid x)}{\pi(x)q(x\mid y) + \pi(y)q(y\mid x)} = \dfrac{\pi'(y)q(y\mid x)}{\pi'(x)q(x\mid y) + \pi'(y)q(y\mid x)}
+\end{equation}
+cannot be directly evaluated~\cite{goncalves2017}.
+
+\subsection{Properties}
+
+\subsection{Other Historical Data Modelling Approaches}
+
+
+\section{Unbiased MCMC Methods}
+
+\subsection{Barker's Algorithm for Exact Inference}
+
+Barker's algorithm \cite{barker1965} provides an alternative to Metropolis-Hastings that is amenable to Bernoulli factory methods.
+For a target distribution $\pi(\theta)$ and proposal $q(\theta'|\theta)$, Barker's acceptance probability is:
+\begin{equation}
+\alpha_B(\theta, \theta') = \frac{\pi(\theta') q(\theta|\theta')}{\pi(\theta) q(\theta'|\theta) + \pi(\theta') q(\theta|\theta')}
+\end{equation}
+
+While Barker's algorithm has lower efficiency than Metropolis-Hastings in the Peskun ordering, its acceptance probability has a crucial property: it can be expressed as a ratio of products.
+This enables the use of \textit{Bernoulli factory} methods to implement the acceptance decision without explicitly computing $\alpha_B$.
+
+\subsubsection{The Two-Coin Algorithm}
+
+The fundamental building block is the two-coin algorithm \cite{goncalves2017}.
+Suppose we can factorize the acceptance odds as:
+\begin{equation}
+\frac{\pi(\theta') q(\theta|\theta')}{\pi(\theta) q(\theta'|\theta)} = \frac{c(\theta', \theta) p(\theta', \theta)}{c(\theta, \theta') p(\theta, \theta')}
+\end{equation}
+where $c(\cdot, \cdot)$ is tractable and $p(\cdot, \cdot) \in [0,1]$ is a probability we can simulate.
+
+Then, Barker's acceptance probability becomes:
+\begin{equation}
+\alpha_B(\theta, \theta') = \frac{c(\theta', \theta) p(\theta', \theta)}{c(\theta', \theta) p(\theta', \theta) + c(\theta, \theta') p(\theta, \theta')}
+\end{equation}
+
+The two-coin algorithm generates this probability without computing it explicitly:
+
+\begin{algorithm}[H]
+    % \label{alg:twocoin}
+        Flip coins with probabilities $p(\theta', \theta)$ and $p(\theta, \theta')$\;
+        \uIf{both heads or both tails}{
+        return to step 1\;
+        }
+        \uElseIf{first heads and second tails}{
+        accept (return 1)\;
+        }
+        \uElseIf{first tails and second heads}{
+        reject (return 0)\;
+        }
+    \caption{Two-coin algorithm \froyo{Just the idea}}
+\end{algorithm}
+
+This procedure produces an acceptance event with exactly probability $\alpha_B(\theta, \theta')$.
+
+\subsection{Divide-and-Conquer Bernoulli Factory (DCBF)}
+
+For models with $n$ observations, the likelihood factorizes as $\pi(\theta|D) \propto \prod_{i=1}^n f_i(\theta)$.
+The vanilla two-coin algorithm requires flipping a coin with probability $p(\theta) = \prod_{i=1}^n p_i(\theta)$.
+As $n$ grows, $p(\theta)$ shrinks exponentially, causing the expected number of loops (ENL) to grow as $O(e^{cn})$ for some constant $c > 0$.
+This exponential cost is prohibitive even for moderate $n$
+
+\subsubsection{The Coin Merge Procedure}
+
+The DCBF addresses this by hierarchically merging factor coins.
+For two factors with odds $h_1, h_2$ and corresponding probabilities $r_j = h_j/(h_j + g_j)$, we can merge them into a single coin with probability $r_0 = h_0/(h_0 + g_0)$ where $h_0 = h_1 h_2$.
+
+
+\begin{algorithm}[H]
+    Flip coins with probabilities $r_1$ and $r_2$\;
+    \eIf{both return the same value (both 0 or both 1)} 
+    {return that value\;}
+    {return to step 1\;}
+\caption{Coin merge algorithm \froyo{Just the idea (again)}}
+\label{alg:coinmerge}
+\end{algorithm}
+
+\subsubsection{Hierarchical Factorization}
+
+Given $n$ factors, we organize them in a balanced binary tree of depth $\ell = \lceil \log_2 n \rceil$.
+
+At the leaves, we place individual factors (or small batches).
+At each internal node, we merge the coins from its two children.
+
+\begin{algorithm}[H]
+    \SetKwProg{Fn}{function}{}{end}
+    \Fn{FlipDCBF($\{f_1, \ldots, f_n\}$, level $k$)}
+    {
+        \If{$n = 1$}{\KwRet Flip2Coin($f_1$)\;}
+        Split factors into $\{f_1, \ldots, f_{n/2}\}$ and $\{f_{n/2+1}, \ldots, f_n\}$\;
+        $c_1 \gets$ FlipDCBF(left half, $k+1$)\;
+        $c_2 \gets$ FlipDCBF(right half, $k+1$)\;
+        \KwRet MergeCoins($c_1$, $c_2$)\;
+        }
+\caption{Divide-and-Conquer Bernoulli Factory}
+\end{algorithm}
+
+\subsubsection{Computational Complexity}
+
+\cite{stumpf2025} prove that under regularity conditions, the expected cost of the DCBF scales as:
+\begin{equation}
+\bE[\text{Cost}] = O(4^\ell \cdot \rho(n, \ell))
+\end{equation}
+where $\rho(n, \ell)$ is the cost of the two-coin algorithm at the leaves with batch size $n/2^\ell$.
+
+For posterior concentration at rate $n^{-1/2}$ with optimal proposal scaling:
+\begin{itemize}
+\item If using likelihood ratio estimators: $\rho(n, \ell) = O(\sqrt{n/2^\ell})$
+\item Setting $4^\ell \propto n$ gives overall cost $O(n^{3/2})$
+\end{itemize}
+
+This is polynomial, compared to the exponential $O(e^{cn})$ cost of vanilla two-coin.
+
+Moreover, this matches or improves upon pseudo-marginal algorithms, which typically require $O(n^2)$ cost.
+
+\subsection{Pseudo-marginal Metropolis-Hastings}
+
+\section{Function Emulation Methods}
+
+\subsection{Gaussian Processes}
+
+
+\subsection{Generalized Additive Models}
+
+\subsection{Shape-constrained Variants}
