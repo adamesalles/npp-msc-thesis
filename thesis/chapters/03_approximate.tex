@@ -35,3 +35,36 @@ Our contributions in this area:
 \section{Doubly Intractable Settings}
 
 \comEA{Discuss \cite{park2020}}
+
+Doubly intractable distributions arise in Bayesian inference when the likelihood takes the form
+\begin{equation}
+\pi(\theta \mid x) \propto p(\theta)\frac{h(x \mid \theta)}{Z(\theta)},
+\end{equation}
+where the normalizing constant $Z(\theta)$ depends on the parameter $\theta$ and cannot be evaluated pointwise, as discussed in detail on seciton \ref{sec:dbl-int}.
+This setting is common in models such as exponential random graph models, Markov point processes, and, more generally, in likelihoods derived from Gibbs measures.
+In the context of Normalized Power Priors (NPP), this issue naturally appears due to the presence of parameter-dependent normalizing constants, making standard Bayesian computation challenging.
+
+A number of Markov chain Monte Carlo (MCMC) methods have been proposed to address this problem, including auxiliary variable approaches such as the exchange algorithm and the double Metropolis--Hastings (DMH) algorithm. While these methods can target the exact posterior distribution, they typically require simulating auxiliary variables at each iteration, which becomes computationally prohibitive in high-dimensional or complex models.
+
+An alternative strategy is proposed by \citeonline{park2020}, who introduce a function emulation approach to approximate the intractable normalizing constant. Their method replaces repeated Monte Carlo estimation of $Z(\theta)$ with a two-stage surrogate model.
+First, importance sampling is used to obtain noisy estimates of $Z(\theta)$ at a finite set of parameter values.
+Then, a Gaussian process (GP) is fitted to the log-normalizing function, providing a fast interpolator that can be evaluated within an MCMC algorithm.
+This leads to two variants: one that emulates only the normalizing function (NormEm), and another that emulates the entire likelihood (LikEm).
+
+The main advantage of this approach is computational efficiency.
+By shifting the costly Monte Carlo approximations to a precomputation stage, the resulting MCMC algorithm avoids repeated simulation of auxiliary variables, yielding substantial speed-ups compared to exact or pseudo-marginal methods.
+Moreover, the approach is naturally parallelizable and extends beyond doubly intractable settings to more general problems involving expensive likelihood evaluations.
+
+However, this efficiency comes at the cost of asymptotic exactness.
+The resulting Markov chain targets an approximate posterior distribution, with an error that depends on both the number of importance samples and the number of design points used to train the Gaussian process.
+While theoretical bounds on the total variation distance are provided, they do not yield explicit rates, making it difficult to calibrate the approximation in practice.
+
+Several additional limitations remain. First, the method relies on importance sampling estimates, which can exhibit high variance in moderate to high-dimensional settings, potentially degrading the quality of the surrogate.
+Second, the Gaussian process approximation assumes a smooth structure for the log-normalizing function and typically ignores heteroskedasticity induced by Monte Carlo noise.
+Third, the selection of design points (particles) is critical but performed using heuristic procedures such as short runs of DMH or approximate Bayesian computation, without a principled adaptive strategy.
+Finally, the approach does not scale well with the dimension of the parameter space due to the cubic complexity of Gaussian process regression and the increasing difficulty of covering the parameter space.
+
+These limitations suggest several directions for future research.
+In particular, combining surrogate-based approximations with exact correction mechanisms, such as pseudo-marginal or delayed-acceptance schemes, could potentially recover asymptotic exactness while retaining computational gains.
+Additionally, replacing importance sampling with more robust estimators, and incorporating adaptive or local surrogate models, may improve both stability and scalability.
+Such developments are particularly relevant in the context of NPP models, where efficient and reliable inference remains an open challenge.

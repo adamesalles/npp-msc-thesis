@@ -67,72 +67,72 @@ where $\Theta$ is open and connected.
 
 \section{Numeric Experiments}
 
-\begin{itemize}
-  \item Gaussian model with known covariance.
-  \item Weakly informative initial priors on $\theta$ and $\eta$.
-  \item 4 chains with 5000 iterations each.
-  \item Several scenarios:
-  \begin{itemize}
-    \item Small dimension ($p=3$).
-    \item Agreement vs partial agreement vs conflict between historical and current data.
-  \end{itemize}
-  \item Compare:
-  \begin{itemize}
-    \item Barker's with Poisson estimator (working name: Power estimator).
-    \item Pseudo-marginal with Prior Estimator.
-    \item Pseudo-marginal with Importance Sampling Estimator.
-    \item Baseline with analytical normalizing constant.
-  \end{itemize}
-\end{itemize}
 
-\subsection{Posterior behavior of $\eta$}
+\subsection{Convergence to the baseline}
 
-\begin{figure}[!h]
-     \centering
-     \includegraphics[width=.4\linewidth]{thesis/figures/ch5/posterior_small.png}
-     \includegraphics[width=.4\linewidth]{thesis/figures/ch5/posterior_medium.png}\\
-     \includegraphics[width=.4\linewidth]{thesis/figures/ch5/posterior_large.png}
+We evaluate the proposed estimators under a multivariate Gaussian model with known covariance ($p = 3$, $\Sigma = I_3$, $\Sigma_0 = 2I_3$), placing weakly informative Beta$(1,1)$ priors on $\eta$ and a $\cN_3(0, \Sigma_0)$ prior on $\theta$.
+Historical and current datasets each contain $N_0 = N = 50$ observations.
+Three discrepancy scenarios are constructed by shifting the historical data mean by $\delta \in \{0.1, 0.5, 1.0\}$ per coordinate, representing low, moderate, and high conflict between historical and current information.
+
+Rather than running each method for a fixed number of iterations, we adopt a convergence-based protocol: each estimator is run in independent batches of four chains and 5\,000 iterations until the two-sample Kolmogorov--Smirnov (KS) distance between its accumulated posterior draws for $\eta$ and the Stan HMC baseline drops below 0.05.
+The number of chains and total wall-clock time required to reach this threshold serve as our primary efficiency metrics.
+The exact algorithm---which uses the closed-form normalising constant ratio---acts as a reference.
+We compare it against three approximate pseudo-marginal methods: the prior-importance estimator ($\delta_a$), the MLE importance-sampling estimator ($\delta_b$), and the power-posterior estimator.
+
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\linewidth]{figures/ch5/convergence_small.png}
+    \caption{Posterior densities for $\eta$ under low discrepancy ($\delta = 0.1$). Each approximate estimator label reports the total number of chains run, wall-clock time, and final KS distance to the Stan baseline.}
+    \label{fig:convergence-small}
 \end{figure}
 
-\begin{table}[h]
-        \centering
-        \begin{tabular}{lccc}
-        \hline
-        Method & Small & Medium & Large \\
-        \hline
-        prior & 0.316 & 0.336 & 0.029 \\
-        importance & 0.096 & 0.122 & 0.027 \\
-        power & 0.097 & 0.034 & 0.022 \\
-        \hline
-        \end{tabular}
-        \caption{Kolmogorov-Smirnov distance between each estimator and the baseline.}
-        \label{tab:ks-comparison}
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\linewidth]{figures/ch5/convergence_medium.png}
+    \caption{Posterior densities for $\eta$ under moderate discrepancy ($\delta = 0.5$).}
+    \label{fig:convergence-medium}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\linewidth]{figures/ch5/convergence_large.png}
+    \caption{Posterior densities for $\eta$ under high discrepancy ($\delta = 1.0$). Under strong conflict between datasets the posterior concentrates near zero and all methods converge in a single batch.}
+    \label{fig:convergence-large}
+\end{figure}
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{lcccccc}
+    \hline
+    & \multicolumn{2}{c}{Small ($\delta=0.1$)} & \multicolumn{2}{c}{Medium ($\delta=0.5$)} & \multicolumn{2}{c}{Large ($\delta=1.0$)} \\
+    Method & Chains & KS & Chains & KS & Chains & KS \\
+    \hline
+    Exact             &  16 & 0.029 &  8 & 0.033 & 4 & 0.010 \\
+    Prior-importance  &  40 & 0.323 & 40 & 0.229 & 4 & 0.027 \\
+    Importance        &  40 & 0.084 & 12 & 0.050 & 4 & 0.026 \\
+    Power             &   8 & 0.017 &  4 & 0.033 & 4 & 0.021 \\
+    \hline
+    \end{tabular}
+    \caption{Total chains required and final KS distance to the Stan HMC baseline. A dash indicates the method reached 10 batches (40 chains) without satisfying the convergence criterion.}
+    \label{tab:convergence-comparison}
 \end{table}
 
-% fazer até rodar
-% da normal
-% outro até ficar bom
-% bom olhar a marginal do theta.
-% olhar a correlação do theta com eta
+\subsection{Discussion of results}
 
+The results reveal a consistent pattern across discrepancy regimes.
+Under low discrepancy (Figure~\ref{fig:convergence-small}), the posterior for $\eta$ spreads across a wide range, reflecting genuine uncertainty about how much weight to assign to the historical data.
+In this regime the estimators differ most sharply: the power estimator converges in just two batches (8 chains, KS$=0.017$), the exact algorithm requires four batches (16 chains, KS$=0.029$), whereas the importance estimator exhausts all ten batches without reaching the threshold (KS$=0.084$) and the prior-importance estimator deviates substantially from the baseline (KS$=0.323$).
+The inefficiency of $\delta_a$ here is expected: when the posterior for $\eta$ is diffuse, prior samples for $\theta$ are a poor proposal for the normalising-constant integral, yielding high-variance estimates of the log-ratio.
 
-\begin{itemize}
-  \item When data agree:
-  \begin{itemize}
-    \item $\eta$ has well-distributed posterior mass.
-    \item Importance and power estimators perform reasonably well.
-    \item The prior estimator is highly inefficient and deviates substantially from the baseline. 
-    \end{itemize}
-    \item When data partially agree:
-  \begin{itemize}
-    \item Posterior mass shifts toward smaller $\eta$.
-    \item Power and importance estimators recover the baseline distribution well.
-    \item The prior estimator exhibits slow mixing.
-  \end{itemize}
-  \item When data conflict:
-  \begin{itemize}
-    \item Posterior concentrates near $\eta \approx 0$ (as expected theoretically).
-    \item All estimators capture the shrinkage effect correctly.
-    \item Differences across methods become smaller as the posterior sharpens.
-  \end{itemize}
-\end{itemize} 
+Under moderate discrepancy (Figure~\ref{fig:convergence-medium}), the posterior shifts toward smaller values of $\eta$, indicating the model has begun to down-weight the historical data.
+The power estimator again converges in a single batch (4 chains), the exact algorithm in two, and the importance estimator in three.
+The prior-importance estimator still fails to reach the threshold, though its KS distance has improved relative to the low-discrepancy case.
+
+When the two datasets are in strong conflict (Figure~\ref{fig:convergence-large}), the posterior concentrates sharply near $\eta \approx 0$.
+In this regime all four estimators converge in a single batch of four chains, and the KS distances are uniformly small.
+The sharp concentration of the posterior makes the normalising-constant ratio easy to estimate regardless of the proposal, erasing the differences observed at lower discrepancy levels.
+
+Overall, the power estimator is the most efficient of the three approximate methods: it matches or beats the exact algorithm in chains required across all scenarios.
+The prior-importance estimator is consistently the weakest, particularly when the posterior is diffuse.
+These findings suggest that the choice of estimator matters most in low-discrepancy settings, where the posterior for $\eta$ is broad and the normalising constant must be estimated accurately over a wide range of values.
