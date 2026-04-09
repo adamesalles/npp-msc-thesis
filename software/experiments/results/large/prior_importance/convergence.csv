@@ -1,0 +1,2 @@
+batch,total_chains,elapsed_sec,ks_stat,converged,eta_mean,eta_sd
+1,4,98.33199999999943,0.02682500000001723,TRUE,0.0331682147647403,0.025709750367208094
