@@ -23,17 +23,17 @@ And with this estimator we can then employ a Portkey Barker's~\cite{vats2021} to
 
 This $\delta_a$ has a major two-sided feature, while it is easy to sample from the initial prior, its efficiency is low due to its large non-informativeness.
 
-In order to improve the efficiency, we can produce an importance sampling estimator by concentrating the probability density around the $\hat{\theta}_{MLE}$, which gives us
+In order to improve the efficiency, we can produce an importance sampling estimator by concentrating the probability density around the $\hat{\theta}_{\text{MLE}}$, which gives us
 
 \begin{equation*}
-c_0(\eta) = \int_{\theta\in\Theta} L_0(\theta\mid D_0)^\eta \pi_0(\theta)\dd{\theta} = \bE_{\theta\sim\pi_{MLE}}\qty[L_0(\theta\mid D_0)^\eta\dfrac{\pi_0(\theta)}{\pi_{MLE}(\theta)}].    
+c_0(\eta) = \int_{\theta\in\Theta} L_0(\theta\mid D_0)^\eta \pi_0(\theta)\dd{\theta} = \bE_{\theta\sim\pi_{\text{MLE}}}\qty[L_0(\theta\mid D_0)^\eta\dfrac{\pi_0(\theta)}{\pi_{\text{MLE}}(\theta)}].    
 \end{equation*}
 
 
 We can then define $\delta_b$ as:
 
 \begin{equation}
-    \delta_b(\eta, \theta_1, \dots, \theta_K) = \dfrac{1}{K} \sum_{i=1}^K L_0(\theta_i\mid D_0)^\eta\dfrac{\pi_0(\theta)}{\pi_{MLE}(\theta)}.
+    \delta_b(\eta, \theta_1, \dots, \theta_K) = \dfrac{1}{K} \sum_{i=1}^K L_0(\theta_i\mid D_0)^\eta\dfrac{\pi_0(\theta_i)}{\pi_{\text{MLE}}(\theta_i)}.
 \end{equation}
 
 \comEA{Different compatibility scenarios.}
