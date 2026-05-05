@@ -1,0 +1,204 @@
+\chapter{Formulations}
+
+\section{Gaussian likelihood with known variance}
+Consider $d_{0j} \sim \cN(\theta, \sg)$ with known variance $\sg$ for all $j \in 0,\ldots, p$, and let $P_0$ be the measure induced by the prior $\pi_0(\theta) \propto 1$.
+% The power prior is given by
+
+Therefore, let $\dbar = \sum_{j=1}^{p} d_{0j}/p$ be the mean of the historical data $D_0$ and $S^2 = \sum_{j=1}^{p} (d_{0j} - \dbar)^2$ the sample variance. Then, we have
+
+\begin{align*}
+    c_0(\eta) &= \int_{\Theta} L(D_0 \mid t)^{\eta}\,  \dd P_0(t), \\
+    &= \int_{-\infty}^{\infty} \dfrac{1}{{(2\pi\sg)}^{\eta p/2}} \exp\left\{-\dfrac{\eta}{2\sg}\left(\sum_{j=1}^{p}(d_{0j} - t)^2\right) \right\} \, \dd t, \\
+    &= \dfrac{1}{{(2\pi\sg)}^{\eta p/2}}\int_{-\infty}^{\infty}  \exp\left\{-\dfrac{\eta}{2\sg}\left(\sum_{j=1}^{p}((d_{0j} -\dbar) + (\dbar - t))^2\right) \right\} \, \dd t, \\
+    &=  \dfrac{1}{{(2\pi\sg)}^{\eta p/2}}\int_{-\infty}^{\infty} \exp\left\{-\dfrac{\eta}{2\sg}\left(S^2 + p(t- \dbar)^2 + \cancelto{0}{\sum_{j=1}^{p} 2(d_{0j} - \dbar)}(t- \dbar)\right) \right\} \, \dd t, \\
+    &= \dfrac{1}{{(2\pi\sg)}^{\eta p/2}}\exp\left\{-\dfrac{\eta}{2\sg}S^2\right\} \int_{-\infty}^{\infty} \exp\left\{-\dfrac{\eta}{2\sg}p(t- \dbar)^2  \right\} \, \dd t, \\
+    &= \dfrac{1}{{(2\pi\sg)}^{\eta p/2}}\exp\left\{-\dfrac{\eta}{2\sg}S^2\right\} \sqrt{\dfrac{2\pi\sg}{p\eta}} = \dfrac{1}{{(2\pi\sg)}^{(\eta p - 1)/2}\sqrt{p\eta}}\exp\left\{-\dfrac{\eta}{2\sg}S^2\right\}.
+\end{align*}
+
+Computing the logarithm of the normalizing constant, we have
+\begin{align*}
+    \log c_0(\eta) &= -\dfrac{(\eta p - 1)}{2}\log(2\pi\sg) - \dfrac{1}{2}\log(p\eta) - \dfrac{\eta}{2\sg}S^2.
+\end{align*}
+Therefore, the derivative of the logarithm of the normalizing constant is given by
+\begin{align*}
+    \dfrac{\dd \log c_0(\eta)}{\dd \eta} &= -\dfrac{p}{2}\log(2\pi\sg) - \dfrac{S^2}{2\sg}  - \dfrac{1}{2\eta}.
+\end{align*}
+
+On the other hand, we can show that $\bE_{\pi_\eta}[\log(L(D_0 \mid \theta))]$ matches the previous expression. In this case, we have that $\theta \mid D_0 \sim \cN(\dbar, \sg/p\eta)$, so we can compute the expectation as follows:
+
+\begin{align*}
+    \bE_{\pi_\eta}[\log(L(D_0 \mid \theta))] &= -\dfrac{p}{2}\log(2\pi\sg) - \bE_{\pi_\eta}\left[\dfrac{1}{2\sg}\left(\sum_{j=1}^{p}(d_{0j} - \theta)^2\right)\right], \\
+    &= -\dfrac{p}{2}\log(2\pi\sg) - \dfrac{1}{2\sg}\sum_{j=1}^{p}\bE_{\pi_\eta}\left[(d_{0j} - \theta)^2\right], \\
+    &= -\dfrac{p}{2}\log(2\pi\sg) - \dfrac{1}{2\sg}\sum_{j=1}^{p}\left((d_{0j} - \bE_{\pi_\eta}[\theta])^2 + \vr_{\pi_\eta}[\theta]\right), \\
+    &= -\dfrac{p}{2}\log(2\pi\sg) - \dfrac{1}{2\sg}\sum_{j=1}^{p}\left((d_{0j} - \dbar)^2 + \dfrac{\sg}{p\eta} \right), \\
+    &= -\dfrac{p}{2}\log(2\pi\sg) - \dfrac{1}{2\sg}\sum_{j=1}^{p}(d_{0j} - \dbar)^2 - \dfrac{p}{2\sg}\dfrac{\sg}{p\eta}, \\
+    &= -\dfrac{p}{2}\log(2\pi\sg) - \dfrac{S^2}{2\sg} - \dfrac{1}{2\eta}. \\
+\end{align*}
+
+
+
+\subsection{Reformulation from Importance Sampling}
+
+One might be interested in using importance sampling to estimate the expectation in the last expression. In this case, we can rewrite the expectation as
+
+\begin{align*}
+    c_0'(\eta) &= c_0(\eta) \bE_{\pi_\eta}[\log(L(D_0 \mid \theta))] \\
+    &= c_0(\eta)\bE_{P_0}\left[\log(L(D_0 \mid \theta)) \dfrac{\pi_\eta(\theta)}{\pi_0(\theta)}\right]\\
+    &= c_0(\eta)\bE_{P_0}\left[\log(L(D_0 \mid \theta)) \dfrac{L_0(D_0\mid \theta)^\eta}{c_0(\eta)}\right] = \bE_{P_0}\left[\log(L(D_0 \mid \theta))L(D_0\mid \theta)^\eta\right].
+\end{align*}
+
+\subsection{Adding a Gaussian Initial Prior}
+
+Consider again $d_{0j} \sim \cN(\theta, \sg)$ with known variance $\sg$ for all $j \in 0,\ldots, p$, but now let $P_0 \equiv \cN(0, \sz)$, where $\sz$ is a known initial prior variance.
+    % The power prior is given by
+
+    Again, let $\dbar = \sum_{j=1}^{p} d_{0j}/p$ be the mean of the historical data $D_0$ and $S^2 = \sum_{j=1}^{p} (d_{0j} - \dbar)^2$ the sample variance. Starting, we get:
+
+    \begin{align*}
+        c_0(\eta) &= \dfrac{1}{{(2\pi\sg)}^{\eta p/2}}\exp\left\{-\dfrac{\eta}{2\sg}S^2\right\} \dfrac{1}{\sqrt{2\pi\sz}} \int_{-\infty}^{\infty}\exp\left\{-\dfrac{\eta}{2\sg}p(t- \dbar)^2 -\dfrac{1}{2\sz}t^2 \right\} \, \dd t.
+    \end{align*}
+
+    Expanding $-\frac{\eta p}{2\sg} (\dbar - t)^2 - \frac{t^2}{2\sz}$, we get $(\dbar - t)^2 = t^2 - 2t\dbar + \dbar^2$. And, thus, we have that
+
+    \begin{align*}
+        -\frac{\eta p}{2\sg} (\dbar - t)^2 - \frac{t^2}{2\sz} &=
+        -\frac{\eta p}{2\sg}\left(t^2 - 2t\dbar + \dbar^2\right) - \frac{t^2}{2\sz},\\
+        &= - \dfrac{1}{2}\left(t^2 \left(\dfrac{\eta p}{\sg} + \dfrac{1}{\sz}\right) - 2t\dbar\dfrac{\eta p}{\sg} + \dbar^2 \dfrac{\eta p}{\sg}\right).
+    \end{align*}
+
+    Define $A = \frac{\eta p}{\sg} + \frac{1}{\sz}$ and $B = \frac{\eta p}{\sg}\dbar$. We can now complete the square. Once we have that $A t^2 - 2Bt = A \left( t - \frac{B}{A} \right)^2 - \frac{B^2}{A}$, it follows that $ -\frac{1}{2} (A t^2 - 2Bt) = -\frac{A}{2}\left( t - \frac{B}{A} \right)^2 + \frac{B^2}{2A}$. Which gives us
+
+    \begin{equation*}
+        -\dfrac{1}{2} \left( A t^2 - 2Bt + \dbar^2 \dfrac{\eta p}{\sg} \right) = -\dfrac{A}{2}\left( t - \dfrac{B}{A} \right)^2 + \dfrac{B^2}{2A} - \dfrac{\dbar^2}{2}\dfrac{\eta p}{\sg}.
+    \end{equation*}
+
+    Therefore, we can rewrite the normalizing constant as
+
+    \begin{align*}
+        c_0(\eta) &= \dfrac{1}{{(2\pi\sg)}^{\eta p/2}}\exp\left\{-\dfrac{\eta}{2\sg}S^2\right\} \dfrac{1}{\sqrt{2\pi\sz}} \int_{-\infty}^{\infty}\exp\left\{-\dfrac{A}{2}\left( t - \dfrac{B}{A} \right)^2 + \dfrac{B^2}{2A} - \dfrac{\dbar^2}{2}\dfrac{\eta p}{\sg}\right\} \, \dd t, \\
+        &= \dfrac{1}{{(2\pi\sg)}^{\eta p/2}}\exp\left\{-\dfrac{\eta}{2\sg}S^2 - \dfrac{\eta p}{2\sg}\dbar^2\right\} \cdot \dfrac{1}{\sqrt{A\sz}} \cdot \exp\left\{\dfrac{B^2}{2A}\right\}, \\
+        &= \dfrac{1}{{(2\pi\sg)}^{\eta p/2}}\exp\left\{-\dfrac{\eta}{2\sg}\left(S^2 - p\dbar^2\right) + \dfrac{B^2}{2A}\right\} \cdot \dfrac{1}{\sqrt{A\sz}}.
+    \end{align*}
+
+    Taking the logarithm, we have
+
+    \begin{align*}
+        \log c_0(\eta) &= -\dfrac{(\eta p)}{2}\log(2\pi\sg) - \dfrac{\eta}{2\sg}\left(S^2 - p\dbar^2\right) + \dfrac{B^2}{2A} - \dfrac{1}{2}\log(A\sz). \\
+    \end{align*}
+
+    And, thus, we can compute the derivative of the logarithm of the normalizing constant term by term. The first two terms and the last one can be calculated right away:
+
+    \begin{align*}
+        \dfrac{\dd}{\dd \eta}\left(-\dfrac{(\eta p)}{2}\log(2\pi\sg)\right) &= -\dfrac{p}{2}\log(2\pi\sg),\\
+        \dfrac{\dd}{\dd \eta}\left(-\dfrac{\eta}{2\sg}\left(S^2 - p\dbar^2\right)\right) &= -\dfrac{1}{2\sg}\left(S^2 - p\dbar^2\right),  \text{ and} \\
+        \dv{\eta} \left(- \dfrac{1}{2}\log(A\sz)\right) &= -\dfrac{1}{2}\left(\frac{A^\prime}{A}\right) = \dfrac{-p/\sg}{2A}.
+    \end{align*}
+
+    The third term is given by
+
+    \begin{align*}
+        \frac{d}{d\eta} \left( \frac{B^2}{2A} \right) = \frac{2BB^\prime A - B^2 A^\prime}{2A^2},
+    \end{align*}
+
+    where $B^\prime = \frac{d}{d\eta} \left( \frac{\eta p}{\sg}\dbar \right) = \frac{p}{\sg}\dbar$ and $A^\prime = \frac{d}{d\eta} \left( \frac{\eta p}{\sg} + \frac{1}{\sz} \right) = \frac{p}{\sg}$, thus
+
+    \begin{align*}
+        2BB^\prime &= 2 \cdot \left( \frac{\eta p}{\sg} \dbar \right) \cdot \left( \frac{p}{\sg} \dbar \right) = 2\eta \frac{p^2}{\sigma^4} \dbar^2,\\
+        B^2 &= \left( \frac{\eta p}{\sg} \dbar \right)^2 = \eta^2 \frac{p^2}{\sigma^4} \dbar^2,
+    \end{align*}
+
+    then 
+
+    \begin{equation*}
+        \frac{2BB^\prime A - B^2A^\prime}{2A^2} = \frac{1}{2A^2} \left( 2\eta \frac{p^2}{\sigma^4} \dbar^2 A - \eta^2 \frac{p^3}{\sigma^6} \dbar^2 \right) = \dfrac{\eta \frac{p^2}{\sigma^4} \dbar^2}{A^2} \left( A - \frac{\eta p}{2\sg} \right).
+    \end{equation*}
+
+    And now we can recover the $c_0^\prime(\eta)$ expression as
+
+    \begin{equation}
+        \label{eq:recover-c0p}
+        c_0^\prime(\eta) = c_0(\eta)(\log(c_0(\eta)))^\prime
+    \end{equation}
+
+    and compare it with the importance sampling reformulation.
+
+\section{Linear Regression with NIG priors}
+
+    \label{example:nig_lm}
+    Suppose we observe $\bfy_{0} = \bX_0 \bfbt + \eps_0, \ \bfy = \bX \bfbt + \eps$ with $\eps_0 \sim \cN(0, \sg I_{n_0}), \ \eps \sim \cN(0, \sg I_{n})$ and unknown variance $\sg$. Now let $P_0 \equiv \cN(\bfmu_0, \ \bfV_0) \cdot \InvGam(a,b)$, where $\bfmu_0, \bfV_0, a$ and $b$ are known hyperparameters. 
+    
+    Assume that $\bfX^\top \bfX$ is positive definite and let 
+
+    \begin{align*}
+        \hat{\bfbt_0} &= (\bfX_0^\top \bfX_0)^{-1} \bfX_0^\top \bfy_0,
+        \\
+        \hat{\bfbt} &= (\bfX^\top \bfX)^{-1} \bfX^\top \bfy,
+        \\
+        S_0 &= (\bfy_0 - \bfX_0 \hat{\bfbt_0})^\top (\bfy_0 - \bfX_0 \hat{\bfbt_0}),
+        \\
+        S &= (\bfy - \bfX \hat{\bfbt})^\top (\bfy - \bfX \hat{\bfbt}).
+    \end{align*}
+
+    So the likelihood of the historical data $D_0$ is
+
+    \begin{align*}
+        L(D_0 \mid \bfbt, \sg) &= (2\pi\sg)^{-n_0/2} \exp\left\{ -\frac{1}{2\sg}\left[S_0 + (\bfbt - \hat{\bfbt_0})^\top \bfX_0^\top \bfX_0 (\bfbt - \hat{\bfbt_0})\right] \right\}
+    \end{align*}
+
+    and the initial prior of $(\bfbt, \sg)$ is
+
+    \begin{align*}
+        \pi_0(\bfbt, \sg) &\propto (\sg)^{-a - p/2} \exp\left\{ -\frac{1}{\sg} \left[ b + \frac{1}{2}(\bfbt - \bfmu_0)^\top \bfV_0^{-1} (\bfbt - \bfmu_0) \right] \right\}.
+    \end{align*}
+
+    Then
+
+    \begin{align*}
+        c_0(\eta) &= \int_0^\infty \int_{\bR^p} \pi_0(\bfu, v) L(D_0 \mid \bfu, v)^\eta d\bfu dv,
+        \\
+        &\propto \int_0^\infty \int_{\bR^p} (2\pi)^{-n_0 \eta/2} v^{-a - p/2 - n_0\eta/2} \exp\left\{ -\frac{1}{2v}\left[2H_0(\eta) + (\bfu - \tilde{\bfbt_0})^\top (\bfV_0^{-1} + \eta\bfX_0^\top \bfX_0) (\bfu - \tilde{\bfbt_0})\right] \right\} d\bfu dv,
+        \\
+        &\propto (2\pi)^{-n_0 \eta/2} \Gamma(\nu_0) \mid \Lambda_0 \mid^{-1/2} H_0(\eta)^{-\nu_0},
+    \end{align*}
+
+    where
+
+    \begin{align*}
+        \tilde{\bfbt_0} &= (\Lambda_0)^{-1}(\bfV_0^{-1}\bfmu_0 + \bfX_0^\top \bfy_0 \eta), 
+        \\ 
+        \nu_0 &= \frac{n_0\eta}{2} + a -1, 
+        \\
+        \Lambda_0 &= \bfV_0^{-1} + \bfX_0^\top \bfX_0 \eta,
+        \\
+        H_0(\eta) &= b + \frac{\eta}{2}\left[S_0 + (\bfmu_0 - \hat{\bfbt_0})^\top \bfX_0^\top \bfX_0 (\Lambda_0)^{-1} \bfV_0^{-1} (\bfmu_0 - \hat{\bfbt_0})\right]. 
+    \end{align*}
+
+    This leads to the following NPP:
+
+    \begin{align*}
+        \pi(\bfbt, \sg, \eta \mid D_0) \propto \frac{ \pi_0(\eta) H_0(\eta)^{\nu_0} \mid \Lambda_0 \mid^{1/2} }{ (\sg)^{\frac{n + n_0\eta + p}{2} + a} \Gamma(\nu_0) } \exp \left\{ -\frac{1}{2\sg} \left[ (\bfbt - \tilde{\bfbt_0})^\top \Lambda_0 (\bfbt - \tilde{\bfbt_0}) + 2H_0(\eta) \right] \right\}.
+    \end{align*}
+
+    Including the likelihood we can derive the joint posterior distribution:
+
+    \begin{align*}
+        \pi(\bfbt, \sg, \eta \mid D, D_0) \propto \frac{ \pi_0(\eta) H_0(\eta)^{\nu_0} \mid \Lambda_0 \mid^{1/2} }{ (\sg)^{\frac{n + n_0\eta + p}{2} + a} \Gamma(\nu_0) } \exp\left\{ -\frac{1}{2\sg} \left[ (\bfbt - \tilde{\bfbt})^\top \Lambda (\bfbt - \tilde{\bfbt}) + 2H(\eta) \right] \right\},
+    \end{align*}
+
+    where
+
+    \begin{align*}
+        \tilde{\bfbt} &= \Lambda^{-1}(\bfV_0^{-1} \mu_0 + \bfX^\top \bfy + \bfX_0^\top \eta),
+        \\
+        \Lambda &= \Lambda_0 + \bfX^\top \bfX,
+        \\
+        H(\eta) &= H_0(\eta) + \frac{1}{2}[S + (\tilde{\bfbt_0} - \hat{\bfbt})^\top \bfX^\top \bfX \Lambda^{-1} \Lambda_0 (\tilde{\bfbt_0} - \hat{\bfbt})].
+    \end{align*}
+
+    So we can express the marginal posterior distribution of $\eta$ given $(D_0, D)$ as
+
+    \begin{align*}
+        \pi(\eta \mid D_0, D) &\propto \frac{\pi_0(\eta) \Gamma(n/2 + \nu_0) \mid \Lambda_0 \mid^{1/2} H_0(\eta)^{\nu_0}}{\mid \Lambda \mid^{1/2} \Gamma(\nu_0) H(\eta)^{\nu_0 + n/2}},
+    \end{align*}
+
+    and the conditional posterior distribution of $\bfbt$ given $(\eta, D_0, D)$ follows the multivariate Student distribution with location parameter $\tilde{\bfbt}$, shape matrix $\Sigma$, and degree of freedom $\rho$, where $\rho = n+2\nu_0$ and $\Sigma = \frac{2H(\eta)}{n + 2\nu_0} \Lambda^{-1}$.

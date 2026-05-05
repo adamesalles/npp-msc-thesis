@@ -58,7 +58,7 @@ and the marginal posterior distribution of $\eta$ as, for a new dataset $D$,
 \end{equation}
 
 
-Notice that, since both \( c_0(\eta) \) and \( \int_{\Theta} L(D \mid t) L_0(D_0 \mid t)^{\eta} \, \dd P_0(t) \) are intractable, we call this a doubly-intractable posterior. Previous work \cite{adame2025, carvalho2021} have focused on emulating \( \log c_0(\eta) \) and \( \log c'(\eta) = \bE_{\pi_\eta}\qty[\log L_0(D_0\mid \theta)] \) through non-parametric models, which has proven to be more effective than common interpolation methods—particularly when incorporating shape constraints.
+Notice that, since both \( c_0(\eta) \) and \( \int_{\Theta} L(D \mid t) L_0(D_0 \mid t)^{\eta} \, \dd P_0(t) \) are intractable, we call this a doubly-intractable posterior. Previous work \cite{adame2025, carvalho2021} have focused on emulating \( \log c_0(\eta) \) and \( \log c'(\eta) = \bE_{\pi_\eta}\qty[\log L_0(D_0\mid \theta)] \) \eqref{eq:normalizing-constant-log} through non-parametric models, which has proven to be more effective than common interpolation methods—particularly when incorporating shape constraints.
 
 Sampling from these posteriors is challenging due to the intractability of standard M-H acceptance probabilities, making approximate methods like auxiliary variable techniques computationally expensive and lacking convergence guarantees; an alternative is unbiased event constructions, which enable exact sampling without evaluating normalizing constants.
 
@@ -69,6 +69,28 @@ For instance, applying Barker's algorithm for MCMC~\cite{vats2021} to sample fro
 cannot be directly evaluated~\cite{goncalves2017}.
 
 \subsection{Properties}
+
+\subsubsection{Derivative of the normalizing constant}
+
+Considering $c_0(\eta)$ as in \eqref{eq:normalizing-constant}, we can find the derivative of $c_0(\eta)$ with respect to $\eta$ as
+
+\begin{align*}
+    \dfrac{\dd c_0(\eta)}{\dd \eta} &= \dfrac{\dd}{\dd \eta} \int_{\Theta} L(D_0 \mid t)^{\eta}\,  \dd P_0(t), \\
+    &= \int_{\Theta} \dfrac{\dd}{\dd \eta} L(D_0 \mid t)^{\eta}\,  \dd P_0(t), \\
+    &= \int_{\Theta} \log(L(D_0 \mid t)) L(D_0 \mid t)^{\eta}\,  \dd P_0(t), \\
+    &= \int_{\Theta} \log(L(D_0 \mid t)) \pi_\eta(t \mid D_0)\,  \dd P_0(t), \\
+    &= c_0(\eta)\bE_{\pi_\eta}[\log(L(D_0 \mid \theta))],
+\end{align*}
+
+where $\bE_{\pi_\eta}[\cdot]$ denotes the expectation with respect to the power prior distribution $\pi_\eta(\theta \mid D_0)$.
+
+When we're interested on the derivative of the logarithm of the normalizing constant, we can use the following expression:
+
+\begin{align}
+    \label{eq:normalizing-constant-log}
+    \dfrac{\dd \log c_0(\eta)}{\dd \eta} &= \dfrac{1}{c_0(\eta)}\dfrac{\dd c_0(\eta)}{\dd \eta} = \bE_{\pi_\eta}[\log(L(D_0 \mid \theta))].
+\end{align}
+
 
 \subsection{Other Historical Data Modelling Approaches}
 
