@@ -99,6 +99,64 @@ The choice of $\lambda$ and $c$ is crucial for the efficiency of the estimator. 
 In order to make proper use of this method with $\widehat{\Delta}(\eta, \eta')$, one would use a prior with finite support.
 We then suggest employing a standard-normal truncated at the 99\% percentiles.
 
+\subsection{Local envelopes for the Poisson estimator}
+
+Observe that the Poisson estimator only requires an upper envelope for the proposal-specific random variable
+
+\begin{equation}
+  \widehat\Delta(\eta,\eta') = (\eta'-\eta)\log L_0(D_0\mid\widetilde\theta),
+\end{equation}
+
+rather than a global bound over the entire state space.
+
+% For Gaussian historical likelihoods with known covariance matrix $\Sigma$,
+
+% \begin{equation}
+% \log L_0(D_0\mid\theta)
+% =
+% C
+% -
+% \frac N2
+% (\theta-\bar d)^T\Sigma^{-1}(\theta-\bar d),
+% \end{equation}
+
+% where
+
+% \begin{equation}
+% C
+% =
+% -\frac{Nd}{2}\log(2\pi)
+% -\frac N2\log|\Sigma|
+% -\frac N2\operatorname{tr}(\Sigma^{-1}S),
+% \end{equation}
+
+% and therefore
+
+% \begin{equation}
+% \sup_{\theta\in\Theta}
+% \log L_0(D_0\mid\theta)
+% =
+% C.
+% \end{equation}
+
+Consequently, for a proposal $\eta'$ from the current state $\eta$,
+
+\begin{equation}
+\widehat\Delta(\eta,\eta')
+\le
+|\eta'-\eta|C.
+\end{equation}
+
+This yields the proposal-local envelope
+
+\begin{equation}
+c(\eta,\eta')
+=
+|\eta'-\eta|C.
+\end{equation}
+
+Choosing the Poisson intensity parameter proportionally to this local envelope implies that the expected computational effort scales with the proposal distance. In particular, for local random-walk proposals, small moves induce small Poisson intensities and therefore low expected computational cost.
+
 \subsection{Divide-and-Conquer}
 
 \begin{equation}
