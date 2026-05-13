@@ -1,8 +1,18 @@
 \chapter{Experiments}
 
 
-\section{Assessing Exact Methods}
 \comEA{Add the new estimators. Is it methodology? Because it is still an example.}
+\section{Assessing exact and approximate samplers}
+A central distinction in this chapter is between asymptotic exactness and finite-time computational efficiency. 
+An MCMC transition kernel may be $\pi$-invariant, and hence exact in the usual Markov chain sense, while still being practically inefficient if its accept-reject mechanism is driven by rare events or high-variance unbiased estimators. 
+For this reason, we do not compare methods only at a fixed number of iterations. 
+
+Instead, we report the computational time required to reach a target effective sample size for $\eta$, together with distributional discrepancies from a reference posterior. 
+Since $\eta$ is one-dimensional, we use the empirical Wasserstein distance as the primary convergence diagnostic. 
+KL and Jensen-Shannon divergences are reported only as secondary diagnostics, since they require density estimation.
+
+For exact Poisson and Bernoulli-factory constructions, we additionally monitor the local envelope parameter $\lambda$, the realized Poisson count $K$, the variability of $\log \widehat I$, invalid factors, and, for DCBF, recursive agreement attempts. 
+These diagnostics separate correctness of the invariant distribution from practical viability of the resulting algorithm.
 
 
 \subsection{Building an estimator}
@@ -50,7 +60,7 @@ $$\max_{\theta \in \Theta} \log L_0\qty(D_0\mid\theta) = -\frac{N d}{2}\log(2\pi
 
  where $S= \frac{1}{N}\sum_{j=1}^N(x_j - \hat{\theta}_{\text{MLE}})(x_j - \hat{\theta}_{\text{MLE}})^\top$
 
- 
+
  
 \subsection{The choice of $\lambda$ and $c$ for the exponential family}
 

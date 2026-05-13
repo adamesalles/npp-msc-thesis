@@ -167,6 +167,21 @@ Choosing the Poisson intensity parameter proportionally to this local envelope i
 
 \section{Pseudo-marginal via Importance Sampling}
 
-\section{Other Approaches}
 
-\subsection{Harmonic Estimator}
+An alternative to constructing an unbiased estimator of the ratio $c_0(\eta)/c_0(\eta')$ is to directly estimate the normalizing constant $c_0(\eta)$ itself and form the ratio from two independent estimates.
+% While this does not resolve the Jensen bias when the log-ratio is exponentiated, it provides a practical family of estimators that are straightforward to implement.
+
+The simplest such approach is the \emph{prior Monte Carlo estimator}, which exploits the representation
+\begin{align*}
+    c_0(\eta) &= \bE_{\theta\sim\pi_0}\qty[L_0(\theta\mid D_0)^\eta].
+\end{align*}
+Samples drawn directly from the prior $\pi_0$ are cheap to obtain and require no gradient information or auxiliary computations.
+The main limitation is that the prior and the power posterior $\pi_\eta(\theta) \propto L_0(\theta \mid D_0)^\eta \pi_0(\theta)$ can be poorly aligned, particularly when the historical data are informative, leading to high variance in the importance weights and an inefficient estimator.
+
+A more principled alternative is \emph{importance sampling} centered at the maximum likelihood estimate. Writing the normalizing constant as
+\begin{equation*}
+    c_0(\eta) = \int_{\theta\in\Theta} L_0(\theta\mid D_0)^\eta \pi_0(\theta)\dd{\theta} = \bE_{\theta\sim\pi_\text{MLE}}\qty[L_0(\theta\mid D_0)^\eta\dfrac{\pi_0(\theta)}{\pi_\text{MLE}(\theta)}],
+\end{equation*}
+one draws samples from a proposal $\pi_\text{MLE}$ centered at the MLE and reweights by the ratio $\pi_0(\theta)/\pi_\text{MLE}(\theta)$.
+The MLE-centered proposal concentrates mass where the likelihood is large, reducing variance relative to the prior estimator when the historical data are informative. The cost is the need to compute or approximate the MLE, which may itself require numerical optimization.
+
