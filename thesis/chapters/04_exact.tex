@@ -81,89 +81,410 @@ Thus, for a single sample $\tau_\star \sim \Uni(\eta, \eta')$, and $\qty(\wideti
 \end{equation}
 
 
-\subsection{Producing an unbiased estimator via Poisson Estimator}
+\subsection{Producing an unbiased estimator via a Poisson estimator}
+\label{subsec:poisson-estimator}
 
-As discussed in~\cite{stumpf2025}, we can produce an unbiased estimator $\widehat{I}$ such that $\bE_{K, (\tau_\star, \theta_\star)_1, \dots, (\tau_\star, \theta_\star)_K}\qty[\widehat{I}] = \exp{-\Delta}$, where $K\sim \Poi(\lambda)$ and $(\tau_\star, \theta_\star)_j \sim P$ (built from the conditional and marginal). In fact, we sample ${\tau_\star}_j \sim \Uni[\eta, \eta']$.
-\comEA{Note here, we have to define this measure properly. It should be a product measure.}
-
-In that case, we find 
-
+Let $\pi_\tau$ denote the power posterior associated with the historical data.
+For $\tau\in[0,1]$, define
 \begin{equation}
-  \widehat{I} = \exp\{(\lambda -c)\}\prod_{j=1}^{K}\dfrac{(c - \widehat{\Delta}({\tau_\star}_j))}{\lambda}
-  \label{eq:exact-est}
+    \pi_\tau(\theta)
+    =
+    \frac{L_0(D_0\mid \theta)^\tau \pi_0(\theta)}
+    {c_0(\tau)},
+    \qquad
+    c_0(\tau)
+    =
+    \int_\Theta L_0(D_0\mid t)^\tau \,\dd P_0(t).
+\end{equation}
+For two values $\eta,\eta'\in[0,1]$, define
+\begin{equation}
+    \Delta(\eta,\eta')
+    =
+    \log\frac{c_0(\eta')}{c_0(\eta)}.
+\end{equation}
+Under the usual regularity conditions allowing differentiation under the integral sign, the thermodynamic identity gives
+\begin{equation}
+    \Delta(\eta,\eta')
+    =
+    \int_{\eta}^{\eta'}
+    \bE_{\theta\sim \pi_\tau}
+    \left[
+        \log L_0(D_0\mid \theta)
+    \right]
+    \,\dd \tau.
+\end{equation}
+Equivalently, if $U\sim\mathrm{Unif}(0,1)$ and $\tau_{\eta,\eta'}(U)=\eta+U(\eta'-\eta)$, then
+\begin{equation}
+    \Delta(\eta,\eta')
+    =
+    \bE_{U}
+    \left[
+        (\eta'-\eta)
+        \bE_{\theta\sim \pi_{\tau_{\eta,\eta'}(U)}}
+        \{\log L_0(D_0\mid \theta)\}
+    \right].
 \end{equation}
 
+This representation suggests a proposal-specific random variable.
+Let $\mathsf P_{\eta,\eta'}$ be the probability measure on $[0,1]\times\Theta$ obtained by first drawing $U\sim\mathrm{Unif}(0,1)$ and then drawing $\theta\sim\pi_{\tau_{\eta,\eta'}(U)}$.
+Equivalently,
+\begin{equation}
+    \mathsf P_{\eta,\eta'}(\dd u,\dd\theta)
+    =
+    \dd u\,
+    \pi_{\tau_{\eta,\eta'}(u)}(\dd\theta).
+\end{equation}
+Define
+\begin{equation}
+    Z_{\eta,\eta'}(U,\theta)
+    =
+    (\eta'-\eta)\log L_0(D_0\mid \theta).
+\end{equation}
+Then
+\begin{equation}
+    \bE_{\mathsf P_{\eta,\eta'}}[Z_{\eta,\eta'}]
+    =
+    \Delta(\eta,\eta').
+\end{equation}
 
-The choice of $\lambda$ and $c$ is crucial for the efficiency of the estimator. An optimal choice would be to take $\lambda = \sup_{\theta \in \Theta} \widehat{\Delta} - \inf_{\theta \in \Theta} \widehat{\Delta}$ and $c =  \sup_{\theta \in \Theta} \widehat{\Delta}$. Refer to section ~\ref{proof:exact-est} for a detailed proof of unbiasedness.
+The objective is to construct an unbiased estimator of the ratio $c_0(\eta)/c_0(\eta')$.
+This ratio can be written as
+\begin{equation}
+    \exp\{-\Delta(\eta,\eta')\}
+    =
+    \frac{c_0(\eta)}{c_0(\eta')}.
+\end{equation}
+Assume that there exist deterministic constants $a_{\eta,\eta'}$ and $b_{\eta,\eta'}$ such that
+\begin{equation}
+    a_{\eta,\eta'}
+    \le
+    Z_{\eta,\eta'}(U,\theta)
+    \le
+    b_{\eta,\eta'}
+    \qquad
+    \mathsf P_{\eta,\eta'}\text{-almost surely}.
+\end{equation}
+Set
+\begin{equation}
+    c_{\eta,\eta'}
+    =
+    b_{\eta,\eta'},
+    \qquad
+    \lambda_{\eta,\eta'}
+    =
+    b_{\eta,\eta'}-a_{\eta,\eta'}.
+\end{equation}
+Draw $K\sim\mathrm{Poisson}(\lambda_{\eta,\eta'})$.
+Conditionally on $K$, draw
+\begin{equation}
+    (U_j,\theta_j)_{j=1}^K
+    \overset{\mathrm{iid}}{\sim}
+    \mathsf P_{\eta,\eta'}.
+\end{equation}
+The Poisson estimator is
+\begin{equation}
+    \widehat I(\eta,\eta')
+    =
+    \exp\{\lambda_{\eta,\eta'}-c_{\eta,\eta'}\}
+    \prod_{j=1}^{K}
+    \frac{
+        c_{\eta,\eta'} -
+        Z_{\eta,\eta'}(U_j,\theta_j)
+    }{
+        \lambda_{\eta,\eta'}
+    }.
+    \label{eq:poisson-estimator}
+\end{equation}
+By construction, each factor satisfies
+\begin{equation}
+    0
+    \le
+    \frac{
+        c_{\eta,\eta'} -
+        Z_{\eta,\eta'}(U_j,\theta_j)
+    }{
+        \lambda_{\eta,\eta'}
+    }
+    \le
+    1.
+\end{equation}
+Therefore $\widehat I(\eta,\eta')$ is non-negative.
+Using the exponential formula for a Poisson random variable, we obtain
+\begin{align}
+    \bE[\widehat I(\eta,\eta')]
+    &=
+    \exp\{\lambda_{\eta,\eta'}-c_{\eta,\eta'}\}
+    \bE\left[
+        \left\{
+        \bE_{\mathsf P_{\eta,\eta'}}
+        \left[
+        \frac{c_{\eta,\eta'}-Z_{\eta,\eta'}}{\lambda_{\eta,\eta'}}
+        \right]
+        \right\}^K
+    \right] \\
+    &=
+    \exp\{\lambda_{\eta,\eta'}-c_{\eta,\eta'}\}
+    \exp\left\{
+        \lambda_{\eta,\eta'}
+        \left(
+        \frac{c_{\eta,\eta'}-\Delta(\eta,\eta')}
+             {\lambda_{\eta,\eta'}}
+        -1
+        \right)
+    \right\} \\
+    &=
+    \exp\{-\Delta(\eta,\eta')\}.
+\end{align}
+Thus, $\widehat I(\eta,\eta')$ is an unbiased estimator of the normalizing-constant ratio $c_0(\eta)/c_0(\eta')$.
 
-In order to make proper use of this method with $\widehat{\Delta}(\eta, \eta')$, one would use a prior with finite support.
-We then suggest employing a standard-normal truncated at the 99\% percentiles.
+The efficiency of the estimator depends strongly on the envelope width $\lambda_{\eta,\eta'}=b_{\eta,\eta'}-a_{\eta,\eta'}$.
+Large envelopes lead to large Poisson counts and high estimator variability.
+Therefore, the practical usefulness of the construction depends on obtaining deterministic but sufficiently tight proposal-specific bounds for $Z_{\eta,\eta'}$.
+
+It is important to distinguish this unbiased estimator from an exact Barker accept--reject mechanism.
+Although $\widehat I(\eta,\eta')$ is unbiased for $c_0(\eta)/c_0(\eta')$, substituting a noisy estimate of the likelihood ratio directly into the Barker probability does not generally produce an exact Barker transition.
+Exact Barker implementations require simulating the accept--reject event itself with the correct marginal probability, typically through a Bernoulli-factory or two-coin construction.
 
 \subsection{Local envelopes for the Poisson estimator}
+\label{subsec:local-envelopes}
 
-Observe that the Poisson estimator only requires an upper envelope for the proposal-specific random variable
-
+The preceding construction does not require a single global envelope that is valid uniformly over all possible proposals.
+Instead, for each proposed move $\eta\to\eta'$, it is enough to obtain deterministic bounds for the proposal-specific random variable
 \begin{equation}
-  \widehat\Delta(\eta,\eta') = (\eta'-\eta)\log L_0(D_0\mid\widetilde\theta),
+    Z_{\eta,\eta'}(U,\theta)
+    =
+    (\eta'-\eta)\log L_0(D_0\mid \theta),
+    \qquad
+    (U,\theta)\sim\mathsf P_{\eta,\eta'}.
+\end{equation}
+Suppose that the historical log-likelihood satisfies
+\begin{equation}
+    \ell_{\min}
+    \le
+    \log L_0(D_0\mid\theta)
+    \le
+    \ell_{\max}
+    \qquad
+    \text{for all }\theta\in\Theta.
+\end{equation}
+Then, for a fixed proposal $\eta\to\eta'$, define
+\begin{equation}
+    a_{\eta,\eta'}
+    =
+    \min\{(\eta'-\eta)\ell_{\min},
+          (\eta'-\eta)\ell_{\max}\}.
+\end{equation}
+Similarly, define
+\begin{equation}
+    b_{\eta,\eta'}
+    =
+    \max\{(\eta'-\eta)\ell_{\min},
+          (\eta'-\eta)\ell_{\max}\}.
+\end{equation}
+The resulting envelope width is
+\begin{equation}
+    b_{\eta,\eta'}-a_{\eta,\eta'}
+    =
+    |\eta'-\eta|(\ell_{\max}-\ell_{\min}).
+\end{equation}
+Hence a natural local choice is
+\begin{equation}
+    c_{\eta,\eta'}
+    =
+    b_{\eta,\eta'},
+    \qquad
+    \lambda_{\eta,\eta'}
+    =
+    |\eta'-\eta|(\ell_{\max}-\ell_{\min}).
+\end{equation}
+This choice makes the expected number of Poisson factors proportional to the proposal distance $|\eta'-\eta|$.
+Consequently, local random-walk proposals in $\eta$ lead to smaller expected computational cost than large independent proposals.
+
+For unbounded parameter spaces, such as Gaussian models with $\Theta=\mathbb R^d$, the lower bound $\ell_{\min}$ is typically $-\infty$.
+In that case, the above exact Poisson construction is not directly applicable without additional structure.
+One possible remedy is to work with a compactly supported prior.
+For example, define
+\begin{equation}
+    \pi_{0,B}(\theta)
+    \propto
+    \pi_0(\theta)\mathbf 1_{\Theta_B}(\theta),
+\end{equation}
+where $\Theta_B\subset\Theta$ is compact.
+Then deterministic bounds for $\log L_0(D_0\mid\theta)$ can be derived on $\Theta_B$.
+In the Gaussian historical likelihood with known covariance, the log-likelihood is a concave quadratic function of $\theta$.
+Its maximum is attained at the historical maximum likelihood estimator.
+Its minimum over a compact box is attained on the boundary.
+These deterministic bounds yield a valid local envelope for the Poisson estimator.
+
+\subsection{Divide-and-conquer factorization}
+\label{subsec:divide-and-conquer}
+
+The computational difficulty of the Poisson estimator increases with the variability of the historical log-likelihood.
+Since the historical likelihood factorizes over observations, we can write
+\begin{equation}
+    \log L_0(D_0\mid\theta)
+    =
+    \sum_{i=1}^{N_0}\log L_i(d_{0i}\mid\theta).
+\end{equation}
+The width of a global envelope for $Z_{\eta,\eta'}=(\eta'-\eta)\log L_0(D_0\mid\theta)$ typically grows with $N_0$.
+This motivates a divide-and-conquer construction.
+
+Let $D_{0,1},\ldots,D_{0,G}$ be a partition of the historical data.
+Let $\mathcal I_g$ denote the set of observation indices in block $g$.
+Define the block likelihood by
+\begin{equation}
+    L_{0,g}(D_{0,g}\mid\theta)
+    =
+    \prod_{i\in\mathcal I_g} L_i(d_{0i}\mid\theta).
+\end{equation}
+Then the full historical likelihood satisfies
+\begin{equation}
+    L_0(D_0\mid\theta)
+    =
+    \prod_{g=1}^{G} L_{0,g}(D_{0,g}\mid\theta).
+\end{equation}
+Equivalently, the full historical log-likelihood satisfies
+\begin{equation}
+    \log L_0(D_0\mid\theta)
+    =
+    \sum_{g=1}^{G}\log L_{0,g}(D_{0,g}\mid\theta).
 \end{equation}
 
-rather than a global bound over the entire state space.
-
-% For Gaussian historical likelihoods with known covariance matrix $\Sigma$,
-
-% \begin{equation}
-% \log L_0(D_0\mid\theta)
-% =
-% C
-% -
-% \frac N2
-% (\theta-\bar d)^T\Sigma^{-1}(\theta-\bar d),
-% \end{equation}
-
-% where
-
-% \begin{equation}
-% C
-% =
-% -\frac{Nd}{2}\log(2\pi)
-% -\frac N2\log|\Sigma|
-% -\frac N2\operatorname{tr}(\Sigma^{-1}S),
-% \end{equation}
-
-% and therefore
-
-% \begin{equation}
-% \sup_{\theta\in\Theta}
-% \log L_0(D_0\mid\theta)
-% =
-% C.
-% \end{equation}
-
-Consequently, for a proposal $\eta'$ from the current state $\eta$,
-
+For each block $g$, define the blockwise random variable
 \begin{equation}
-\widehat\Delta(\eta,\eta')
-\le
-|\eta'-\eta|C.
+    Z_{g,\eta,\eta'}(U,\theta)
+    =
+    (\eta'-\eta)\log L_{0,g}(D_{0,g}\mid\theta).
+\end{equation}
+Assume that deterministic bounds $a_{g,\eta,\eta'}$ and $b_{g,\eta,\eta'}$ are available such that
+\begin{equation}
+    a_{g,\eta,\eta'}
+    \le
+    Z_{g,\eta,\eta'}(U,\theta)
+    \le
+    b_{g,\eta,\eta'}
+    \qquad
+    \mathsf P_{\eta,\eta'}\text{-almost surely}.
+\end{equation}
+Set
+\begin{equation}
+    c_{g,\eta,\eta'}
+    =
+    b_{g,\eta,\eta'},
+    \qquad
+    \lambda_{g,\eta,\eta'}
+    =
+    b_{g,\eta,\eta'}-a_{g,\eta,\eta'}.
+\end{equation}
+A blockwise Poisson estimator can then be constructed as
+\begin{equation}
+    \widehat I_g(\eta,\eta')
+    =
+    \exp\{\lambda_{g,\eta,\eta'}-c_{g,\eta,\eta'}\}
+    \prod_{j=1}^{K_g}
+    \frac{
+        c_{g,\eta,\eta'} -
+        Z_{g,\eta,\eta'}(U_{g,j},\theta_{g,j})
+    }{
+        \lambda_{g,\eta,\eta'}
+    },
+\end{equation}
+where $K_g\sim\mathrm{Poisson}(\lambda_{g,\eta,\eta'})$.
+The variables $(U_{g,j},\theta_{g,j})$ are sampled independently from the same proposal-specific measure $\mathsf P_{\eta,\eta'}$.
+The blockwise estimator satisfies
+\begin{equation}
+    \bE[\widehat I_g(\eta,\eta')]
+    =
+    \exp\{-\Delta_g(\eta,\eta')\},
+\end{equation}
+where
+\begin{equation}
+    \Delta_g(\eta,\eta')
+    =
+    \bE_{\mathsf P_{\eta,\eta'}}
+    \left[
+        Z_{g,\eta,\eta'}(U,\theta)
+    \right].
 \end{equation}
 
-This yields the proposal-local envelope
-
+If the block estimators are independent, the divide-and-conquer product estimator is
 \begin{equation}
-c(\eta,\eta')
-=
-|\eta'-\eta|C.
+    \widehat I_{\mathrm{dc}}(\eta,\eta')
+    =
+    \prod_{g=1}^{G}\widehat I_g(\eta,\eta').
 \end{equation}
-
-Choosing the Poisson intensity parameter proportionally to this local envelope implies that the expected computational effort scales with the proposal distance. In particular, for local random-walk proposals, small moves induce small Poisson intensities and therefore low expected computational cost.
-
-\subsection{Divide-and-Conquer}
-
+By independence, its expectation is
+\begin{align}
+    \bE[\widehat I_{\mathrm{dc}}(\eta,\eta')]
+    &=
+    \prod_{g=1}^{G}
+    \bE[\widehat I_g(\eta,\eta')] \\
+    &=
+    \prod_{g=1}^{G}
+    \exp\{-\Delta_g(\eta,\eta')\} \\
+    &=
+    \exp\left\{
+        -\sum_{g=1}^{G}\Delta_g(\eta,\eta')
+    \right\}.
+\end{align}
+Since
 \begin{equation}
-    p(\theta, \eta\mid D, D_0) \propto \dfrac{L(D\mid \theta) \{L_1 (D_0\mid \theta) \cdots L_{n_0} (D_0\mid \theta)\}^\eta\pi_A(\eta)\pi_0(\theta)}{c_0(\theta)}
+    \sum_{g=1}^{G}\Delta_g(\eta,\eta')
+    =
+    \Delta(\eta,\eta'),
 \end{equation}
+we obtain
+\begin{equation}
+    \bE[\widehat I_{\mathrm{dc}}(\eta,\eta')]
+    =
+    \exp\{-\Delta(\eta,\eta')\}.
+\end{equation}
+Thus, the divide-and-conquer product estimator is unbiased for $c_0(\eta)/c_0(\eta')$.
 
-% Dois termos de produto por ramo, dois termos por folha da árvore
+The main advantage of this construction is variance and cost control.
+Instead of using one global envelope with width $\lambda_{\eta,\eta'}$, the method uses several smaller envelopes with widths $\lambda_{g,\eta,\eta'}$.
+The expected number of Poisson factors is
+\begin{equation}
+    \sum_{g=1}^{G}\lambda_{g,\eta,\eta'}.
+\end{equation}
+When the blockwise envelopes are much tighter than the full-data envelope, the product construction can be substantially more stable than the global estimator.
+
+This product estimator should not be confused with a genuine recursive divide-and-conquer Bernoulli factory.
+The estimator $\widehat I_{\mathrm{dc}}(\eta,\eta')$ is an unbiased estimator of a normalizing-constant ratio.
+However, using it as a noisy plug-in inside the Barker probability does not generally yield an exact Barker transition.
+A true DCBF Barker transition recursively constructs the accept--reject coin itself.
+At the leaves, one simulates smaller Bernoulli coins associated with subsets of likelihood factors.
+At internal nodes, these coins are merged recursively until a single coin with the Barker acceptance probability is obtained at the root.
+Therefore, the recursive DCBF is a coin construction, not merely a product of random ratio estimates.
+
+For the normalized power prior, the joint posterior can be written as
+\begin{equation}
+    \pi(\theta,\eta\mid D,D_0)
+    \propto
+    \frac{
+        L(D\mid\theta)
+        \prod_{i=1}^{N_0}L_i(d_{0i}\mid\theta)^\eta
+        \pi_0(\theta)\pi_A(\eta)
+    }{
+        c_0(\eta)
+    }.
+\end{equation}
+The normalizing constant depends on $\eta$, not on $\theta$.
+It is given by
+\begin{equation}
+    c_0(\eta)
+    =
+    \int_\Theta
+    \prod_{i=1}^{N_0}L_i(d_{0i}\mid t)^\eta
+    \,\dd P_0(t).
+\end{equation}
+Therefore, the correct factorization is through the historical likelihood terms $L_i(d_{0i}\mid\theta)$ and through proposal-specific envelopes for their log-contributions.
+In particular, the denominator should be written as $c_0(\eta)$ rather than $c_0(\theta)$.
+
+In the experiments, we distinguish between two objects.
+The first object is a divide-and-conquer product Poisson estimator, which is an unbiased estimator of a normalizing-constant ratio under valid deterministic envelopes.
+The second object is a genuine divide-and-conquer Barker/Bernoulli-factory transition, which must simulate the accept--reject event itself.
+This distinction is essential because the first object is useful for diagnostics and pseudo-marginal comparisons, while the second object is required for exact Barker sampling.
 
 \section{Pseudo-marginal via Importance Sampling}
 
