@@ -4,7 +4,149 @@
 
 \subsection{Principles}
 
+Bayesian inference provides a probabilistic framework for updating uncertainty about unknown quantities after observing data.
+
+Let $D$ denote the observed data, and let $\theta \in \Theta$ denote an unknown parameter defined on a measurable parameter space $(\Theta,\mathcal{F})$.
+The Bayesian model is specified by a likelihood function $L(D\mid\theta)$ and a prior distribution $\pi_0(\theta)$.
+
+The likelihood describes the information about $\theta$ contained in the data, while the prior represents information available before observing $D$.
+Bayes' theorem combines these two sources of information through the posterior distribution
+
+\begin{equation}
+    \pi(\theta\mid D)
+    =
+    \frac{L(D\mid\theta)\pi_0(\theta)}
+    {\int_{\Theta} L(D\mid t)\pi_0(t)\,\dd t}.
+    \label{eq:bayes-theorem-background}
+\end{equation}
+
+The denominator in \eqref{eq:bayes-theorem-background} is the marginal likelihood, or evidence, and is given by
+
+\begin{equation}
+    m(D)
+    =
+    \int_{\Theta} L(D\mid t)\pi_0(t)\,\dd t.
+    \label{eq:marginal-likelihood-background}
+\end{equation}
+
+When $m(D)<\infty$, the posterior distribution is well-defined and integrates to one.
+In this sense, Bayesian inference can be understood as a normalization procedure that transforms the unnormalized density $L(D\mid\theta)\pi_0(\theta)$ into a probability distribution over $\Theta$.
+
+For any posterior-integrable function $h:\Theta\to\bR$, posterior summaries are often expressed through expectations of the form
+
+\begin{equation}
+    \bE_{\pi(\theta\mid D)}\qty[h(\theta)]
+    =
+    \int_{\Theta} h(\theta)\pi(\theta\mid D)\,\dd\theta.
+    \label{eq:posterior-expectation-background}
+\end{equation}
+
+Examples include posterior means, posterior variances, marginal probabilities, credible intervals, and posterior predictive quantities.
+The main computational challenge is that the posterior distribution is usually available only up to a normalizing constant.
+
+Indeed, many Bayesian algorithms only require the unnormalized posterior density
+
+\begin{equation}
+    \gamma(\theta)
+    =
+    L(D\mid\theta)\pi_0(\theta),
+    \label{eq:unnormalized-posterior-background}
+\end{equation}
+
+because the marginal likelihood $m(D)$ does not depend on $\theta$.
+
+However, the marginal likelihood is still important for model comparison, empirical Bayes procedures, and doubly intractable models.
+In low-dimensional conjugate models, the integral in \eqref{eq:marginal-likelihood-background} may be available analytically.
+
+In modern Bayesian models, this integral is often unavailable, and posterior expectations such as \eqref{eq:posterior-expectation-background} must be approximated numerically. This motivates the use of simulation-based methods.
+
 \subsection{Monte Carlo Methods}
+
+Monte Carlo methods approximate integrals by random sampling.
+
+Let $\pi$ be a probability distribution on $(\Theta,\mathcal{F})$, and suppose that the quantity of interest is
+
+\begin{equation}
+    \mu
+    =
+    \bE_{\pi}\qty[h(\theta)]
+    =
+    \int_{\Theta} h(\theta)\pi(\theta)\,\dd\theta.
+    \label{eq:mc-target-background}
+\end{equation}
+
+If $\theta_1,\dots,\theta_N$ are independent samples from $\pi$, then the Monte Carlo estimator of $\mu$ is
+
+\begin{equation}
+    \widehat{\mu}_N
+    =
+    \frac{1}{N}\sum_{i=1}^{N} h(\theta_i).
+    \label{eq:mc-estimator-background}
+\end{equation}
+
+Under standard integrability conditions, the law of large numbers gives
+
+\begin{equation}
+    \widehat{\mu}_N
+    \xrightarrow[N\to\infty]{a.s.}
+    \mu.
+    \label{eq:mc-lln-background}
+\end{equation}
+
+If $h(\theta)$ has finite variance under $\pi$, the central limit theorem gives
+
+\begin{equation}
+    \sqrt{N}\qty(\widehat{\mu}_N-\mu)
+    \xrightarrow[N\to\infty]{d}
+    \mathcal{N}\qty(0,\sigma_h^2),
+    \label{eq:mc-clt-background}
+\end{equation}
+
+where
+
+\begin{equation}
+    \sigma_h^2
+    =
+    \operatorname{Var}_{\pi}\qty[h(\theta)].
+    \label{eq:mc-variance-background}
+\end{equation}
+
+The important feature of the Monte Carlo approximation is that its convergence rate is typically $N^{-1/2}$ and does not directly depend on the dimension of $\Theta$.
+This makes Monte Carlo methods attractive for Bayesian inference, where posterior distributions are often high-dimensional.
+
+The difficulty is that independent sampling from $\pi(\theta\mid D)$ is rarely possible.
+Markov chain Monte Carlo methods address this difficulty by constructing a Markov chain whose invariant distribution is the desired posterior distribution.
+
+The samples are then dependent, but posterior expectations can still be estimated using ergodic averages.
+If $(\theta_n)_{n\geq 0}$ is a Markov chain with invariant distribution $\pi$, then the MCMC estimator is
+
+\begin{equation}
+    \widehat{\mu}_N^{\operatorname{MCMC}}
+    =
+    \frac{1}{N}\sum_{n=1}^{N} h(\theta_n).
+    \label{eq:mcmc-estimator-background}
+\end{equation}
+
+Under suitable irreducibility, recurrence, and integrability conditions, the ergodic theorem gives
+
+\begin{equation}
+    \widehat{\mu}_N^{\operatorname{MCMC}}
+    \xrightarrow[N\to\infty]{a.s.}
+    \bE_{\pi}\qty[h(\theta)].
+    \label{eq:mcmc-ergodic-theorem-background}
+\end{equation}
+
+The price paid for replacing independent samples with a Markov chain is autocorrelation.
+
+When samples are correlated, the effective amount of information in $N$ iterations may be much smaller than $N$ independent draws.
+This motivates the use of diagnostics such as effective sample size, Monte Carlo standard errors, trace plots, and comparisons across independent chains.
+Another important practical issue is initialization.
+
+A Markov chain usually starts from a distribution different from $\pi$, and therefore the early iterations may not be representative of the target distribution.
+The usual practical response is to discard an initial portion of the chain, known as burn-in.
+
+However, burn-in is an asymptotic correction rather than an exact one.
+This distinction is central to the later discussion of exact and unbiased MCMC methods.
 
 \section{Standard MCMC Methods}
 \comEA{Since I know you will ask me what do I mean by standard: we can surely think of a better name}
