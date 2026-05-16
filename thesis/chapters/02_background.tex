@@ -148,12 +148,203 @@ The usual practical response is to discard an initial portion of the chain, know
 However, burn-in is an asymptotic correction rather than an exact one.
 This distinction is central to the later discussion of exact and unbiased MCMC methods.
 
-\section{Standard MCMC Methods}
-\comEA{Since I know you will ask me what do I mean by standard: we can surely think of a better name}
+\section{Classical Markov Chain Monte Carlo Methods}
+
+Markov chain Monte Carlo methods construct a transition kernel $P$ on $(\Theta,\mathcal{F})$ such that the posterior distribution $\pi$ is invariant.
+
+This means that, for every measurable set $A\in\mathcal{F}$,
+
+\begin{equation}
+    \int_{\Theta} P(\theta,A)\pi(\theta)\,\dd\theta
+    =
+    \pi(A).
+    \label{eq:invariance-background}
+\end{equation}
+
+Equivalently, if $\theta_n\sim\pi$ and $\theta_{n+1}\mid\theta_n\sim P(\theta_n,\cdot)$, then $\theta_{n+1}\sim\pi$.
+Invariance alone does not guarantee convergence from arbitrary starting points.
+
+For convergence, the Markov chain must also satisfy appropriate irreducibility and recurrence conditions.
+A common sufficient condition used to establish invariance is detailed balance.
+
+The transition kernel $P$ satisfies detailed balance with respect to $\pi$ if
+
+\begin{equation}
+    \pi(\theta)P(\theta,\dd\theta')
+    =
+    \pi(\theta')P(\theta',\dd\theta)
+    \label{eq:detailed-balance-background}
+\end{equation}
+
+as measures on $\Theta\times\Theta$.
+
+Detailed balance implies invariance and gives a convenient route for proving that a Markov chain targets the desired posterior distribution.
+The two classical algorithms discussed in this section are Gibbs sampling and Metropolis-Hastings.
+
+Gibbs sampling exploits conditional distributions that can be sampled exactly.
+Metropolis-Hastings is more general and only requires evaluation of the target density up to a normalizing constant.
+
+Both algorithms are asymptotically exact in the sense that their ergodic averages converge to posterior expectations under suitable conditions.
+They are not exact in the finite-time sense, because samples obtained after a finite number of iterations still depend on the initial state.
 
 \subsection{Gibbs Sampling}
 
+Gibbs sampling is designed for posterior distributions whose full conditional distributions are available and easy to sample from.
+
+Suppose that the parameter can be partitioned into $K$ blocks,
+
+\begin{equation}
+    \theta
+    =
+    \qty(\theta_1,\dots,\theta_K),
+    \qquad
+    \Theta
+    =
+    \Theta_1\times\cdots\times\Theta_K.
+    \label{eq:gibbs-blocks-background}
+\end{equation}
+
+For each block $\theta_k$, define the complementary vector
+
+\begin{equation}
+    \theta_{-k}
+    =
+    \qty(\theta_1,\dots,\theta_{k-1},\theta_{k+1},\dots,\theta_K).
+    \label{eq:gibbs-complement-background}
+\end{equation}
+
+The full conditional distribution of the $k$-th block is
+
+\begin{equation}
+    \pi(\theta_k\mid\theta_{-k},D).
+    \label{eq:gibbs-full-conditional-background}
+\end{equation}
+
+A systematic-scan Gibbs sampler updates the blocks sequentially.
+Starting from $\theta^{(n)}=\qty(\theta_1^{(n)},\dots,\theta_K^{(n)})$, one iteration produces $\theta^{(n+1)}$ by sampling
+
+\begin{align}
+    \theta_1^{(n+1)}
+    &\sim
+    \pi\qty(\theta_1\mid\theta_2^{(n)},\dots,\theta_K^{(n)},D),
+    \label{eq:gibbs-step-1-background}
+    \\
+    \theta_2^{(n+1)}
+    &\sim
+    \pi\qty(\theta_2\mid\theta_1^{(n+1)},\theta_3^{(n)},\dots,\theta_K^{(n)},D),
+    \label{eq:gibbs-step-2-background}
+    \\
+    &\vdots
+    \nonumber
+    \\
+    \theta_K^{(n+1)}
+    &\sim
+    \pi\qty(\theta_K\mid\theta_1^{(n+1)},\dots,\theta_{K-1}^{(n+1)},D).
+    \label{eq:gibbs-step-k-background}
+\end{align}
+
+Each update leaves the posterior distribution invariant because it samples exactly from a conditional distribution of the target.
+The composition of these invariant updates also leaves the posterior distribution invariant.
+
+The main advantage of Gibbs sampling is that every proposed block update is accepted automatically.
+In this sense, the algorithm avoids the tuning of an acceptance probability.
+
+On the other hand, the most relevant limitation is that the required full conditional distributions may not be available in closed form.
+Even when they are available, strong posterior dependence between blocks can lead to slow mixing.
+
+This is especially relevant in hierarchical models, latent variable models, and models with highly correlated parameters.
+In such cases, blocking, reparameterization, or hybrid Gibbs-within-Metropolis strategies may be necessary.
+
 \subsection{Metropolis-Hastings}
+
+The Metropolis-Hastings algorithm constructs a Markov chain using a proposal distribution and an accept-reject correction.
+Let $\pi$ denote the target posterior density, known up to a normalizing constant.
+
+Let $q(\theta'\mid\theta)$ be a proposal density for moving from the current state $\theta$ to a proposed state $\theta'$.
+Given the current state $\theta$, the algorithm first samples
+
+\begin{equation}
+    \theta'
+    \sim
+    q(\cdot\mid\theta).
+    \label{eq:mh-proposal-background}
+\end{equation}
+
+The proposal is then accepted with probability
+
+\begin{equation}
+    \alpha(\theta,\theta')
+    =
+    \min\qty{
+    1,
+    \frac{\pi(\theta')q(\theta\mid\theta')}
+    {\pi(\theta)q(\theta'\mid\theta)}
+    }.
+    \label{eq:mh-acceptance-background}
+\end{equation}
+
+If the proposal is accepted, the next state is $\theta'$.
+If the proposal is rejected, the chain remains at $\theta$.
+Thus,
+
+\begin{equation}
+    \theta_{n+1}
+    =
+    \begin{cases}
+    \theta',
+    &
+    \text{with probability } \alpha(\theta_n,\theta'),
+    \\
+    \theta_n,
+    &
+    \text{otherwise}.
+    \end{cases}
+    \label{eq:mh-transition-background}
+\end{equation}
+
+The acceptance probability in \eqref{eq:mh-acceptance-background} depends only on ratios of the target density.
+Therefore, if $\pi(\theta)=\gamma(\theta)/Z$ for an unknown normalizing constant $Z$, then $Z$ cancels from the ratio.
+
+This cancellation is one of the main reasons why Metropolis-Hastings is useful in Bayesian computation.
+The Metropolis-Hastings transition kernel satisfies detailed balance with respect to $\pi$.
+
+Indeed, the accept-reject correction symmetrizes the probability flow between $\theta$ and $\theta'$.
+Consequently, $\pi$ is invariant for the Markov chain.
+
+A common special case is the random-walk Metropolis algorithm.
+In this case,
+
+\begin{equation}
+    q(\theta'\mid\theta)
+    =
+    q(\theta-\theta'),
+    \label{eq:random-walk-proposal-background}
+\end{equation}
+
+so that $q(\theta'\mid\theta)=q(\theta\mid\theta')$.
+The acceptance probability then reduces to
+
+\begin{equation}
+    \alpha(\theta,\theta')
+    =
+    \min\qty{
+    1,
+    \frac{\pi(\theta')}{\pi(\theta)}
+    }.
+    \label{eq:random-walk-acceptance-background}
+\end{equation}
+
+The efficiency of Metropolis-Hastings depends strongly on the proposal distribution.
+If the proposal variance is too small, the chain accepts many proposals but explores the state space slowly.
+
+If the proposal variance is too large, the chain proposes distant states that are often rejected.
+This trade-off is one of the central practical issues in MCMC.
+
+Metropolis-Hastings is asymptotically exact under appropriate conditions, but it does not remove the finite-time dependence on the initial state.
+For this reason, convergence diagnostics and burn-in choices remain important in practical applications.
+In doubly intractable models, even the ratio in \eqref{eq:mh-acceptance-background} may contain unknown normalizing constants that depend on $\theta$.
+
+This is one of the settings where standard Metropolis-Hastings is no longer directly applicable and where the methods studied in this dissertation become necessary.
 
 \section{Doubly Intractable Distributions}
 \label{sec:dbl-int}
