@@ -728,6 +728,104 @@ For this reason, in this thesis the DCBF is treated as a theoretically motivated
 
 \subsection{Pseudo-marginal Metropolis--Hastings}
 
+Pseudo-marginal Metropolis--Hastings is a modification of the Metropolis--Hastings algorithm for targets whose unnormalised density cannot be evaluated exactly, but can be estimated without bias.
+Let the target distribution be
+
+\begin{equation}
+    \pi(\theta)
+    =
+    \dfrac{\gamma(\theta)}{Z},
+\end{equation}
+
+where $Z$ is unknown and where $\gamma(\theta)$ is not available pointwise.
+Assume that, for each $\theta$, we can simulate an auxiliary random variable $U \sim m_\theta(\dd u)$ and compute a non-negative estimator $\widehat{\gamma}(\theta, U)$ satisfying
+
+\begin{equation}
+    \bE_{U \sim m_\theta}
+    \qty[
+        \widehat{\gamma}(\theta, U)
+    ]
+    =
+    \gamma(\theta).
+\end{equation}
+
+The pseudo-marginal method applies an ordinary Metropolis--Hastings algorithm on the extended space $(\theta, U)$.
+The extended target is
+
+\begin{equation}
+    \widetilde{\pi}(\theta, u)
+    =
+    \dfrac{\widehat{\gamma}(\theta, u) m_\theta(u)}{Z}.
+\end{equation}
+
+This construction is valid because the marginal distribution of $\theta$ under $\widetilde{\pi}$ is the desired target distribution.
+Indeed,
+
+\begin{align}
+    \int \widetilde{\pi}(\theta, u) \dd u
+    &=
+    \dfrac{1}{Z}
+    \int
+    \widehat{\gamma}(\theta, u) m_\theta(u) \dd u,
+    \\
+    &=
+    \dfrac{\gamma(\theta)}{Z},
+    \\
+    &=
+    \pi(\theta).
+\end{align}
+
+Given the current state $(\theta, U)$, the algorithm proposes $\theta' \sim q(\dd\theta' \mid \theta)$ and independently samples $U' \sim m_{\theta'}(\dd u')$.
+The proposal is accepted with probability
+
+\begin{equation}
+    \alpha_{\mathrm{PM}}
+    \qty{
+        (\theta, U),
+        (\theta', U')
+    }
+    =
+    \min
+    \qty{
+        1,
+        \dfrac{
+            \widehat{\gamma}(\theta', U')
+            q(\theta \mid \theta')
+        }{
+            \widehat{\gamma}(\theta, U)
+            q(\theta' \mid \theta)
+        }
+    }.
+\end{equation}
+
+A crucial implementation detail is that the estimator associated with the current state must be stored and reused after rejection.
+If the estimator at the current state were regenerated at every iteration, the resulting chain would generally no longer be the standard pseudo-marginal chain on the extended space.
+Under the non-negativity and unbiasedness assumptions, the algorithm is exact in the sense that the marginal invariant distribution of $\theta$ is $\pi$.
+This result is the central guarantee of the pseudo-marginal approach of \cite{andrieu2009}.
+
+The method is especially useful when $\gamma(\theta)$ contains an intractable likelihood or an intractable normalising constant ratio for which an unbiased non-negative estimator is available.
+In the context of normalized power priors, one may use pseudo-marginal ideas when the ratio involving $c_0(\eta)$ is replaced by a positive unbiased estimator of the corresponding ratio.
+
+The main caveat is that unbiasedness alone is not sufficient for good computational performance.
+If the estimator $\widehat{\gamma}(\theta, U)$ has high variance, the chain may become sticky because unusually large estimates at the current state are difficult to move away from.
+This phenomenon can produce high autocorrelation, poor effective sample size, and long burn-in periods even though the invariant distribution is theoretically correct.\
+
+Another caveat is that the estimator must be non-negative.
+Signed unbiased estimators do not directly define a probability density on the extended space and therefore do not yield the standard pseudo-marginal guarantee.
+Moreover, pseudo-marginal Metropolis--Hastings should not be confused with plugging an unbiased estimator into an arbitrary nonlinear acceptance probability.
+For instance, replacing an exact ratio $R$ by an unbiased estimate $\widehat{R}$ inside Barker's probability $\widehat{R}/(1+\widehat{R})$ is generally biased, since
+
+\begin{equation}
+    \bE
+    \qty[
+        \dfrac{\widehat{R}}{1+\widehat{R}}
+    ]
+    \neq
+    \dfrac{R}{1+R}.
+\end{equation}
+
+Thus, pseudo-marginal Metropolis--Hastings provides an exact route when a non-negative unbiased estimator of the unnormalised target is available, but its practical usefulness depends strongly on the stability and variance of that estimator.
+
 \section{Function Emulation Methods}
 
 \subsection{Gaussian Processes}

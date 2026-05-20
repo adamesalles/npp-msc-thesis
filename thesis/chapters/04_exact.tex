@@ -503,35 +503,6 @@ At the leaves, one simulates smaller Bernoulli coins associated with subsets of 
 At internal nodes, these coins are merged recursively until a single coin with the Barker acceptance probability is obtained at the root.
 Therefore, the recursive DCBF is a coin construction, not merely a product of random ratio estimates.
 
-For the normalized power prior, the joint posterior can be written as
-\begin{equation}
-    \pi(\theta,\eta\mid D,D_0)
-    \propto
-    \frac{
-        L(D\mid\theta)
-        \prod_{i=1}^{N_0}L_i(d_{0i}\mid\theta)^\eta
-        \pi_0(\theta)\pi_A(\eta)
-    }{
-        c_0(\eta)
-    }.
-\end{equation}
-The normalizing constant depends on $\eta$, not on $\theta$.
-It is given by
-\begin{equation}
-    c_0(\eta)
-    =
-    \int_\Theta
-    \prod_{i=1}^{N_0}L_i(d_{0i}\mid t)^\eta
-    \,\dd P_0(t).
-\end{equation}
-Therefore, the correct factorization is through the historical likelihood terms $L_i(d_{0i}\mid\theta)$ and through proposal-specific envelopes for their log-contributions.
-In particular, the denominator should be written as $c_0(\eta)$ rather than $c_0(\theta)$.
-
-In the experiments, we distinguish between two objects.
-The first object is a divide-and-conquer product Poisson estimator, which is an unbiased estimator of a normalizing-constant ratio under valid deterministic envelopes.
-The second object is a genuine divide-and-conquer Barker/Bernoulli-factory transition, which must simulate the accept--reject event itself.
-This distinction is essential because the first object is useful for diagnostics and pseudo-marginal comparisons, while the second object is required for exact Barker sampling.
-
 \section{Pseudo-marginal via Importance Sampling}
 
 
