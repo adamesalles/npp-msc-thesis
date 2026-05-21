@@ -92,21 +92,21 @@ The exact algorithm---which uses the closed-form normalising constant ratio---ac
 We compare it against three approximate pseudo-marginal methods: the prior-importance estimator ($\delta_a$), the MLE importance-sampling estimator ($\delta_b$), and the power-posterior estimator.
 
 
-\begin{figure}[!ht]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{figures/ch5/convergence_small.png}
     \caption{Posterior densities for $\eta$ under low discrepancy ($\delta = 0.1$). Each approximate estimator label reports the total number of chains run, wall-clock time, and final KS distance to the Stan baseline.}
     \label{fig:convergence-small}
 \end{figure}
 
-\begin{figure}[!ht]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{figures/ch5/convergence_medium.png}
     \caption{Posterior densities for $\eta$ under moderate discrepancy ($\delta = 0.5$).}
     \label{fig:convergence-medium}
 \end{figure}
 
-\begin{figure}[!ht]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{figures/ch5/convergence_large.png}
     \caption{Posterior densities for $\eta$ under high discrepancy ($\delta = 1.0$). Under strong conflict between datasets the posterior concentrates near zero and all methods converge in a single batch.}
@@ -148,3 +148,139 @@ The sharp concentration of the posterior makes the normalising-constant ratio ea
 Overall, the power estimator is the most efficient of the three approximate methods: it matches or beats the exact algorithm in chains required across all scenarios.
 The prior-importance estimator is consistently the weakest, particularly when the posterior is diffuse.
 These findings suggest that the choice of estimator matters most in low-discrepancy settings, where the posterior for $\eta$ is broad and the normalising constant must be estimated accurately over a wide range of values.
+
+\subsection{Linear regression with Normal-Inverse-Gamma priors}
+\label{subsec:nig-lm-experiment}
+
+We next consider a Gaussian linear regression model with unknown variance.
+This experiment is designed to evaluate the exchange update in a setting where the normalized power prior remains analytically tractable, but the normalizing constant is no longer a simple linear function of the power parameter.
+Let $D_0 = (\bfX_0,\bfy_0)$ denote the historical data and let $D = (\bfX,\bfy)$ denote the current data.
+We assume
+\begin{equation}
+    \bfy_0 = \bfX_0 \bfbt + \bfeps_0,
+    \qquad
+    \bfy = \bfX \bfbt + \bfeps,
+\end{equation}
+where $\bfeps_0 \sim \cN(\bfzero,\sg \bfI_{n_0})$ and $\bfeps \sim \cN(\bfzero,\sg \bfI_n)$.
+The variance $\sg$ is unknown.
+The initial prior is Normal-Inverse-Gamma,
+\begin{equation}
+    \bfbt \mid \sg \sim \cN(\bfmu_0,\sg \bfV_0),
+    \qquad
+    \sg \sim \InvGam(a,b).
+\end{equation}
+For a fixed value of $\eta$, the powered prior is given by
+\begin{equation}
+    \pi_{\eta}(\bfbt,\sg \mid D_0)
+    =
+    \frac{
+        L(D_0 \mid \bfbt,\sg)^\eta \pi_0(\bfbt,\sg)
+    }{
+        c_0(\eta)
+    }.
+\end{equation}
+The normalizing constant is
+\begin{equation}
+    c_0(\eta)
+    =
+    \int_0^\infty
+    \int_{\bR^p}
+    L(D_0 \mid \bfu,v)^\eta
+    \pi_0(\bfu,v)
+    \dd \bfu
+    \dd v.
+\end{equation}
+In this model, $c_0(\eta)$ is available in closed form by conjugacy.
+This allows us to construct an analytic reference chain for $\eta$ and to validate algorithms that do not directly evaluate $c_0(\eta)$.
+The marginal posterior density of $\eta$ is proportional to
+\begin{equation}
+    \pi(\eta \mid D_0,D)
+    \propto
+    \frac{
+        \pi_A(\eta)
+        \Gamma(n/2+\nu_0)
+        \abs{\Lambda_0}^{1/2}
+        H_0(\eta)^{\nu_0}
+    }{
+        \abs{\Lambda}^{1/2}
+        \Gamma(\nu_0)
+        H(\eta)^{\nu_0+n/2}
+    }.
+    \label{eq:nig-lm-eta-marginal}
+\end{equation}
+The quantities $\nu_0$, $\Lambda_0$, $H_0(\eta)$, $\Lambda$, and $H(\eta)$ are defined in Appendix~\ref{example:nig_lm}.
+Although the analytic expression is available here, the exchange algorithm does not require evaluating $c_0(\eta)$.
+Given the current state $(\bfbt,\sg,\eta)$, we propose $\eta'$ and draw an auxiliary value
+\begin{equation}
+    ({\bfbt}^\star,{\sg}^\star)
+    \sim
+    \pi_{\eta'}(\bfbt,\sg \mid D_0).
+\end{equation}
+The exchange log-ratio for the $\eta$ update is
+\begin{align}
+    \log R_{\mathrm{ex}}
+    &=
+    (\eta'-\eta)
+    \log L(D_0 \mid \bfbt,\sg)
+    +
+    (\eta-\eta')
+    \log L(D_0 \mid {\bfbt}^\star,{\sg}^\star)
+    \nonumber
+    \\
+    &\quad
+    +
+    \log \frac{\pi_A(\eta')}{\pi_A(\eta)}
+    +
+    \log \frac{q(\eta \mid \eta')}{q(\eta' \mid \eta)}.
+    \label{eq:nig-lm-exchange-log-ratio}
+\end{align}
+The proposal is then accepted with probability $\min\{1,\exp(\log R_{\mathrm{ex}})\}$.
+When the auxiliary draw from $\pi_{\eta'}(\bfbt,\sg \mid D_0)$ is exact, this update has the correct invariant distribution for the normalized power prior.
+This follows from the exchange algorithm for doubly-intractable distributions, where an auxiliary draw from the proposed normalized model cancels the unknown ratio of normalizing constants in the Metropolis-Hastings acceptance probability~\cite{murray2012}. 
+The exchange algorithm therefore provides an exact update for $\eta$ under the powered-prior simulation assumption.
+This assumption is satisfied in the present experiment because the powered prior is Normal-Inverse-Gamma.
+
+We compare three methods.
+The first method is an analytic Metropolis-Hastings reference that evaluates Equation~\eqref{eq:nig-lm-eta-marginal}.
+The second method is the exchange Metropolis-Hastings update in Equation~\eqref{eq:nig-lm-exchange-log-ratio}.
+The third method is a path-sampling pseudo-marginal method based on a Monte Carlo approximation of the normalizing constant ratio.
+The path-sampling method is included as a computational baseline and is classified according to the exactness of the estimator used in its acceptance ratio.
+If the estimator is not non-negative and unbiased for the required marginal target, the method is treated as approximate rather than exact.
+This distinction follows the pseudo-marginal principle, where exactness requires a non-negative unbiased estimator of the target density on an extended space~\cite{andrieu2009}.
+
+We generate three discrepancy scenarios between the historical and current regression coefficients.
+In the small-discrepancy scenario, the current coefficient vector is close to the historical coefficient vector.
+In the medium-discrepancy scenario, the current coefficient vector is moderately shifted.
+In the large-discrepancy scenario, the current coefficient vector is substantially shifted.
+The expected qualitative behavior is that the posterior distribution of $\eta$ moves toward smaller values as the discrepancy increases.
+This reflects reduced borrowing from the historical data when the historical and current data-generating mechanisms are less compatible.
+
+The main diagnostic is the one-dimensional Wasserstein distance from each method to the analytic reference.
+We report this distance separately for $\eta$, $\norm{\bfbt}_2$, and $\sg$.
+We also report posterior means, posterior standard deviations, effective sample sizes, acceptance rates, and runtime.
+The norm $\norm{\bfbt}_2$ summarizes the magnitude of the regression coefficient vector, while $\sg$ is reported separately because it represents the residual variance and should not be combined with $\bfbt$ into a single geometric average.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{../software/experiments/results/nig_lm_exchange/posterior_eta_all_discrepancies.png}
+    \caption{Posterior density of $\eta$ for the linear regression NPP experiment across discrepancy scenarios.}
+    \label{fig:nig-lm-eta-density}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{../software/experiments/results/nig_lm_exchange/posterior_beta_norm_all_discrepancies.png}
+    \caption{Posterior density of $\norm{\bfbt}_2$ for the linear regression NPP experiment across discrepancy scenarios.}
+    \label{fig:nig-lm-beta-norm-density}
+\end{figure}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{../software/experiments/results/nig_lm_exchange/posterior_sigma_all_discrepancies.png}
+    \caption{Posterior density of $\sg$ for the linear regression NPP experiment across discrepancy scenarios.}
+    \label{fig:nig-lm-sigma-density}
+\end{figure}
+
+\input{../software/experiments/results/nig_lm_exchange/table_diagnostics.tex}
+
+\input{../software/experiments/results/nig_lm_exchange/table_posterior_summaries.tex}
