@@ -21,13 +21,186 @@ Our contributions in this area:
 
 
 \section{Emulating the normalizing constant}
-\comEA{Here I'd like to present the formulation of the problem, what exactly I mean by emulating in this case.}
+
+In many applications involving normalized power priors, the normalizing constant
+
+\begin{equation}
+    c_0(\eta)
+    =
+    \int_{\Theta}
+    L(D_0 \mid \theta)^\eta
+    \pi_0(\theta)
+    \dd \theta
+\end{equation}
+
+cannot be evaluated analytically.
+As a consequence, direct evaluation of the posterior density becomes infeasible.
+A common strategy is therefore to replace $c_0(\eta)$ by a surrogate approximation constructed from evaluations at a finite collection of design points.
+
+More precisely, suppose we evaluate the log-normalizing constant
+
+\begin{equation}
+    g(\eta)
+    =
+    \log c_0(\eta)
+\end{equation}
+
+at points $\eta_1, \ldots, \eta_m \in [0,1]$.
+The evaluations may be obtained analytically, via Monte Carlo estimators, thermodynamic integration, or path sampling methods.
+We then construct an emulator
+
+\begin{equation}
+    \widehat g(\eta)
+\end{equation}
+
+intended to approximate $g(\eta)$ over the entire interval.
+This yields the approximation
+
+\begin{equation}
+    c_0(\eta)
+    \approx
+    \exp\{\widehat g(\eta)\}.
+\end{equation}
+
+The resulting approximation can then be plugged into the posterior density, producing an approximate MCMC scheme whose computational cost is substantially reduced after the emulator is trained.
+
+From a statistical perspective, this transforms the problem of evaluating an intractable normalizing constant into a nonparametric regression problem.
+The quality of inference then depends on the approximation properties of the emulator and on how uncertainty propagates through the posterior distribution.
 
 \subsection{Consequences}
-\comEA{Here I'd like to talk about how appoximations w/o uncertainty quantification might lead to unstrustworthy results}
+
+Although emulation methods can dramatically reduce computational cost, replacing the true normalizing constant by a deterministic approximation may substantially alter the resulting posterior distribution.
+
+Suppose the true posterior density is
+
+\begin{equation}
+    \pi(\theta, \eta \mid D, D_0)
+    \propto
+    \frac{
+        L(D \mid \theta)
+        L(D_0 \mid \theta)^\eta
+        \pi_0(\theta)
+        \pi_0(\eta)
+    }{
+        c_0(\eta)
+    }.
+\end{equation}
+
+If $c_0(\eta)$ is replaced by an approximation $\widehat c_0(\eta)$, the resulting Markov chain targets instead
+
+\begin{equation}
+    \widetilde \pi(\theta, \eta \mid D, D_0)
+    \propto
+    \frac{
+        L(D \mid \theta)
+        L(D_0 \mid \theta)^\eta
+        \pi_0(\theta)
+        \pi_0(\eta)
+    }{
+        \widehat c_0(\eta)
+    }.
+\end{equation}
+
+Consequently, approximation errors directly perturb the invariant distribution of the Markov chain.
+Even small systematic biases in $\widehat c_0(\eta)$ may produce substantial distortions in posterior summaries, credible intervals, and Bayes factors.
+
+An important practical issue is that many emulation approaches treat $\widehat c_0(\eta)$ as deterministic after fitting.
+In this case, uncertainty associated with the emulator is ignored during posterior inference.
+This may lead to overconfident posterior distributions and unreliable uncertainty quantification.
+
+The problem becomes particularly severe when the approximation error varies non-uniformly across the parameter space.
+For instance, local interpolation errors near regions of high posterior mass may induce systematic bias in the marginal posterior distribution of $\eta$.
+
+Moreover, unconstrained emulators may violate structural properties known to hold for the true function.
+For normalized power priors, the map
+
+\begin{equation}
+    g(\eta)
+    =
+    \log c_0(\eta)
+\end{equation}
+
+typically satisfies smoothness and monotonicity properties inherited from the likelihood.
+Approximations that ignore such information may generate unrealistic artifacts, including oscillations and locally inconsistent curvature.
+
+These issues motivate the incorporation of structural constraints into the emulation procedure.
 
 \subsection{Introducing shape-constraints}
-\comEA{Show how to plug our scenario into these models}
+
+One strategy for improving the stability of the emulator is to incorporate qualitative information about the target function directly into the model.
+
+Suppose
+
+\begin{equation}
+    g(\eta)
+    =
+    \log c_0(\eta).
+\end{equation}
+
+Under regularity conditions, derivatives of $g$ can be expressed in terms of moments under the power posterior distribution.
+For instance,
+
+\begin{equation}
+    \dv{}{\,\eta}
+    \log c_0(\eta)
+    =
+    \bE_{\pi_\eta}
+    \qty[
+        \log L(D_0 \mid \theta)
+    ].
+\end{equation}
+
+Therefore, information about monotonicity and curvature may be available analytically or estimated from Monte Carlo samples.
+
+A flexible approach consists of modelling $g$ as a Gaussian process.
+If
+
+\begin{equation}
+    g
+    \sim
+    \mathcal{GP}(m, k),
+\end{equation}
+
+then derivatives of $g$ are also Gaussian processes because differentiation is a linear operator.
+In particular,
+
+\begin{equation}
+    g'
+    \sim
+    \mathcal{GP}
+    \qty(
+        \dv{}{\,\eta} m(\eta),
+        \dv{}{\,\eta}\dv{}{\,\eta'} k(\eta, \eta')
+    ).
+\end{equation}
+
+This allows derivative information and shape restrictions to be incorporated directly into the posterior distribution of the Gaussian process.
+Conditioning on derivative observations or derivative sign constraints can substantially reduce unrealistic oscillatory behaviour.
+We refer to \citeonline{adame2025} for recent developments in shape-constrained emulation through Gaussian processes.
+\comEA{Insert more references}
+
+An alternative strategy is based on shape-constrained additive models (SCAMs).
+These models extend generalized additive models (GAMs) by imposing constraints directly on the spline basis coefficients.
+
+Suppose
+
+\begin{equation}
+    g(\eta)
+    =
+    \beta_0
+    +
+    \sum_{j=1}^p
+    f_j(\eta),
+\end{equation}
+
+where the functions $f_j$ are represented through spline expansions.
+Shape constraints such as monotonicity or convexity can then be enforced by restricting the spline coefficients during estimation.
+
+In practice, SCAMs are fitted using penalized likelihood methods analogous to standard GAM estimation procedures.
+The main difference is that the optimization is performed under linear inequality constraints on the spline coefficients.
+
+Compared with unconstrained smoothers, shape-constrained models may provide more stable extrapolation behaviour and improved uncertainty quantification in regions with sparse design points.
+These properties are particularly appealing when approximating normalizing constants, since small local errors may propagate nonlinearly into the posterior distribution.
 
 \section{Current approaches for the NPP}
 \comEA{Discuss \cite{han2023} and \cite{carvalho2021} - and any other state-of-art}
