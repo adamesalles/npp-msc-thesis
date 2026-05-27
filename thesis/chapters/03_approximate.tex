@@ -203,7 +203,103 @@ Compared with unconstrained smoothers, shape-constrained models may provide more
 These properties are particularly appealing when approximating normalizing constants, since small local errors may propagate nonlinearly into the posterior distribution.
 
 \section{Current approaches for the NPP}
-\comEA{Discuss \cite{han2023} and \cite{carvalho2021} - and any other state-of-art}
+
+The normalized power prior has received considerable attention in recent years due to its ability to incorporate historical information while preserving coherence with the likelihood principle.
+However, practical posterior inference under the NPP remains computationally challenging because the normalizing constant
+
+\begin{equation}
+    c_0(\eta)
+    =
+    \int_\Theta
+    L(D_0 \mid \theta)^\eta
+    \pi_0(\theta)
+    \dd \theta
+\end{equation}
+
+typically depends on the discounting parameter $\eta$ in a non-analytic manner.
+As discussed in Section 2.3, this induces a doubly intractable posterior distribution whose evaluation requires repeated computation of $c_0(\eta)$ across the MCMC iterations.
+
+A substantial portion of the current literature therefore focuses on approximating either the normalizing constant itself or ratios involving $c_0(\eta)$.
+The main approaches may be broadly divided into:
+\begin{enumerate}[label=(\roman*)]
+\item direct approximation of the normalizing function;
+\item Monte Carlo estimators based on importance sampling or path sampling; and
+\item exact or asymptotically exact MCMC procedures.
+\end{enumerate}
+\subsection{Approximate inference through emulation and interpolation}
+
+One of the main practical difficulties in the NPP is that evaluating $c_0(\eta)$ repeatedly during posterior simulation may become prohibitively expensive for complex models.
+Consequently, several authors have proposed constructing surrogate approximations for the normalizing function.
+
+A common strategy consists of evaluating $c_0(\eta)$ or $\log c_0(\eta)$ over a finite grid of discounting parameters and then interpolating these values over the interval $\eta \in [0,1]$.
+Spline-based approximations are particularly attractive in this setting because the normalizing function is typically smooth as a function of $\eta$.
+
+In the R package NPP associated with \citeonline{han2023}, efficient posterior computation is achieved by avoiding repeated evaluation of the normalizing constant during MCMC sampling.
+The proposed framework exploits structural properties of the power posterior and constructs computational approximations that only require simulation from a small number of reference distributions.
+
+More generally, spline interpolation methods approximate
+
+\begin{equation}
+    g(\eta)
+    =
+    \log c_0(\eta)
+\end{equation}
+
+through basis expansions of the form
+
+\begin{equation}
+    \widehat g(\eta)
+    =
+    \sum_{k=1}^K
+    \beta_k
+    B_k(\eta),
+\end{equation}
+
+where $B_k$ denotes spline basis functions.
+The resulting approximation can then be plugged directly into the posterior distribution.
+
+Although such methods may substantially reduce computational cost, they typically treat the approximation as deterministic after fitting.
+As a consequence, uncertainty associated with the approximation is not propagated into the posterior distribution.
+This may lead to overconfident inference and distortions in posterior summaries when approximation errors accumulate near regions of high posterior mass.
+
+An important limitation of the current literature is that there is still no widely adopted exact computational baseline for assessing approximation quality in the NPP setting.
+Most existing works compare computational approximations against other approximate procedures or against simplified models where the normalizing constant is analytically available.
+This makes it difficult to quantify the true inferential impact of approximation errors.
+
+The recent development of exact and quasi-exact MCMC procedures for doubly intractable distributions provides an opportunity to revisit these approximation methods under a more rigorous computational framework.
+In particular, exact samplers may be used as gold-standard references for evaluating the bias and stability of surrogate models.
+
+\subsection{Monte Carlo approaches and exact inference}
+
+Several recent works investigate Monte Carlo estimators for posterior inference under the normalized power prior.
+These methods typically exploit the representation of the normalizing constant as an expectation under a tractable proposal distribution.
+
+The work of \citeonline{carvalho2021} establishes several theoretical properties of the NPP and highlights the computational challenges induced by the normalizing function.
+In particular, the authors show that the normalized power prior is always proper whenever the initial prior is proper and prove smoothness and convexity properties of the map $\eta \mapsto \log c_0(\eta)$.
+
+The same work also emphasizes that posterior inference under the NPP belongs to the class of doubly intractable distributions because the posterior density depends explicitly on an unknown normalizing constant ratio.
+This observation motivates the use of advanced MCMC procedures originally developed for doubly intractable models.
+
+More recently, \citeonline{han2023} proposed efficient posterior sampling procedures based on importance sampling and power posterior representations.
+The central idea is to avoid evaluating $c_0(\eta)$ repeatedly by constructing estimators using samples generated under reference power posterior distributions.
+
+These approaches are computationally attractive because they are relatively simple to implement and scale well to moderate-dimensional models.
+However, they remain approximate in general and their accuracy depends critically on the variance of the Monte Carlo estimators and on the overlap between the proposal and target distributions.
+
+At present, the literature still lacks a systematic comparison between:
+\begin{enumerate}[label=(\roman*)]
+    \item deterministic emulation procedures;
+    \item pseudo-marginal Monte Carlo estimators; and
+    \item exact MCMC algorithms for the NPP.
+\end{enumerate}
+
+In particular, there is limited empirical evidence regarding:
+the stationary bias induced by noisy approximations,
+the computational trade-offs between exact and approximate methods,
+and the practical benefits of incorporating structural information such as shape constraints into surrogate models.
+
+The methodology developed in this work aims to contribute to this direction by combining exact MCMC procedures based on the Exchange algorithm with approximation strategies based on functional emulation.
+This provides a unified framework in which both exact and approximate methods can be evaluated relative to a common computational baseline.
 
 \section{Doubly Intractable Settings}
 
