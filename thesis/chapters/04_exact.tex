@@ -62,6 +62,8 @@ R_{\mathrm{ex}}(\eta,\eta';\theta,\theta^\star)
 The ratio $c_0(\eta)/c_0(\eta')$ has disappeared.
 This cancellation is the main reason why the exchange algorithm is attractive for the normalized power prior.
 
+\comEA{Add proof and intuition that it is not biased.}
+
 The exactness of the exchange algorithm depends on the ability to sample $\theta^\star$ exactly from $\pi_{\eta'}(\theta \mid D_0)$.
 This assumption is strong.
 It is satisfied in conjugate Gaussian models and in some conditionally conjugate models.
@@ -283,12 +285,12 @@ where $\tau_k \sim \Uni(\eta, \eta')$, and $\qty(\widetilde{\theta}_{m_k} \mid \
 
 Thus, for a single sample $\tau_\star \sim \Uni(\eta, \eta')$, and $\qty(\widetilde{\theta}_{\star} \mid \tau_\star) \sim \pi_{\tau_\star}(\theta)$ we have:
 
-\comEA{Because it doesn't depend on the variance}
 
 \begin{equation}
-  \widehat{\Delta}(\eta, \eta') = (\eta' - \eta) \log L_0\qty(D_0\mid\widetilde{\theta}_{\star})
+    \widehat{\Delta}(\eta, \eta') = (\eta' - \eta) \log L_0\qty(D_0\mid\widetilde{\theta}_{\star})
 \end{equation}
 
+\comEA{Because it doesn't depend on the variance}
 
 \subsection{Local envelopes for the Poisson estimator}
 \label{subsec:local-envelopes}

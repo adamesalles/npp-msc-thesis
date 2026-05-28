@@ -1,0 +1,28 @@
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{llcccc}
+  \hline
+  Scenario & Method & $\bar{\eta}$ & $\mathrm{sd}(\eta)$ & $\overline{\|\theta\|}$ & $\mathrm{sd}(\|\theta\|)$ \\
+  \hline
+  Small & Analytic MH (exact reference) & 0.611 & 0.254 & 0.225 & 0.088 \\
+   & Prior IS & 0.704 & 0.223 & 0.219 & 0.085 \\
+   & MLE-centered IS & 0.647 & 0.259 & 0.218 & 0.088 \\
+   & Path-sampling PMMH & 0.663 & 0.226 & 0.231 & 0.091 \\
+   & Exchange MH & 0.556 & 0.248 & 0.219 & 0.091 \\
+  \hline
+  Medium & Analytic MH (exact reference) & 0.189 & 0.163 & 0.289 & 0.112 \\
+   & Prior IS & 0.200 & 0.169 & 0.302 & 0.113 \\
+   & MLE-centered IS & 0.176 & 0.145 & 0.297 & 0.113 \\
+   & Path-sampling PMMH & 0.176 & 0.125 & 0.290 & 0.116 \\
+   & Exchange MH & 0.184 & 0.154 & 0.291 & 0.118 \\
+  \hline
+  Large & Analytic MH (exact reference) & 0.031 & 0.023 & 0.268 & 0.113 \\
+   & Prior IS & 0.033 & 0.026 & 0.269 & 0.104 \\
+   & MLE-centered IS & 0.032 & 0.024 & 0.263 & 0.113 \\
+   & Path-sampling PMMH & 0.032 & 0.025 & 0.260 & 0.110 \\
+   & Exchange MH & 0.032 & 0.024 & 0.276 & 0.105 \\
+  \hline
+  \end{tabular}
+  \caption{Posterior summaries for Experiment 1 (Normal-Normal NPP).}
+  \label{tab:exp1-posterior-summaries}
+\end{table}

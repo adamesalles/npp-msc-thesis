@@ -349,8 +349,11 @@ This is one of the settings where standard Metropolis-Hastings is no longer dire
 
 \section{Doubly Intractable Distributions}
 \label{sec:dbl-int}
+\comEA{Not sure if I'll keep this here.}
 
 \section{The Normalized Power Prior}
+
+\comEA{Write some motivation here.}
 
 \subsection{Formulation}
 
@@ -361,7 +364,7 @@ Consider the following Bayesian schema:
 \end{equation}
 
 
-\begin{defi}[Power prior]
+\begin{definition}[Power prior]
     Let $D_0 = \{d_{01}, d_{02}, \dots, d_{0N_0}\}$, $d_{0i} \subseteq \cX^{p}$ be the historical data and let $L_0(D_0 \mid \theta)$ be a likelihood function assumed to be finite for all $\theta \in \Theta \subseteq \bR^p$. Then, the power prior is defined as
 
     \begin{equation}
@@ -370,7 +373,7 @@ Consider the following Bayesian schema:
     \end{equation}
 
     where $\pi_0(\theta)$ is the initial prior distribution of $\theta$ and $\eta$ is the (fixed) power parameter.
-\end{defi}
+\end{definition}
 
 Then, when we want to accomodate the uncertainty in the choice of $\eta$, we treat it as a random variable and assign a prior distribution to it, indexed by $\phi$. In this case, we find the \textit{unnormalized} power prior as
 
@@ -402,9 +405,7 @@ For instance, applying Barker's algorithm for MCMC~\cite{vats2021} to sample fro
 \end{equation}
 cannot be directly evaluated~\cite{goncalves2017}.
 
-\subsection{Properties}
-
-\subsubsection{Derivative of the normalizing constant}
+\subsection{The derivative of the normalizing constant}
 
 Considering $c_0(\eta)$ as in \eqref{eq:normalizing-constant}, we can find the derivative of $c_0(\eta)$ with respect to $\eta$ as
 
@@ -468,7 +469,7 @@ A standard Metropolis--Hastings proposal, as discussed in section \ref{subsec:me
 The ratio $c(\eta)/c(\eta')$ is generally unavailable.
 This prevents the direct application of ordinary Metropolis--Hastings.
 
-The exchange algorithm of \cite{murray2012} introduces an auxiliary variable $x^\star$ sampled exactly from the normalized model at the proposed value $\eta'$.
+The exchange algorithm of \citeonline{murray2012} introduces an auxiliary variable $x^\star$ sampled exactly from the normalized model at the proposed value $\eta'$.
 That is,
 \begin{equation}
 x^\star
@@ -610,7 +611,7 @@ then $p(\theta)$ can become very small as $n$ increases.
 A direct two-coin implementation may therefore have an expected number of loops that grows exponentially in $n$.
 This is the main computational bottleneck addressed by divide-and-conquer Bernoulli factories.
 
-The divide-and-conquer Bernoulli factory of \cite{stumpf2025} reduces this cost by recursively merging coins associated with smaller groups of factors.
+The divide-and-conquer Bernoulli factory of \citeonline{stumpf2025} reduces this cost by recursively merging coins associated with smaller groups of factors.
 Instead of constructing one coin for the full product at once, the method builds a tree.
 The leaves correspond to individual factors or small batches of factors.
 The internal nodes merge the coins produced by their children.
@@ -801,7 +802,7 @@ The proposal is accepted with probability
 A crucial implementation detail is that the estimator associated with the current state must be stored and reused after rejection.
 If the estimator at the current state were regenerated at every iteration, the resulting chain would generally no longer be the standard pseudo-marginal chain on the extended space.
 Under the non-negativity and unbiasedness assumptions, the algorithm is exact in the sense that the marginal invariant distribution of $\theta$ is $\pi$.
-This result is the central guarantee of the pseudo-marginal approach of \cite{andrieu2009}.
+This result is the central guarantee of the pseudo-marginal approach of \citeonline{andrieu2009}.
 
 The method is especially useful when $\gamma(\theta)$ contains an intractable likelihood or an intractable normalising constant ratio for which an unbiased non-negative estimator is available.
 In the context of normalized power priors, one may use pseudo-marginal ideas when the ratio involving $c_0(\eta)$ is replaced by a positive unbiased estimator of the corresponding ratio.

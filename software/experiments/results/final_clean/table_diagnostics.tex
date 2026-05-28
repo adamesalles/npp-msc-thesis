@@ -1,0 +1,28 @@
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{llccccccc}
+  \hline
+  Scenario & Method & $W_\eta$ & $W_{\|\theta\|}$ & ESS$_\eta$ & ESS$_{\|\theta\|}$ & Acc.\ $\eta$ & Time (s) \\
+  \hline
+  Small & Analytic MH (exact reference) & 0.000 & 0.000 & 48 & 210 & 0.973 & 10.2 \\
+   & Prior IS & 0.094 & 0.007 & 54 & 181 & 0.968 & 211.5 \\
+   & MLE-centered IS & 0.036 & 0.008 & 44 & 225 & 0.975 & 615.9 \\
+   & Path-sampling PMMH & 0.052 & 0.010 & 50 & 144 & 0.981 & 941.3 \\
+   & Exchange MH & 0.056 & 0.008 & 61 & 235 & 0.955 & 9.4 \\
+  \hline
+  Medium & Analytic MH (exact reference) & 0.000 & 0.000 & 75 & 221 & 0.904 & 9.7 \\
+   & Prior IS & 0.017 & 0.014 & 61 & 203 & 0.914 & 218.9 \\
+   & MLE-centered IS & 0.015 & 0.008 & 71 & 210 & 0.909 & 633.0 \\
+   & Path-sampling PMMH & 0.022 & 0.008 & 130 & 212 & 0.906 & 965.3 \\
+   & Exchange MH & 0.011 & 0.008 & 74 & 271 & 0.845 & 9.6 \\
+  \hline
+  Large & Analytic MH (exact reference) & 0.000 & 0.000 & 1644 & 259 & 0.751 & 9.4 \\
+   & Prior IS & 0.003 & 0.009 & 1451 & 342 & 0.754 & 177.7 \\
+   & MLE-centered IS & 0.001 & 0.007 & 1332 & 311 & 0.750 & 510.6 \\
+   & Path-sampling PMMH & 0.001 & 0.008 & 1329 & 331 & 0.753 & 772.2 \\
+   & Exchange MH & 0.001 & 0.014 & 1275 & 379 & 0.449 & 9.1 \\
+  \hline
+  \end{tabular}
+  \caption{Diagnostic comparison for Experiment 1 (Normal-Normal NPP, 5000 iterations, warmup 1000). Wasserstein distances are computed against the analytic MH reference within each discrepancy scenario.}
+  \label{tab:exp1-diagnostics}
+\end{table}

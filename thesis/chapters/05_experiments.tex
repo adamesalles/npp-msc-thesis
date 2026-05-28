@@ -1,23 +1,78 @@
 \chapter{Experiments}
 
 
-\comEA{Add the new estimators. Is it methodology? Because it is still an example.}
+
 \section{Assessing exact and approximate samplers}
-A central distinction in this chapter is between asymptotic exactness and finite-time computational efficiency. 
-An MCMC transition kernel may be $\pi$-invariant, and hence exact in the usual Markov chain sense, while still being practically inefficient if its accept-reject mechanism is driven by rare events or high-variance unbiased estimators. 
-For this reason, we do not compare methods only at a fixed number of iterations. 
 
-Instead, we report the computational time required to reach a target effective sample size for $\eta$, together with distributional discrepancies from a reference posterior. 
-Since $\eta$ is one-dimensional, we use the empirical Wasserstein distance as the primary convergence diagnostic. 
-KL and Jensen-Shannon divergences are reported only as secondary diagnostics, since they require density estimation.
+The primary objective of this chapter is to compare exact and approximate inference procedures for the normalized power prior under controlled settings where the normalizing constant is analytically available.
 
-For exact Poisson and Bernoulli-factory constructions, we additionally monitor the local envelope parameter $\lambda$, the realized Poisson count $K$, the variability of $\log \widehat I$, invalid factors, and, for DCBF, recursive agreement attempts. 
-These diagnostics separate correctness of the invariant distribution from practical viability of the resulting algorithm.
+This allows us to evaluate not only computational efficiency, but also the inferential distortion introduced by noisy approximations of the normalizing constant ratio.
+
+A central distinction throughout the experiments is between:
+
+\begin{enumerate}[label=(\roman*)]
+    \item  exact MCMC algorithms targeting the true posterior distribution; and
+    \item pseudo-marginal or approximation-based methods whose stationary distribution depends on Monte Carlo estimators or surrogate approximations.
+\end{enumerate}
+
+Rather than comparing methods exclusively through asymptotic guarantees, we focus on their finite-sample practical behaviour.
+
+In particular, we evaluate:
+
+\begin{itemize}
+
+    \item posterior agreement with the analytic baseline;
+
+    \item computational efficiency;
+
+    \item acceptance rates;
+
+    \item Monte Carlo variability;
+
+    \item and stability of the normalizing-constant estimators.
+
+\end{itemize}
+
+Since the posterior distribution of $\eta$ is one-dimensional, we use the empirical Wasserstein distance relative to the exact analytic sampler as the primary discrepancy measure.
+
+Unlike density-based divergences, the Wasserstein distance does not require kernel density estimation and remains numerically stable even when posterior samples concentrate near the boundary of the parameter space.
 
 
-\subsection{Building an estimator}
+% \comEA{Different compatibility scenarios.}
 
-The most simple approach is the harmonic estimator, since
+% \subsection{The choice of $\lambda$ and $c$ for the Gaussian likelihood with known $\Sigma$.}
+
+% Considering the functional form of our estimator $\widehat{\Delta}(\eta, \eta') = (\eta' - \eta) \log L_0\qty(D_0\mid\widetilde{\theta})$ and that $L_0$ is the likelihood of $D_0 = \{d_{01}, \dots, d_{0N}\}$ where each $d_{0j} \sim \cN_d(\theta, \Sigma)$ for $j = 1, \dots, N$ with known $\Sigma$, we can find that 
+
+% $$\argmax_{\theta \in \Theta} \log L_0\qty(D_0\mid\theta) = \hat{\theta}_{\text{MLE}}= \dfrac{1}{N}\sum_{j=1}^N d_{0j},$$
+
+% and, therefore, we have that
+
+% $$\max_{\theta \in \Theta} \log L_0\qty(D_0\mid\theta) = -\frac{N d}{2}\log(2\pi) - \frac{N}{2}\log\det\Sigma - \frac{N}{2}\operatorname{tr}(\Sigma^{-1}S),$$
+
+%  where $S= \frac{1}{N}\sum_{j=1}^N(x_j - \hat{\theta}_{\text{MLE}})(x_j - \hat{\theta}_{\text{MLE}})^\top$
+
+
+ 
+% \subsection{The choice of $\lambda$ and $c$ for the exponential family}
+
+% \comEA{Produce analytical results for exponential family. I have it somewhere.}
+
+% A canonical exponential family has the following density: 
+
+% \begin{equation}
+%     L(X\mid \theta) = b(X) \exp{\theta^\top t(X) - c(\theta)},\, \theta \in \Theta \subseteq \bR^d,
+% \end{equation}
+
+% where $\Theta$ is open and connected.
+
+\section{Using Exact Methods as Baseline}
+\comEA{Here I'd like to use the best exact method to assess the quality of the approximate methods}
+
+\subsection{Building unbiased estimators for the normalizing constant}
+\comEA{Is it methodology? Because it is still an example.}
+
+The most simple approach is the importance sampling estimator based on the prior, since
 
 \begin{equation*}
     c_0(\eta) = \bE_{\theta\sim\pi_0}\qty[L_0(\theta\mid D_0)^\eta].
@@ -29,7 +84,7 @@ Then, we define $\delta_a$ as
     \delta_a(\eta, \theta_1, \dots, \theta_K) = \dfrac{1}{K} \sum_{i=1}^K L_0(\theta_i\mid D_0)^\eta
 \end{equation}
 
-And with this estimator we can then employ a Portkey Barker's~\cite{vats2021} to sample from the power posterior. 
+And with this estimator we can then employ a pseudo-marginal metropolis-hastings algorithm to sample from the power posterior.
 
 This $\delta_a$ has a major two-sided feature, while it is easy to sample from the initial prior, its efficiency is low due to its large non-informativeness.
 
@@ -46,108 +101,117 @@ We can then define $\delta_b$ as:
     \delta_b(\eta, \theta_1, \dots, \theta_K) = \dfrac{1}{K} \sum_{i=1}^K L_0(\theta_i\mid D_0)^\eta\dfrac{\pi_0(\theta_i)}{\pi_{\text{MLE}}(\theta_i)}.
 \end{equation}
 
-\comEA{Different compatibility scenarios.}
-
-\subsection{The choice of $\lambda$ and $c$ for the Gaussian likelihood with known $\Sigma$.}
-
-Considering the functional form of our estimator $\widehat{\Delta}(\eta, \eta') = (\eta' - \eta) \log L_0\qty(D_0\mid\widetilde{\theta})$ and that $L_0$ is the likelihood of $D_0 = \{d_{01}, \dots, d_{0N}\}$ where each $d_{0j} \sim \cN_d(\theta, \Sigma)$ for $j = 1, \dots, N$ with known $\Sigma$, we can find that 
-
-$$\argmax_{\theta \in \Theta} \log L_0\qty(D_0\mid\theta) = \hat{\theta}_{\text{MLE}}= \dfrac{1}{N}\sum_{j=1}^N d_{0j},$$
-
-and, therefore, we have that
-
-$$\max_{\theta \in \Theta} \log L_0\qty(D_0\mid\theta) = -\frac{N d}{2}\log(2\pi) - \frac{N}{2}\log\det\Sigma - \frac{N}{2}\operatorname{tr}(\Sigma^{-1}S),$$
-
- where $S= \frac{1}{N}\sum_{j=1}^N(x_j - \hat{\theta}_{\text{MLE}})(x_j - \hat{\theta}_{\text{MLE}})^\top$
+\section{Convergence to the baseline}
 
 
- 
-\subsection{The choice of $\lambda$ and $c$ for the exponential family}
+\subsection{Normal distribution with known covariance}
+\label{subsec:gaussian-convergence}
 
-\comEA{Produce analytical results for exponential family. I have it somewhere.}
-
-A canonical exponential family has the following density: 
-
+We evaluate the proposed samplers under a multivariate Gaussian model with known covariance structure.
+The parameter dimension is fixed at $p = 3$, with
 \begin{equation}
-    L(X\mid \theta) = b(X) \exp{\theta^\top t(X) - c(\theta)},\, \theta \in \Theta \subseteq \bR^d,
+\Sigma = \bfI_3,
+\qquad
+\Sigma_0 = 2\bfI_3.
 \end{equation}
-
-where $\Theta$ is open and connected.
-
-\section{Using Exact Methods as Baseline}
-\comEA{Here I'd like to use the best exact method to assess the quality of the approximate methods}
-
-\section{Numeric Experiments}
-
-
-\subsection{Convergence to the baseline}
-
-We evaluate the proposed estimators under a multivariate Gaussian model with known covariance ($p = 3$, $\Sigma = I_3$, $\Sigma_0 = 2I_3$), placing weakly informative Beta$(1,1)$ priors on $\eta$ and an initial $\cN_3(0, \Sigma_0)$ prior on $\theta$.
+A Gaussian prior is assigned to $\theta$,
+\begin{equation}
+\theta \sim \cN_3(\bfzero,\Sigma_0),
+\end{equation}
+and the power parameter receives a uniform prior,
+\begin{equation}
+\eta \sim \mathrm{Beta}(1,1).
+\end{equation}
 Historical and current datasets each contain $N_0 = N = 50$ observations.
-Three discrepancy scenarios are constructed by shifting the historical data mean by $\delta \in \{0.1, 0.5, 1.0\}$ per coordinate, representing low, moderate, and high conflict between historical and current information.
 
-Rather than running each method for a fixed number of iterations, we adopt a convergence-based protocol: each estimator is run in independent batches of four chains and 5\,000 iterations until the two-sample Kolmogorov--Smirnov (KS) distance between its accumulated posterior draws for $\eta$ and the Stan HMC baseline drops below 0.05.
-The number of chains and total wall-clock time required to reach this threshold serve as our primary efficiency metrics.
-The exact algorithm---which uses the closed-form normalising constant ratio---acts as a reference.
-We compare it against three approximate pseudo-marginal methods: the prior-importance estimator ($\delta_a$), the MLE importance-sampling estimator ($\delta_b$), and the power-posterior estimator.
+Three discrepancy scenarios are considered.
+In the small-discrepancy regime, the historical and current datasets are generated from nearby means.
+The medium-discrepancy regime introduces a moderate shift between the datasets, while the large-discrepancy regime generates substantial disagreement between the historical and current information.
+As the discrepancy increases, the posterior distribution of $\eta$ is expected to concentrate closer to zero, reflecting reduced borrowing from the historical data.
 
+The purpose of this experiment is not only to compare posterior distributions, but also to assess the computational efficiency required for each method to approximate the exact posterior distribution.
+To accomplish this, we use a convergence-to-baseline protocol.
+
+The analytic Metropolis--Hastings sampler is used as the reference method.
+Since the Gaussian normalized power prior admits a closed-form normalizing constant ratio, this sampler directly evaluates the exact posterior density.
+Longer chains are used for the analytic reference in order to reduce Monte Carlo variability and provide a stable empirical baseline for posterior comparisons.
+
+The remaining methods are evaluated according to how efficiently they approach the analytic reference posterior.
+We compare:
+\begin{itemize}
+    \item Exchange MH,
+    \item Prior IS,
+    \item MLE-centered IS,
+    \item Path Sampling PMMH.
+\end{itemize}
+
+For each method, chains are accumulated until the one-dimensional Wasserstein distance between the empirical posterior distribution of $\eta$ and the analytic reference posterior falls below a fixed tolerance threshold.
+We additionally monitor the Wasserstein distance for $\norm{\theta}_2$ in order to assess agreement in the parameter space.
+
+The primary performance metric is therefore the computational effort required to achieve a prescribed approximation accuracy.
+We report:
+\begin{itemize}
+    \item Wasserstein distance to the analytic baseline,
+    \item total runtime,
+    \item effective sample size,
+    \item posterior means and standard deviations,
+    \item acceptance rates.
+\end{itemize}
+
+The Wasserstein distance is preferred over the Kolmogorov--Smirnov statistic because it provides a more stable and geometrically meaningful measure of posterior discrepancy, particularly for concentrated or skewed distributions.
+
+A central distinction between the methods is how the ratio of normalizing constants is handled.
+The Exchange MH algorithm avoids evaluating the normalizing constant entirely by introducing an auxiliary draw from the powered prior distribution at the proposed value of $\eta$.
+In the present Gaussian experiment, sampling from the powered prior can be performed exactly in closed form, making the exchange update computationally efficient while preserving exactness.
+
+The Prior IS and MLE-centered IS methods instead estimate the normalizing constant ratio through importance sampling constructions.
+Both methods remain exact pseudo-marginal algorithms when embedded within the extended-state Metropolis--Hastings framework, provided the estimator is nonnegative and unbiased.
+The difference between the two approaches lies primarily in variance reduction.
+The MLE-centered proposal attempts to concentrate samples in regions of high likelihood in order to stabilize the importance weights.
+
+The Path Sampling PMMH method approximates the log normalizing constant ratio through thermodynamic integration along a temperature path.
+Although effective in some settings, the resulting estimator is not guaranteed to satisfy the conditions required for exact pseudo-marginal inference and is therefore treated as an approximate baseline.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{figures/ch5/convergence_small.png}
-    \caption{Posterior densities for $\eta$ under low discrepancy ($\delta = 0.1$). Each approximate estimator label reports the total number of chains run, wall-clock time, and final KS distance to the Stan baseline.}
-    \label{fig:convergence-small}
+    \includegraphics[width=\textwidth]{../software/experiments/results/final_clean/posterior_eta_all_discrepancies.png}
+    \caption{Posterior density of $\eta$ across discrepancy regimes for the Gaussian normalized power prior experiment.}
+    \label{fig:gaussian-eta-density}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{figures/ch5/convergence_medium.png}
-    \caption{Posterior densities for $\eta$ under moderate discrepancy ($\delta = 0.5$).}
-    \label{fig:convergence-medium}
+    \includegraphics[width=\textwidth]{../software/experiments/results/final_clean/posterior_theta_norm_all_discrepancies.png}
+    \caption{Posterior density of $\norm{\theta}_2$ across discrepancy regimes for the Gaussian normalized power prior experiment.}
+    \label{fig:gaussian-theta-density}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=\linewidth]{figures/ch5/convergence_large.png}
-    \caption{Posterior densities for $\eta$ under high discrepancy ($\delta = 1.0$). Under strong conflict between datasets the posterior concentrates near zero and all methods converge in a single batch.}
-    \label{fig:convergence-large}
-\end{figure}
+\input{../software/experiments/results/final_clean/table_diagnostics.tex}
 
-\begin{table}[ht]
-    \centering
-    \begin{tabular}{lcccccc}
-    \hline
-    & \multicolumn{2}{c}{Small ($\delta=0.1$)} & \multicolumn{2}{c}{Medium ($\delta=0.5$)} & \multicolumn{2}{c}{Large ($\delta=1.0$)} \\
-    Method & Chains & KS & Chains & KS & Chains & KS \\
-    \hline
-    Exact             &  16 & 0.029 &  8 & 0.033 & 4 & 0.010 \\
-    Prior-importance  &  40 & 0.323 & 40 & 0.229 & 4 & 0.027 \\
-    Importance        &  40 & 0.084 & 12 & 0.050 & 4 & 0.026 \\
-    Power             &   8 & 0.017 &  4 & 0.033 & 4 & 0.021 \\
-    \hline
-    \end{tabular}
-    \caption{Total chains required and final KS distance to the Stan HMC baseline. A dash indicates the method reached 10 batches (40 chains) without satisfying the convergence criterion.}
-    \label{tab:convergence-comparison}
-\end{table}
+\input{../software/experiments/results/final_clean/table_posterior_summaries.tex}
 
-\subsection{Discussion of results}
+\subsubsection{Discussion of results}
 
-The results reveal a consistent pattern across discrepancy regimes.
-Under low discrepancy (Figure~\ref{fig:convergence-small}), the posterior for $\eta$ spreads across a wide range, reflecting genuine uncertainty about how much weight to assign to the historical data.
-In this regime the estimators differ most sharply: the power estimator converges in just two batches (8 chains, KS$=0.017$), the exact algorithm requires four batches (16 chains, KS$=0.029$), whereas the importance estimator exhausts all ten batches without reaching the threshold (KS$=0.084$) and the prior-importance estimator deviates substantially from the baseline (KS$=0.323$).
-The inefficiency of $\delta_a$ here is expected: when the posterior for $\eta$ is diffuse, prior samples for $\theta$ are a poor proposal for the normalising-constant integral, yielding high-variance estimates of the log-ratio.
+The results reveal a clear distinction between methods that directly target the exact posterior distribution and methods that rely on noisier approximations of the normalizing constant ratio.
 
-Under moderate discrepancy (Figure~\ref{fig:convergence-medium}), the posterior shifts toward smaller values of $\eta$, indicating the model has begun to down-weight the historical data.
-The power estimator again converges in a single batch (4 chains), the exact algorithm in two, and the importance estimator in three.
-The prior-importance estimator still fails to reach the threshold, though its KS distance has improved relative to the low-discrepancy case.
+First, the Exchange MH algorithm is nearly indistinguishable from the analytic reference posterior across all discrepancy regimes.
+This confirms empirically that the exchange construction correctly removes the intractable normalizing constant ratio while preserving the target posterior distribution.
+Moreover, because auxiliary draws from the powered prior are available analytically in the Gaussian setting, the exchange update remains computationally efficient despite being exact.
 
-When the two datasets are in strong conflict (Figure~\ref{fig:convergence-large}), the posterior concentrates sharply near $\eta \approx 0$.
-In this regime all four estimators converge in a single batch of four chains, and the KS distances are uniformly small.
-The sharp concentration of the posterior makes the normalising-constant ratio easy to estimate regardless of the proposal, erasing the differences observed at lower discrepancy levels.
+The Prior IS and MLE-centered IS methods both exhibit sensitivity to the discrepancy regime.
+Under low discrepancy, where the posterior distribution of $\eta$ is diffuse, the variance of the importance weights becomes more pronounced and larger computational effort is required to achieve the target Wasserstein tolerance.
+The MLE-centered proposal generally improves stability relative to Prior IS by concentrating importance samples near regions of higher likelihood support.
 
-Overall, the power estimator is the most efficient of the three approximate methods: it matches or beats the exact algorithm in chains required across all scenarios.
-The prior-importance estimator is consistently the weakest, particularly when the posterior is diffuse.
-These findings suggest that the choice of estimator matters most in low-discrepancy settings, where the posterior for $\eta$ is broad and the normalising constant must be estimated accurately over a wide range of values.
+As the discrepancy increases, the posterior distribution of $\eta$ concentrates near zero.
+In this regime, all methods become substantially easier to stabilize because the relevant range of powered likelihoods becomes smaller.
+Consequently, the Wasserstein distances decrease rapidly and the differences between methods become less pronounced.
+
+The Path Sampling PMMH method displays the largest variability across discrepancy scenarios.
+Because the thermodynamic integration estimator depends on Monte Carlo approximations along an entire temperature path, estimator variability accumulates and may degrade mixing efficiency.
+This effect is especially visible in diffuse posterior regimes.
+
+Overall, the experiments demonstrate that exact inference for the normalized power prior is computationally feasible through the Exchange algorithm, even in settings where direct evaluation of the normalizing constant ratio would otherwise be computationally prohibitive.
+The exchange sampler additionally provides a principled exact baseline against which approximate pseudo-marginal and future surrogate-based methods may be assessed.
 
 \subsection{Linear regression with Normal-Inverse-Gamma priors}
 \label{subsec:nig-lm-experiment}
@@ -260,21 +324,21 @@ We report this distance separately for $\eta$, $\norm{\bfbt}_2$, and $\sg$.
 We also report posterior means, posterior standard deviations, effective sample sizes, acceptance rates, and runtime.
 The norm $\norm{\bfbt}_2$ summarizes the magnitude of the regression coefficient vector, while $\sg$ is reported separately because it represents the residual variance and should not be combined with $\bfbt$ into a single geometric average.
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{../software/experiments/results/nig_lm_exchange/posterior_eta_all_discrepancies.png}
     \caption{Posterior density of $\eta$ for the linear regression NPP experiment across discrepancy scenarios.}
     \label{fig:nig-lm-eta-density}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{../software/experiments/results/nig_lm_exchange/posterior_beta_norm_all_discrepancies.png}
     \caption{Posterior density of $\norm{\bfbt}_2$ for the linear regression NPP experiment across discrepancy scenarios.}
     \label{fig:nig-lm-beta-norm-density}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{../software/experiments/results/nig_lm_exchange/posterior_sigma_all_discrepancies.png}
     \caption{Posterior density of $\sg$ for the linear regression NPP experiment across discrepancy scenarios.}
