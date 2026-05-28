@@ -1,28 +1,29 @@
 \begin{table}[ht]
   \centering
+  \resizebox{\textwidth}{!}{%
   \begin{tabular}{llccccccc}
   \hline
-  Scenario & Method & $W_\eta$ & $W_{\|\theta\|}$ & ESS$_\eta$ & ESS$_{\|\theta\|}$ & Acc.\ $\eta$ & Time (s) \\
+  Scenario & Method & Batches & Time (s) & $W_\eta$ & $W_{\|\theta\|}$ & ESS$_\eta$ & ESS$_{\|\theta\|}$ & Acc.\ $\eta$ \\
   \hline
-  Small & Analytic MH (exact reference) & 0.000 & 0.000 & 48 & 210 & 0.973 & 10.2 \\
-   & Prior IS & 0.094 & 0.007 & 54 & 181 & 0.968 & 211.5 \\
-   & MLE-centered IS & 0.036 & 0.008 & 44 & 225 & 0.975 & 615.9 \\
-   & Path-sampling PMMH & 0.052 & 0.010 & 50 & 144 & 0.981 & 941.3 \\
-   & Exchange MH & 0.056 & 0.008 & 61 & 235 & 0.955 & 9.4 \\
+  Small & Analytic MH (exact reference) & 5 & 100.6 & 0.000 & 0.000 & 552 & 2327 & 0.978 \\
+   & Exchange MH & 1 & 9.5 & 0.005 & 0.006 & 63 & 226 & 0.953 \\
+   & Prior IS & 10 & 2278.2 & 0.072 & 0.002 & 517 & 2111 & 0.965 \\
+   & MLE-centered IS & 7 & 4614.7 & 0.005 & 0.003 & 387 & 1421 & 0.978 \\
+   & Path-sampling PMMH & 6 & 5812.2 & 0.008 & 0.003 & 333 & 1234 & 0.978 \\
   \hline
-  Medium & Analytic MH (exact reference) & 0.000 & 0.000 & 75 & 221 & 0.904 & 9.7 \\
-   & Prior IS & 0.017 & 0.014 & 61 & 203 & 0.914 & 218.9 \\
-   & MLE-centered IS & 0.015 & 0.008 & 71 & 210 & 0.909 & 633.0 \\
-   & Path-sampling PMMH & 0.022 & 0.008 & 130 & 212 & 0.906 & 965.3 \\
-   & Exchange MH & 0.011 & 0.008 & 74 & 271 & 0.845 & 9.6 \\
+  Medium & Analytic MH (exact reference) & 5 & 97.7 & 0.000 & 0.000 & 1046 & 2677 & 0.907 \\
+   & Exchange MH & 1 & 9.7 & 0.008 & 0.004 & 123 & 266 & 0.847 \\
+   & Prior IS & 1 & 221.5 & 0.006 & 0.007 & 175 & 362 & 0.909 \\
+   & MLE-centered IS & 4 & 2553.1 & 0.009 & 0.003 & 229 & 945 & 0.907 \\
+   & Path-sampling PMMH & 1 & 968.2 & 0.008 & 0.011 & 161 & 272 & 0.911 \\
   \hline
-  Large & Analytic MH (exact reference) & 0.000 & 0.000 & 1644 & 259 & 0.751 & 9.4 \\
-   & Prior IS & 0.003 & 0.009 & 1451 & 342 & 0.754 & 177.7 \\
-   & MLE-centered IS & 0.001 & 0.007 & 1332 & 311 & 0.750 & 510.6 \\
-   & Path-sampling PMMH & 0.001 & 0.008 & 1329 & 331 & 0.753 & 772.2 \\
-   & Exchange MH & 0.001 & 0.014 & 1275 & 379 & 0.449 & 9.1 \\
+  Large & Analytic MH (exact reference) & 5 & 94.5 & 0.000 & 0.000 & 18361 & 3474 & 0.749 \\
+   & Exchange MH & 1 & 9.2 & 0.001 & 0.007 & 1474 & 401 & 0.448 \\
+   & Prior IS & 1 & 178.9 & 0.001 & 0.006 & 872 & 390 & 0.748 \\
+   & MLE-centered IS & 1 & 513.6 & 0.000 & 0.004 & 1923 & 350 & 0.748 \\
+   & Path-sampling PMMH & 1 & 775.7 & 0.000 & 0.004 & 1954 & 398 & 0.753 \\
   \hline
-  \end{tabular}
-  \caption{Diagnostic comparison for Experiment 1 (Normal-Normal NPP, 5000 iterations, warmup 1000). Wasserstein distances are computed against the analytic MH reference within each discrepancy scenario.}
+  \end{tabular}}
+  \caption{Experiment 1 convergence diagnostics. Batches: number of batches of 4 chains $\times$ 5000 iterations required to reach $W_1(\eta) <0.01$. Wasserstein distances computed against the analytic MH reference.}
   \label{tab:exp1-diagnostics}
 \end{table}
