@@ -1,0 +1,25 @@
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{llcccccccc}
+  \hline
+  Scenario & Method & $\bar{\eta}$ & $\mathrm{sd}(\eta)$ & $\bar{\beta}_1$ & $\mathrm{sd}(\beta_1)$ & $\bar{\beta}_2$ & $\mathrm{sd}(\beta_2)$ & $\bar{\beta}_3$ & $\mathrm{sd}(\beta_3)$ \\
+  \hline
+  Small & Exchange MH & 0.681 & 0.227 & 0.860 & 0.198 & -0.246 & 0.190 & 0.922 & 0.192 \\
+  Small & Spline Emulator & 0.608 & 0.254 & 0.875 & 0.189 & -0.229 & 0.191 & 0.934 & 0.201 \\
+  Small & GP Emulator & 0.611 & 0.254 & 0.874 & 0.187 & -0.231 & 0.187 & 0.932 & 0.199 \\
+  Small & SCAM Emulator & 0.590 & 0.248 & 0.882 & 0.200 & -0.224 & 0.195 & 0.944 & 0.207 \\
+  \hline
+  Medium & Exchange MH & 0.395 & 0.245 & 1.437 & 0.270 & -0.146 & 0.225 & 0.698 & 0.222 \\
+  Medium & Spline Emulator & 0.308 & 0.229 & 1.489 & 0.284 & -0.140 & 0.234 & 0.669 & 0.241 \\
+  Medium & GP Emulator & 0.250 & 0.177 & 1.517 & 0.281 & -0.132 & 0.237 & 0.684 & 0.231 \\
+  Medium & SCAM Emulator & 0.355 & 0.230 & 1.448 & 0.267 & -0.153 & 0.228 & 0.674 & 0.226 \\
+  \hline
+  Large & Exchange MH & 0.059 & 0.044 & 3.383 & 0.687 & -0.235 & 0.452 & 1.062 & 0.473 \\
+  Large & Spline Emulator & 0.059 & 0.043 & 3.370 & 0.675 & -0.261 & 0.432 & 1.047 & 0.455 \\
+  Large & GP Emulator & 0.060 & 0.044 & 3.444 & 0.753 & -0.263 & 0.457 & 1.075 & 0.496 \\
+  Large & SCAM Emulator & 0.063 & 0.050 & 3.340 & 0.661 & -0.254 & 0.425 & 1.026 & 0.448 \\
+  \hline
+  \end{tabular}
+  \caption{Posterior summaries for the logistic regression NPP experiment across three discrepancy levels.}
+  \label{tab:logistic-surrogate-summaries}
+\end{table}
