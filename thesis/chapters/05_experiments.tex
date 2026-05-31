@@ -17,89 +17,20 @@ A central distinction throughout the experiments is between:
 
 Rather than comparing methods exclusively through asymptotic guarantees, we focus on their finite-sample practical behaviour.
 
-In particular, we evaluate:
-
-\begin{itemize}
-
-    \item posterior agreement with the analytic baseline;
-
-    \item computational efficiency;
-
-    \item acceptance rates;
-
-    \item Monte Carlo variability;
-
-    \item and stability of the normalizing-constant estimators.
-
-\end{itemize}
+In particular, we evaluate posterior agreement with the analytic baseline, computational efficiency, acceptance rates, Monte Carlo variability, and stability of the normalising-constant estimators.
 
 Since the posterior distribution of $\eta$ is one-dimensional, we use the empirical Wasserstein distance relative to the exact analytic sampler as the primary discrepancy measure.
 
 Unlike density-based divergences, the Wasserstein distance does not require kernel density estimation and remains numerically stable even when posterior samples concentrate near the boundary of the parameter space.
 
+\subsection{Using Exact Methods as Baseline}
 
-% \comEA{Different compatibility scenarios.}
+The Exchange MH algorithm described in Section~\ref{sec:exact-exchange} serves as the primary exact reference throughout the experiments.
+Where the powered prior $\pi_{\eta'}(\theta \mid D_0)$ is available in closed form (Gaussian and Normal--Inverse--Gamma models), the exchange update is exact and computationally efficient.
 
-% \subsection{The choice of $\lambda$ and $c$ for the Gaussian likelihood with known $\Sigma$.}
+The importance sampling estimators $\delta_a$ (prior IS) and $\delta_b$ (MLE-centred IS), introduced in Section~\ref{sec:pseudo-marginal-is}, are used as pseudo-marginal baselines.
+They provide non-negative unbiased estimates of $c_0(\eta)$ and can be embedded within a Metropolis--Hastings scheme, yielding exact pseudo-marginal chains under the conditions of \citeonline{andrieu2009}.
 
-% Considering the functional form of our estimator $\widehat{\Delta}(\eta, \eta') = (\eta' - \eta) \log L_0\qty(D_0\mid\widetilde{\theta})$ and that $L_0$ is the likelihood of $D_0 = \{d_{01}, \dots, d_{0N}\}$ where each $d_{0j} \sim \cN_d(\theta, \Sigma)$ for $j = 1, \dots, N$ with known $\Sigma$, we can find that 
-
-% $$\argmax_{\theta \in \Theta} \log L_0\qty(D_0\mid\theta) = \hat{\theta}_{\text{MLE}}= \dfrac{1}{N}\sum_{j=1}^N d_{0j},$$
-
-% and, therefore, we have that
-
-% $$\max_{\theta \in \Theta} \log L_0\qty(D_0\mid\theta) = -\frac{N d}{2}\log(2\pi) - \frac{N}{2}\log\det\Sigma - \frac{N}{2}\operatorname{tr}(\Sigma^{-1}S),$$
-
-%  where $S= \frac{1}{N}\sum_{j=1}^N(x_j - \hat{\theta}_{\text{MLE}})(x_j - \hat{\theta}_{\text{MLE}})^\top$
-
-
- 
-% \subsection{The choice of $\lambda$ and $c$ for the exponential family}
-
-% \comEA{Produce analytical results for exponential family. I have it somewhere.}
-
-% A canonical exponential family has the following density: 
-
-% \begin{equation}
-%     L(X\mid \theta) = b(X) \exp{\theta^\top t(X) - c(\theta)},\, \theta \in \Theta \subseteq \bR^d,
-% \end{equation}
-
-% where $\Theta$ is open and connected.
-
-\section{Using Exact Methods as Baseline}
-\comEA{Here I'd like to use the best exact method to assess the quality of the approximate methods}
-
-\subsection{Building unbiased estimators for the normalizing constant}
-\comEA{Is it methodology? Because it is still an example.}
-
-The most simple approach is the importance sampling estimator based on the prior, since
-
-\begin{equation*}
-    c_0(\eta) = \bE_{\theta\sim\pi_0}\qty[L_0(\theta\mid D_0)^\eta].
-\end{equation*}
-
-Then, we define $\delta_a$ as
-
-\begin{equation}
-    \delta_a(\eta, \theta_1, \dots, \theta_K) = \dfrac{1}{K} \sum_{i=1}^K L_0(\theta_i\mid D_0)^\eta
-\end{equation}
-
-And with this estimator we can then employ a pseudo-marginal metropolis-hastings algorithm to sample from the power posterior.
-
-This $\delta_a$ has a major two-sided feature, while it is easy to sample from the initial prior, its efficiency is low due to its large non-informativeness.
-
-In order to improve the efficiency, we can produce an importance sampling estimator by concentrating the probability density around the $\hat{\theta}_{\text{MLE}}$, which gives us
-
-\begin{equation*}
-c_0(\eta) = \int_{\theta\in\Theta} L_0(\theta\mid D_0)^\eta \pi_0(\theta)\dd{\theta} = \bE_{\theta\sim\pi_{\text{MLE}}}\qty[L_0(\theta\mid D_0)^\eta\dfrac{\pi_0(\theta)}{\pi_{\text{MLE}}(\theta)}].    
-\end{equation*}
-
-
-We can then define $\delta_b$ as:
-
-\begin{equation}
-    \delta_b(\eta, \theta_1, \dots, \theta_K) = \dfrac{1}{K} \sum_{i=1}^K L_0(\theta_i\mid D_0)^\eta\dfrac{\pi_0(\theta_i)}{\pi_{\text{MLE}}(\theta_i)}.
-\end{equation}
 
 \section{Convergence to the baseline}
 
@@ -137,26 +68,13 @@ Since the Gaussian normalized power prior admits a closed-form normalizing const
 Longer chains are used for the analytic reference in order to reduce Monte Carlo variability and provide a stable empirical baseline for posterior comparisons.
 
 The remaining methods are evaluated according to how efficiently they approach the analytic reference posterior.
-We compare:
-\begin{itemize}
-    \item Exchange MH,
-    \item Prior IS,
-    \item MLE-centered IS,
-    \item Path Sampling PMMH.
-\end{itemize}
+We compare four methods: Exchange MH, Prior IS, MLE-centred IS, and Path Sampling PMMH.
 
 For each method, chains are accumulated until the one-dimensional Wasserstein distance between the empirical posterior distribution of $\eta$ and the analytic reference posterior falls below a fixed tolerance threshold.
 We additionally monitor the Wasserstein distance for $\norm{\theta}_2$ in order to assess agreement in the parameter space.
 
 The primary performance metric is therefore the computational effort required to achieve a prescribed approximation accuracy.
-We report:
-\begin{itemize}
-    \item Wasserstein distance to the analytic baseline,
-    \item total runtime,
-    \item effective sample size,
-    \item posterior means and standard deviations,
-    \item acceptance rates.
-\end{itemize}
+We report the Wasserstein distance to the analytic baseline, total runtime, effective sample size, posterior means and standard deviations, and acceptance rates.
 
 The Wasserstein distance is preferred over the Kolmogorov--Smirnov statistic because it provides a more stable and geometrically meaningful measure of posterior discrepancy, particularly for concentrated or skewed distributions.
 
@@ -401,9 +319,7 @@ Under exact simulation from the powered prior, the resulting Markov chain target
 The remaining methods replace $c_0(\eta)$ by an emulator constructed from a finite set of training evaluations.
 
 We consider three surrogate models. The first is a spline emulator based on smoothing splines fitted to estimates of $\log c_0(\eta)$ over a grid of power parameters.
-
 The second is a Gaussian process emulator, which treats $\log c_0(\eta)$ as an unknown latent function and uses a probabilistic interpolation model to predict its value at unobserved values of $\eta$.
-
 The third is a shape-constrained additive model (SCAM), which incorporates structural information about the normalizing constant through monotonicity constraints.
 
 Since
@@ -418,7 +334,8 @@ Since
 \right],
 \end{equation}
 
-the derivative process provides information about the qualitative shape of $\log c_0(\eta)$, which may be incorporated through constrained smoothers.
+the derivative process provides information about the qualitative shape of $\log c_0(\eta)$, which we incorporate through constrained smoothers, since the function $\eta \mapsto \log c_0(\eta)$ is convex, as shown in Appendix~\ref{proof:log-c0-convex}.
+These structural properties motivate the use of shape-constrained emulators in Section~\ref{subsec:scam-emulation}.
 
 In all cases, we emulate the log-normalizing constant using $K=3000$ points sampled via importance sampling.
 
@@ -463,4 +380,22 @@ This allows distortions introduced by the surrogate approximation to be localize
 
 \input{../software/experiments/results/logistic_surrogates/table_posterior_summaries.tex}
 
-\comEA{Discuss here the results. For me, the most important is that the thetas (that are the quantitiy of interest) do not change much even when the eta inteference does not match}
+
+
+\subsubsection{Discussion of results}
+\comEA{Discuss here the results. For me, the most important is that the betas (that are the quantitiy of interest) do not change much even when the eta inteference does not match.
+Also, the Exact is way more slow, and we can only see a difference between them all when the discrepancy is medium, which suggests that the surrogate methods tend to concentrate on 0 more easily (splines and GP, compared to SCAM and Exchange).
+}
+
+The results reveal an important asymmetry between the inferential impact of approximation errors on $\eta$ and on $\bfbt$.
+Even in cases where the surrogate model introduces notable distortion in the marginal posterior of $\eta$, the posterior distributions of the regression coefficients $\bfbt$ remain largely unaffected.
+This suggests that, for the quantity of primary inferential interest in regression applications, moderate errors in the approximation of $c_0(\eta)$ may be practically tolerable.
+
+A further notable finding is that all methods produce the most discernible differences under the medium-discrepancy scenario.
+Under large discrepancy, the posterior of $\eta$ concentrates near zero regardless of the method, reducing the sensitivity to approximation errors.Under small discrepancy, all posteriors are diffuse and similar.
+
+It is precisely the intermediate regime, where the posterior of $\eta$ is neither degenerate nor flat, that discriminates most sharply between exact and approximate approaches.
+The spline and GP surrogates tend to concentrate posterior mass towards zero more aggressively than SCAM and Exchange in this regime, suggesting that they may underestimate the degree of historical borrowing when data are moderately compatible.
+
+Finally, the Exchange sampler is considerably slower per iteration than the surrogate methods, reflecting the cost of exact auxiliary draws via Stan.
+This computational gap motivates the development of faster exact alternatives, such as the pseudo-marginal approach of Section~\ref{sec:pseudo-marginal-is}, as a practical middle ground.

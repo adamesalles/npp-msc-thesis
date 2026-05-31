@@ -1,8 +1,13 @@
-\chapter{Formulations}
+\chapter{Analytic Formulations}
+\label{chap:formulations}
+
+This appendix collects closed-form expressions for the normalising constant $c_0(\eta)$ and its derivative under specific model families.
+These results are used in the experiments of Chapter~\ref{sec:exact} to construct analytic reference chains and to validate the unbiased estimators developed there.
 
 \section{Gaussian likelihood with known variance}
-Consider $d_{0j} \sim \cN(\theta, \sg)$ with known variance $\sg$ for all $j \in 0,\ldots, p$, and let $P_0$ be the measure induced by the prior $\pi_0(\theta) \propto 1$.
-% The power prior is given by
+\label{sec:gaussian-known-var}
+
+Consider $d_{0j} \sim \mathcal{N}(\theta, \sigma^2)$ with known variance $\sigma^2$ for all $j = 1,\ldots, N_0$, and let $P_0$ be the measure induced by the prior $\pi_0(\theta) \propto 1$.
 
 Therefore, let $\dbar = \sum_{j=1}^{p} d_{0j}/p$ be the mean of the historical data $D_0$ and $S^2 = \sum_{j=1}^{p} (d_{0j} - \dbar)^2$ the sample variance. Then, we have
 
@@ -35,17 +40,6 @@ On the other hand, we can show that $\bE_{\pi_\eta}[\log(L(D_0 \mid \theta))]$ m
     &= -\dfrac{p}{2}\log(2\pi\sg) - \dfrac{S^2}{2\sg} - \dfrac{1}{2\eta}. \\
 \end{align*}
 
-
-
-\subsection{Reformulation from Importance Sampling}
-
-One might be interested in using importance sampling to estimate the expectation in the last expression. In this case, we can rewrite the expectation as
-
-\begin{align*}
-    c_0'(\eta) &= c_0(\eta) \bE_{\pi_\eta}[\log(L(D_0 \mid \theta))] \\
-    &= c_0(\eta)\bE_{P_0}\left[\log(L(D_0 \mid \theta)) \dfrac{\pi_\eta(\theta)}{\pi_0(\theta)}\right]\\
-    &= c_0(\eta)\bE_{P_0}\left[\log(L(D_0 \mid \theta)) \dfrac{L_0(D_0\mid \theta)^\eta}{c_0(\eta)}\right] = \bE_{P_0}\left[\log(L(D_0 \mid \theta))L(D_0\mid \theta)^\eta\right].
-\end{align*}
 
 \subsection{Adding a Gaussian Initial Prior}
 

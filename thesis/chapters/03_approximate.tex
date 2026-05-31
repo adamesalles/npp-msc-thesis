@@ -15,25 +15,26 @@ Current approaches:
 Our contributions in this area:
 \begin{itemize}
     \item Do MaL estimation and talk about GP and SCAM;
-    \item Importance sampling to simplify and improve estimation of the NPP normalising constant (including control variates);
-    \item Showcase on moderate size examples (including NIG linear regression as a baseline). Show that it works and then show how to break it    
+    \item Importance sampling to simplify and improve estimation of the NPP normalising constant \comEA{(including control variates on the paper)};
+    \item Showcase on moderate size examples (including NIG linear regression as a baseline). Show that it works and then show how to break it. \comEA{This will go to the paper}
 \end{itemize}
 
 
 \section{Emulating the normalizing constant}
 
-In many applications involving normalized power priors, the normalizing constant
+As established in Section~\ref{sec:npp}, the normalising constant
 
-\begin{equation}
+\begin{equation*}
     c_0(\eta)
     =
     \int_{\Theta}
     L(D_0 \mid \theta)^\eta
     \pi_0(\theta)
-    \dd \theta
-\end{equation}
+    \dd{\theta}
+\end{equation*}
 
-cannot be evaluated analytically.
+also defined in \eqref{eq:normalizing-constant} cannot be evaluated analytically in general.
+
 As a consequence, direct evaluation of the posterior density becomes infeasible.
 A common strategy is therefore to replace $c_0(\eta)$ by a surrogate approximation constructed from evaluations at a finite collection of design points.
 
@@ -176,7 +177,7 @@ In particular,
 
 This allows derivative information and shape restrictions to be incorporated directly into the posterior distribution of the Gaussian process.
 Conditioning on derivative observations or derivative sign constraints can substantially reduce unrealistic oscillatory behaviour.
-We refer to \citeonline{riihmaki2010, adame2025} and \citeonline{wang2016} for recent developments in shape-constrained emulation through Gaussian processes.
+We refer to \citeonline{riihmaki2010, wang2016} and \citeonline{adame2025} for recent developments in shape-constrained emulation through Gaussian processes.
 
 An alternative strategy is based on shape-constrained additive models (SCAMs).
 These models extend generalized additive models (GAMs) by imposing constraints directly on the spline basis coefficients.
@@ -203,20 +204,8 @@ These properties are particularly appealing when approximating normalizing const
 
 \section{Current approaches for the NPP}
 
-The normalized power prior has received considerable attention in recent years due to its ability to incorporate historical information while preserving coherence with the likelihood principle.
-However, practical posterior inference under the NPP remains computationally challenging because the normalizing constant
-
-\begin{equation}
-    c_0(\eta)
-    =
-    \int_\Theta
-    L(D_0 \mid \theta)^\eta
-    \pi_0(\theta)
-    \dd \theta
-\end{equation}
-
-typically depends on the discounting parameter $\eta$ in a non-analytic manner.
-As discussed in Section 2.3, this induces a doubly intractable posterior distribution whose evaluation requires repeated computation of $c_0(\eta)$ across the MCMC iterations.
+The normalised power prior has received considerable attention in recent years due to its ability to incorporate historical information while preserving coherence with the likelihood principle.
+However, as established in Section~\ref{sec:npp}, the normalising constant $c_0(\eta)$ depends on $\eta$ in a non-analytic manner for most models of interest, inducing a doubly intractable posterior whose evaluation requires repeated computation of $c_0(\eta)$ across MCMC iterations.
 
 A substantial portion of the current literature therefore focuses on approximating either the normalizing constant itself or ratios involving $c_0(\eta)$.
 The main approaches may be broadly divided into:
@@ -304,13 +293,9 @@ This provides a unified framework in which both exact and approximate methods ca
 
 \comEA{Discuss \cite{park2020}}
 
-Doubly intractable distributions arise in Bayesian inference when the likelihood takes the form
-\begin{equation}
-\pi(\theta \mid x) \propto p(\theta)\frac{h(x \mid \theta)}{Z(\theta)},
-\end{equation}
-where the normalizing constant $Z(\theta)$ depends on the parameter $\theta$ and cannot be evaluated pointwise, as discussed in detail on seciton \ref{sec:dbl-int}.
-This setting is common in models such as exponential random graph models, Markov point processes, and, more generally, in likelihoods derived from Gibbs measures.
-In the context of Normalized Power Priors (NPP), this issue naturally appears due to the presence of parameter-dependent normalizing constants, making standard Bayesian computation challenging.
+As established in Section~\ref{sec:dbl-int}, doubly intractable distributions arise when the posterior density contains a normalising constant that depends on the parameter being updated and cannot be evaluated pointwise.
+The normalised power prior is a canonical example of this phenomenon.
+This section reviews the main computational strategies available in this setting, with a focus on the emulation approach of \citeonline{park2020} and its applicability to the NPP.
 
 A number of Markov chain Monte Carlo (MCMC) methods have been proposed to address this problem, including auxiliary variable approaches such as the exchange algorithm and the double Metropolis--Hastings (DMH) algorithm. While these methods can target the exact posterior distribution, they typically require simulating auxiliary variables at each iteration, which becomes computationally prohibitive in high-dimensional or complex models.
 

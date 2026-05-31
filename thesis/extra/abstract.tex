@@ -4,11 +4,11 @@ A natural Bayesian strategy for this purpose is the use of informative priors.
 Among them, the normalised power prior has attracted significant interest, as it provides a principled way to control the influence of historical information.
 The method introduces a power parameter, $\eta \in [0, 1]$, that governs the degree of borrowing: $\eta = 0$ discards the past data while $\eta = 1$ fully incorporates it.
 This flexibility makes the framework highly appealing in practice.
-Despite its advantages, the power prior posterior distribution is doubly intractable, as it requires evaluation of a normalising constant that depends on $\eta$.
-Existing approaches rely on approximate inference, which often lack theoretical guarantees and explicit convergence properties.
-To overcome these limitations, we propose an exact MCMC algorithm based on pseudo-marginal methods. \comEA{Sloppy!}
-The key idea is to replace the intractable ratio of normalising constants with an unbiased estimator.
-After finding useful identities for the derivative of the log normalising constant, we construct unbiased estimators of log-ratios through Monte Carlo integration, enabling exact acceptance probabilities, by employing the Poisson Estimator Method, within a Metropolis-Hastings or Barker's scheme.
+Despite its advantages, the normalised power prior induces a doubly intractable posterior: the prior itself contains a normalising constant $c_0(\eta)$ that depends on the power parameter $\eta$ and is unavailable in closed form for most models of interest, rendering standard Metropolis--Hastings inapplicable.
+Existing approaches therefore rely on approximate inference methods that often lack theoretical guarantees and explicit convergence properties.
+To overcome these limitations, we propose exact Markov chain Monte Carlo algorithms that avoid direct evaluation of the normalising constant ratio.
+The key insight is a thermodynamic identity expressing the log-ratio of normalising constants as a tractable conditional expectation under the power prior.
+Exploiting this identity, we construct non-negative unbiased estimators of the normalising constant ratio via Monte Carlo integration, which we embed within an Exchange Metropolis--Hastings scheme and a pseudo-marginal framework.
 We evaluate the method on Gaussian models under varying degrees of compatibility between historical and current data.
 Results demonstrate that the algorithm accurately reflects data conflict by shrinking $\eta$ when the datasets are incompatible, while recovering correct posterior behaviour when they are aligned.
 Comparisons with analytical baselines confirm that our method achieves reliable estimates of both model parameters and the power parameter, with efficiency suitable for practical use.

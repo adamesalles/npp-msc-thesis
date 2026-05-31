@@ -1,35 +1,39 @@
-\chapter{Exact inference for the Normalized Power Prior}
+\chapter{Exact inference for the Normalised Power Prior}
 \label{sec:exact}
 
-In this section, we develop exact Markov Chain Monte Carlo methods for inference with the normalized power prior (NPP).
-The key challenge lies in handling the intractable normalizing constant, which we address through a number of estimators that preserve the exactness of our sampling scheme.
+In this chapter, we develop exact Markov chain Monte Carlo methods for inference under the normalised power prior.
 
-Our focus is on the posterior distribution of the power parameter $\eta$ and how to construct chains that sample from it. For $\theta$, we have a regular Metropolis--Hastings scheme, which is described in section \ref{subsec:metropolis}.
-
-In fact, for updating $\theta$, the full conditional is:
-
+The full joint posterior of interest is
 \begin{equation}
-\pi(\theta | \eta, D, D_0) \propto L(D|\theta) L_0(D_0|\theta)^\eta \pi_0(\theta)
+    \pi(\theta, \eta \mid D, D_0)
+    \propto
+    L(D \mid \theta)\,
+    \frac{L_0(D_0 \mid \theta)^{\eta}\, \pi_0(\theta)}{c_0(\eta)}\,
+    \pi_A(\eta),
+    \label{eq:full-posterior-exact}
+\end{equation}
+and the central challenge is the intractable ratio $c_0(\eta)/c_0(\eta')$ that appears in any Metropolis--Hastings update of $\eta$.
+
+We address this challenge through three complementary constructions: the exchange algorithm (Section~\ref{sec:exact-exchange}), the Poisson estimator (Section~\ref{subsec:poisson-estimator}), and a pseudo-marginal approach based on importance sampling (Section~\ref{sec:pseudo-marginal-is}).
+
+Updating $\theta$ given $(\eta, D, D_0)$ is straightforward: the full conditional
+\begin{equation}
+    \pi(\theta \mid \eta, D, D_0) \propto L(D \mid \theta)\, L_0(D_0 \mid \theta)^{\eta}\, \pi_0(\theta)
+    \label{eq:theta-full-conditional}
+\end{equation}
+does not involve $c_0(\eta)$, so standard Metropolis--Hastings (Section~\ref{subsec:metropolis}) applies directly.
+
+For a symmetric proposal $q(\theta' \mid \theta) = q(\theta \mid \theta')$, the acceptance ratio reduces to
+\begin{equation}
+    \alpha(\theta, \theta' \mid \eta)
+    =
+    \min\!\left\{1,\,
+    \frac{L(D \mid \theta')\,\pi_0(\theta')}{L(D \mid \theta)\,\pi_0(\theta)}
+    \left(\frac{L_0(D_0 \mid \theta')}{L_0(D_0 \mid \theta)}\right)^{\!\eta}
+    \right\}.
 \end{equation}
 
-The acceptance ratio for updating $\theta$ through Metropolis--Hastings for a proposal $q(\theta'\mid\theta)$ is
-\begin{equation}
-\alpha(\theta, \theta'\mid \eta, D, D_0) = \dfrac{L(D|\theta')\pi_0(\theta')q(\theta\mid\theta')}{L(D|\theta)\pi_0(\theta)q(\theta'\mid\theta)}\left(\dfrac{L_0(D_0|\theta')}{L_0(D_0|\theta)}\right)^\eta,
-\end{equation}
-
-and for a symmetric proposal, we have $q(\theta'\mid\theta) = q(\theta\mid\theta')$ and we can cancel out these terms.
-
-The full posterior distribution can be written as
-\begin{equation}
-\pi(\theta,\eta \mid D,D_0)
-\propto
-L(D \mid \theta)
-\frac{L_0(D_0 \mid \theta)^\eta \pi_0(\theta)}
-{c_0(\eta)}
-\pi_A(\eta),
-\end{equation}
-
-which will be the distribution of interest in the following sections, where we will discuss how to construct chains that sample exactly from it. 
+The remainder of this chapter focuses on the harder problem of updating $\eta$.
 
 \section{Exchange Metropolis--Hastings}
 \label{sec:exact-exchange}
@@ -63,6 +67,7 @@ The ratio $c_0(\eta)/c_0(\eta')$ has disappeared.
 This cancellation is the main reason why the exchange algorithm is attractive for the normalized power prior.
 
 \comEA{Add proof and intuition that it is not biased.}
+According to the exchange algorithm framework of \citeonline{murray2012}, the auxiliary draw from $\pi_{\eta'}(\theta \mid D_0)$ introduces a factor $1/c_0(\eta')$ into the augmented target that exactly cancels the intractable ratio (see Appendix~\ref{proof:exchange-correctness} for a self-contained argument).
 
 The exactness of the exchange algorithm depends on the ability to sample $\theta^\star$ exactly from $\pi_{\eta'}(\theta \mid D_0)$.
 This assumption is strong.
@@ -73,37 +78,39 @@ In that case, the method becomes an approximate exchange or double Metropolis--H
 
 \section{Barker's Method via Poisson Estimator}
 
-Again, the challenging term is the normalizing constant:
+Updating $\eta$ is more delicate because the full conditional
 \begin{equation}
-c_0(\eta) = \int_\Theta L_0(D_0|\theta)^\eta \pi_0(\theta) \dd{\theta}
+    \pi(\eta \mid \theta, D, D_0) \propto \frac{\pi_A(\eta)}{c_0(\eta)}\, L_0(D_0 \mid \theta)^{\eta}
+    \label{eq:eta-full-conditional}
 \end{equation}
+involves $c_0(\eta)$ explicitly.
 
-% \subsection{Updating $\eta$ given $\theta$}
-
-Updating $\eta$ is more subtle because the full conditional involves $c_0(\eta)$:
+The Metropolis--Hastings ratio for a proposal $\eta \to \eta'$ is
 \begin{equation}
-\pi(\eta | \theta, D, D_0) \propto \frac{\pi_A(\eta)}{c_0(\eta)} L_0(D_0|\theta)^\eta
+    \frac{\pi(\eta' \mid \theta)}{\pi(\eta \mid \theta)}
+    =
+    \frac{\pi_A(\eta')}{\pi_A(\eta)}
+    \cdot
+    \frac{c_0(\eta)}{c_0(\eta')}
+    \cdot
+    L_0(D_0 \mid \theta)^{\eta' - \eta},
 \end{equation}
+and the intractable ratio $c_0(\eta)/c_0(\eta')$ prevents direct evaluation.
 
-The ratio becomes:
+Recalling the thermodynamic identity established in \eqref{eq:normalizing-constant-log}, integrating from $\eta$ to $\eta'$ gives
 \begin{equation}
-\frac{\pi(\eta'|\theta)}{\pi(\eta|\theta)} = \frac{\pi_A(\eta')}{\pi_A(\eta)} \cdot \frac{c_0(\eta)}{c_0(\eta')} \cdot L_0(D_0|\theta)^{\eta' - \eta}
+    \label{eq:log-ratio-integral}
+    \Delta(\eta, \eta')
+    \coloneqq
+    \log\frac{c_0(\eta')}{c_0(\eta)}
+    =
+    \int_{\eta}^{\eta'}
+    \bE_{\pi_\tau}\bigl[\log L_0(D_0 \mid \theta)\bigr]
+    \,\dd\tau,
 \end{equation}
+where $\pi_\tau(\theta) \propto L_0(D_0 \mid \theta)^\tau \pi_0(\theta)$ is the power prior at temperature $\tau$.
 
-The term $c_0(\eta)/c_0(\eta')$ is intractable but can be estimated using
-
-
-\begin{equation}
-  \dv{\tau}\log c_0(\tau) = \bE_{\theta\sim\pi_\tau(\theta)} \left[\log L_0(D_0\mid\theta)\right],
-\end{equation}
-
-where $\pi_\tau(\theta) \propto L_0(D_0\mid\theta)^\tau \pi_0(\theta)$ is the power posterior at temperature $\tau$.
-
-Integrating this identity from $\eta$ to $\eta'$ yields the log-ratio:
-
-\begin{equation}
-  \Delta = \log\frac{c_0(\eta')}{c_0(\eta)} = \int_{\eta}^{\eta'} \bE_{\theta\sim\pi_\tau(\theta)} \left[\log L_0(D_0\mid\theta)\right] \, \dd{\tau}.
-\end{equation}
+The goal of the following sections is to construct a non-negative unbiased estimator of $\exp\{-\Delta(\eta,\eta')\} = c_0(\eta)/c_0(\eta')$.
 
 
 \subsection{Producing an unbiased estimator via a Poisson estimator}
@@ -128,7 +135,7 @@ For two values $\eta,\eta'\in[0,1]$, define
     \log\frac{c_0(\eta')}{c_0(\eta)}.
 \end{equation}
 Under the usual regularity conditions allowing differentiation under the integral sign, the thermodynamic identity gives
-\comEA{Insert identity formulation in the appendix}
+% Identity is proved in Appendix~\ref{proof:deriv-normalizing-constant}.
 \begin{equation}
     \Delta(\eta,\eta')
     =
@@ -273,24 +280,30 @@ Exact Barker implementations require simulating the accept--reject event itself 
 
 \subsubsection{Practical implementation}
 
-In practice, we replace the integral $\Delta$ with a simple Monte Carlo estimation. This is a unbiased estimator for the actual integral:
+The integral $\Delta(\eta,\eta')$ in \eqref{eq:log-ratio-integral} is estimated by Monte Carlo.
 
-\begin{align}
-  \widehat{\Delta}_a(\eta, \eta') &= \dfrac{(\eta' - \eta)}{K} \sum_{k=1}^K \bE_{\theta\sim\pi_{\tau_k}(\theta)} \left[\log L_0(D_0\mid\theta)\right], \text{ and so} \\
-  \widehat{\Delta}_b(\eta, \eta') &=  \dfrac{(\eta' - \eta)}{M\cdot K} \sum_{k=1}^K \sum_{m=1}^M \log L_0\qty(D_0\mid\widetilde{\theta}_{m_k}),
-\end{align}
-
-where $\tau_k \sim \Uni(\eta, \eta')$, and $\qty(\widetilde{\theta}_{m_k} \mid \tau_k) \sim \pi_{\tau_k}(\theta)$.
-
-
-Thus, for a single sample $\tau_\star \sim \Uni(\eta, \eta')$, and $\qty(\widetilde{\theta}_{\star} \mid \tau_\star) \sim \pi_{\tau_\star}(\theta)$ we have:
-
-
+Drawing $\tau_k \overset{\mathrm{iid}}{\sim} \mathrm{Unif}(\eta,\eta')$ and, conditionally, $\widetilde{\theta}_{m,k} \sim \pi_{\tau_k}$ for $m = 1,\ldots,M$ and $k = 1,\ldots,K$, gives the double Monte Carlo estimator
 \begin{equation}
-    \widehat{\Delta}(\eta, \eta') = (\eta' - \eta) \log L_0\qty(D_0\mid\widetilde{\theta}_{\star})
+    \widehat{\Delta}(\eta, \eta')
+    =
+    \frac{(\eta' - \eta)}{MK}
+    \sum_{k=1}^{K} \sum_{m=1}^{M}
+    \log L_0\bigl(D_0 \mid \widetilde{\theta}_{m,k}\bigr).
 \end{equation}
+This is an unbiased estimator of $\Delta(\eta,\eta')$ by the law of total expectation.
 
-\comEA{Because it doesn't depend on the variance}
+In the single-draw case ($K = M = 1$), this reduces to
+\begin{equation}
+    \label{eq:single-draw-delta}
+    \widehat{\Delta}(\eta, \eta') = (\eta' - \eta)\,\log L_0(D_0 \mid \widetilde{\theta}_\star),
+    \qquad
+    \tau_\star \sim \mathrm{Unif}(\eta,\eta'),
+    \quad
+    \widetilde{\theta}_\star \sim \pi_{\tau_\star},
+\end{equation}
+which can be used in the Poisson estimator construction of Section~\ref{subsec:poisson-estimator}.
+
+Note that only the mean of $Z_{\eta,\eta'}$, not its variance, enters the unbiasedness argument; the variance governs the efficiency of the estimator through the expected Poisson count $\lambda_{\eta,\eta'}$.
 
 \subsection{Local envelopes for the Poisson estimator}
 \label{subsec:local-envelopes}
@@ -365,7 +378,7 @@ These deterministic bounds yield a valid local envelope for the Poisson estimato
 
 \subsection{Divide-and-conquer factorization}
 \label{subsec:divide-and-conquer}
-\comEA{Move it to an appendix?}
+\comEA{Move it to an appendix? I'd say at least the proof should be in proofs.}
 
 The computational difficulty of the Poisson estimator increases with the variability of the historical log-likelihood.
 Since the historical likelihood factorizes over observations, we can write
@@ -506,7 +519,7 @@ At internal nodes, these coins are merged recursively until a single coin with t
 Therefore, the recursive DCBF is a coin construction, not merely a product of random ratio estimates.
 
 \section{Pseudo-marginal via Importance Sampling}
-
+\label{sec:pseudo-marginal-is}
 
 An alternative to constructing an unbiased estimator of the ratio $c_0(\eta)/c_0(\eta')$ is to directly estimate the normalizing constant $c_0(\eta)$ itself and form the ratio from two independent estimates.
 % While this does not resolve the Jensen bias when the log-ratio is exponentiated, it provides a practical family of estimators that are straightforward to implement.

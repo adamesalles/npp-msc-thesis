@@ -1,20 +1,116 @@
 \chapter{Proofs}
 
-\section{Proof that \ref{eq:exact-est} is unbiased}
-\label{proof:exact-est}
+\section{Thermodynamic identity for the normalising constant}
+\label{proof:deriv-normalizing-constant}
 
 \begin{proof}
-  The result is immediate, we first take the expected value with respect to $P$ that leaves us with the actual $\Delta$ inside the expected value.
-  \begin{align}
-     \bE_{K, (\tau_\star, \theta_\star)_1, \dots, (\tau_\star, \theta_\star)_K}\qty[\widehat{I}] &= \bE_{K, (\tau_\star, \theta_\star)_1, \dots, (\tau_\star, \theta_\star)_K}\qty[\exp\{(\lambda -c)\}\prod_{j=1}^{K}\dfrac{(c - \widehat{\Delta}({\tau_\star}_j))}{\lambda}],\\
-     &= \bE_{K}\qty[\exp\{(\lambda -c)\}\prod_{j=1}^{K}\dfrac{(c - \Delta)}{\lambda}],\\
-     &= \bE_{K}\qty[\exp\{(\lambda -c)\}\qty(\dfrac{(c - \Delta)}{\lambda})^K],
-  \end{align}
+Under regularity conditions permitting differentiation under the integral sign, we have
+\begin{align}
+    \dv{c_0(\eta)}{\eta}
+    &= \dv{}{\eta} \int_{\Theta} L_0(D_0 \mid t)^{\eta}\, \dd P_0(t) \\
+    &= \int_{\Theta} \dv{}{\eta} L_0(D_0 \mid t)^{\eta}\, \dd P_0(t) \\
+    &= \int_{\Theta} \log L_0(D_0 \mid t)\cdot L_0(D_0 \mid t)^{\eta}\, \dd P_0(t) \\
+    &= c_0(\eta) \int_{\Theta} \log L_0(D_0 \mid t)\cdot \pi_\eta(t \mid D_0)\, \dd t \\
+    &= c_0(\eta)\, \bE_{\pi_\eta}\bigl[\log L_0(D_0 \mid \theta)\bigr].
+\end{align}
+Since $c_0(\eta) > 0$ whenever the initial prior is proper, dividing both sides by $c_0(\eta)$ yields \eqref{eq:normalizing-constant-log}.
+\end{proof}
 
-  then, we take the expected value with respect to $K\sim \Poi(\lambda)$
-  \begin{align*}
-    \bE_{K, (\tau_\star, \theta_\star)_1, \dots, (\tau_\star, \theta_\star)_K}\qty[\widehat{I}] &= \sum_{i=0}^\infty\bP\qty[K=i]\exp{\lambda -c}\qty(\dfrac{(c - \Delta)}{\lambda})^i,\\
-  &= \sum_{i=0}^\infty\dfrac{e^{-\lambda}\lambda^i}{i!} \exp{\lambda -c}\qty(\dfrac{(c - \Delta)}{\lambda})^i,\\
-  &= e^{-c} \sum_{i=0}^\infty\dfrac{(c - \Delta)}{i!} = e^{-c}e^{c - \Delta} = e^{-\Delta}.
-  \end{align*}
+\section{Unbiasedness of the Poisson estimator}
+\label{proof:poisson-unbiased}
+
+\begin{proof}
+We use the notation of Section~\ref{subsec:poisson-estimator}: write $\lambda \coloneqq \lambda_{\eta,\eta'}$, $c \coloneqq c_{\eta,\eta'}$, and $\Delta \coloneqq \Delta(\eta,\eta')$.
+Since $(U_j, \theta_j) \overset{\mathrm{iid}}{\sim} \mathsf{P}_{\eta,\eta'}$ and $K \sim \mathrm{Poisson}(\lambda)$ are drawn independently, the tower property gives
+\begin{align}
+    \bE\bigl[\widehat{I}(\eta,\eta')\bigr]
+    &= \exp\{\lambda - c\}\,
+    \bE_K\!\left[
+        \left(
+            \bE_{\mathsf{P}_{\eta,\eta'}}
+            \!\left[\frac{c - Z_{\eta,\eta'}}{\lambda}\right]
+        \right)^{\!K}
+    \right] \\
+    &= \exp\{\lambda - c\}\,
+    \bE_K\!\left[\left(\frac{c - \Delta}{\lambda}\right)^{\!K}\right].
+\end{align}
+Applying the probability-generating function of a $\mathrm{Poisson}(\lambda)$ random variable, $\bE[r^K] = \exp\{\lambda(r-1)\}$, with $r = (c - \Delta)/\lambda$, gives
+\begin{align}
+    \bE\bigl[\widehat{I}(\eta,\eta')\bigr]
+    &= \exp\{\lambda - c\}
+    \cdot
+    \exp\!\left\{\lambda\!\left(\frac{c - \Delta}{\lambda} - 1\right)\right\} \\
+    &= \exp\{\lambda - c\}
+    \cdot \exp\{c - \Delta - \lambda\} \\
+    &= \exp\{-\Delta\}
+    = \frac{c_0(\eta)}{c_0(\eta')},
+\end{align}
+which establishes the claim.
+\end{proof}
+
+\section{Correctness of the exchange algorithm}
+\label{proof:exchange-correctness}
+
+\begin{proof}
+We verify detailed balance for the augmented kernel.
+Let $\pi(\eta \mid \theta) \propto \pi_A(\eta)\, L_0(D_0 \mid \theta)^\eta / c_0(\eta)$ denote the conditional target for $\eta$.
+The exchange algorithm augments the state space with $\theta^\star$ drawn from the proposed normalized model:
+\begin{equation}
+    \theta^\star \sim \pi_{\eta'}(\theta \mid D_0)
+    =
+    \frac{L_0(D_0 \mid \theta)^{\eta'}}{c_0(\eta')}\,\pi_0(\theta).
+\end{equation}
+The augmented target on $(\eta, \theta^\star)$ is
+\begin{equation}
+    \widetilde\pi(\eta, \theta^\star)
+    \propto
+    \pi(\eta \mid \theta)\cdot \pi_{\eta'}(\theta^\star \mid D_0).
+\end{equation}
+The proposed move $(\eta, \theta^\star) \to (\eta', \theta)$ is accepted with the Metropolis--Hastings ratio
+\begin{align}
+    R_{\mathrm{ex}}
+    &=
+    \frac{\widetilde\pi(\eta', \theta)\, q(\eta \mid \eta')}
+         {\widetilde\pi(\eta, \theta^\star)\, q(\eta' \mid \eta)}
+    =
+    \frac{\pi_A(\eta')\, L_0(D_0 \mid \theta)^{\eta'} / c_0(\eta')}
+         {\pi_A(\eta)\, L_0(D_0 \mid \theta)^{\eta} / c_0(\eta)}
+    \cdot
+    \frac{L_0(D_0 \mid \theta)^{\eta} / c_0(\eta)}
+         {L_0(D_0 \mid \theta^\star)^{\eta'} / c_0(\eta')}
+    \cdot
+    \frac{q(\eta \mid \eta')}{q(\eta' \mid \eta)}.
+\end{align}
+The factors $c_0(\eta)$ and $c_0(\eta')$ cancel, yielding
+\begin{equation}
+    R_{\mathrm{ex}}
+    =
+    \frac{\pi_A(\eta')}{\pi_A(\eta)}
+    \cdot
+    \frac{q(\eta \mid \eta')}{q(\eta' \mid \eta)}
+    \cdot
+    \frac{L_0(D_0 \mid \theta)^{\eta' - \eta}}
+         {L_0(D_0 \mid \theta^\star)^{\eta' - \eta}},
+\end{equation}
+which is exactly the ratio in Section~\ref{sec:exact-exchange}.
+Since the augmented kernel satisfies detailed balance with respect to $\widetilde\pi$, and since the marginal of $\widetilde\pi$ over $\theta^\star$ recovers $\pi(\eta \mid \theta)$, the exchange update has the correct invariant distribution.
+\end{proof}
+
+\section{Convexity of $\log c_0(\eta)$}
+\label{proof:log-c0-convex}
+
+\begin{proof}
+We show that $\eta \mapsto \log c_0(\eta)$ is convex on $[0,1]$.
+By \eqref{eq:normalizing-constant-log}, the second derivative satisfies
+\begin{equation}
+    \dv[2]{\log c_0(\eta)}{\eta}
+    =
+    \dv{}{\eta}\, \bE_{\pi_\eta}\bigl[\log L_0(D_0 \mid \theta)\bigr]
+    =
+    \mathrm{Var}_{\pi_\eta}\bigl[\log L_0(D_0 \mid \theta)\bigr]
+    \geq
+    0,
+\end{equation}
+where the identity follows by differentiating under the integral sign and recognising the resulting expression as a variance under $\pi_\eta$.
+Since the second derivative is non-negative, $\log c_0(\eta)$ is convex.
 \end{proof}

@@ -1,6 +1,7 @@
 \chapter{Background}
 
 \section{Bayesian Inference}
+\label{sec:bayesian-inference}
 
 \subsection{Principles}
 
@@ -349,23 +350,29 @@ This is one of the settings where standard Metropolis-Hastings is no longer dire
 
 \section{Doubly Intractable Distributions}
 \label{sec:dbl-int}
-\comEA{Not sure if I'll keep this here.}
 
-\section{The Normalized Power Prior}
+Doubly intractable distributions arise in Bayesian inference when the likelihood takes the form
+\begin{equation}
+\pi(\theta \mid x) \propto p(\theta)\frac{h(x \mid \theta)}{Z(\theta)},
+\end{equation}
+where the normalizing constant $Z(\theta)$ depends on the parameter $\theta$ and cannot be evaluated pointwise.
+
+This setting is common in models such as exponential random graph models, Markov point processes, and, more generally, in likelihoods derived from Gibbs measures.
+In the context of Normalized Power Priors (NPP), this issue naturally appears due to the presence of parameter-dependent normalizing constants, making standard Bayesian computation challenging.
+
+\section{The Normalised Power Prior}
+\label{sec:npp}
 
 \comEA{Write some motivation here.}
 
 \subsection{Formulation}
 
-Consider the following Bayesian schema:
-
-\begin{equation}
-    p(\theta \mid D) = \dfrac{L(D \mid \theta) \pi_{0}(\theta)}{\int_{\Theta} L(D \mid t) \pi(t) \, \dd t} = \dfrac{L(D \mid \theta) \overbrace{\pi_{0}(\theta)}^{\text{Initial prior}}}{m(D)}.
-\end{equation}
+Recalling the framework of Section~\ref{sec:bayesian-inference}, the posterior distribution of $\theta$ given data $D$ takes the form of \eqref{eq:bayes-theorem-background}, with $\pi_0(\theta)$ serving as the initial prior.
+The normalised power prior framework replaces this initial prior by a data-informed version constructed from historical data $D_0 = \{d_{01}, \ldots, d_{0N_0}\}$.
 
 
 \begin{definition}[Power prior]
-    Let $D_0 = \{d_{01}, d_{02}, \dots, d_{0N_0}\}$, $d_{0i} \subseteq \cX^{p}$ be the historical data and let $L_0(D_0 \mid \theta)$ be a likelihood function assumed to be finite for all $\theta \in \Theta \subseteq \bR^p$. Then, the power prior is defined as
+    Let $D_0 = \{d_{01}, d_{02}, \dots, d_{0N_0}\}$ with $d_{0i} \in \mathcal{X}^{p}$ be the historical data, and let $L_0(D_0 \mid \theta)$ be a likelihood function that is finite for all $\theta \in \Theta \subseteq \bR^p$. Then, the power prior is defined as
 
     \begin{equation}
         \label{eq:power-prior}
@@ -375,67 +382,66 @@ Consider the following Bayesian schema:
     where $\pi_0(\theta)$ is the initial prior distribution of $\theta$ and $\eta$ is the (fixed) power parameter.
 \end{definition}
 
-Then, when we want to accomodate the uncertainty in the choice of $\eta$, we treat it as a random variable and assign a prior distribution to it, indexed by $\phi$. In this case, we find the \textit{unnormalized} power prior as
+To accommodate uncertainty in the choice of $\eta$, we treat it as a random variable and assign a prior distribution $\pi_A(\eta \mid \phi)$, indexed by hyperparameters $\phi$.
 
+The unnormalised joint power prior over $(\theta, \eta)$ is then
 \begin{equation}
-    \pi^\star(\theta, \eta \mid D_0, \phi) = \pi_\eta(\theta \mid D_0) \pi_A(\eta \mid \phi) \propto L_0(D_0 \mid \theta)^{\eta} \pi_0(\theta) \pi_A(\eta \mid \phi).
+    \pi^\star(\theta, \eta \mid D_0, \phi)
+    \propto
+    L_0(D_0 \mid \theta)^{\eta}\, \pi_0(\theta)\, \pi_A(\eta \mid \phi).
 \end{equation}
 
-In order to compute the posterior distribution of $\theta$ and $\eta$, we need to find the normalizing constant (from \eqref{eq:power-prior}) $c_0(\eta)$, which is given by
-
+To normalise this joint prior, one requires the normalising constant
 \begin{equation}
     \label{eq:normalizing-constant}
-    c_0(\eta) = \int_{\Theta} L_0(D_0 \mid t)^{\eta}\,  \dd P_0(t)
+    c_0(\eta) = \int_{\Theta} L_0(D_0 \mid t)^{\eta}\, \dd P_0(t),
 \end{equation}
+which is unavailable in closed form for general likelihoods.
 
-and the marginal posterior distribution of $\eta$ as, for a new dataset $D$,
-
+Given new data $D$, the marginal posterior distribution of $\eta$ is
 \begin{equation}
-    p(\eta \mid D, D_0, \phi) \propto \dfrac{\pi_A(\eta \mid \phi)}{c_0(\eta)} \int_{\Theta} L(D \mid t) L_0(D_0 \mid t)^{\eta} \, \dd P_0(t).
+    \label{eq:eta-marginal-posterior}
+    \pi(\eta \mid D, D_0, \phi)
+    \propto
+    \frac{\pi_A(\eta \mid \phi)}{c_0(\eta)}
+    \int_{\Theta} L(D \mid t)\, L_0(D_0 \mid t)^{\eta}\, \dd P_0(t).
 \end{equation}
 
+Since neither $c_0(\eta)$ nor the integral in \eqref{eq:eta-marginal-posterior} is tractable in general, this is a \textit{doubly intractable} posterior in the sense of Section~\ref{sec:dbl-int}.
+The computational challenge this poses, and the strategies developed to address it, are the central subject of this thesis.
 
-Notice that, since both \( c_0(\eta) \) and \( \int_{\Theta} L(D \mid t) L_0(D_0 \mid t)^{\eta} \, \dd P_0(t) \) are intractable, we call this a doubly-intractable posterior. Previous work \cite{adame2025, carvalho2021} have focused on emulating \( \log c_0(\eta) \) and \( \log c'(\eta) = \bE_{\pi_\eta}\qty[\log L_0(D_0\mid \theta)] \) \eqref{eq:normalizing-constant-log} through non-parametric models, which has proven to be more effective than common interpolation methods—particularly when incorporating shape constraints.
+\subsection{The derivative of the normalising constant}
+\label{subsec:deriv-normalizing}
 
-Sampling from these posteriors is challenging due to the intractability of standard M-H acceptance probabilities, making approximate methods like auxiliary variable techniques computationally expensive and lacking convergence guarantees; an alternative is unbiased event constructions, which enable exact sampling without evaluating normalizing constants.
-
-For instance, applying Barker's algorithm for MCMC~\cite{vats2021} to sample from a target distribution \( \pi(x) \propto \pi'(x) \) with proposal density \( q(x\mid y) \) has become feasible through Bernoulli factory methods. These methods enable the construction of events with probability \( \alpha_B(x, y) \) when
+Under regularity conditions permitting differentiation under the integral sign, the thermodynamic identity (proved in Appendix~\ref{proof:deriv-normalizing-constant}) gives
 \begin{equation}
-\alpha_B(x, y) = \dfrac{\pi(y)q(y\mid x)}{\pi(x)q(x\mid y) + \pi(y)q(y\mid x)} = \dfrac{\pi'(y)q(y\mid x)}{\pi'(x)q(x\mid y) + \pi'(y)q(y\mid x)}
-\end{equation}
-cannot be directly evaluated~\cite{goncalves2017}.
-
-\subsection{The derivative of the normalizing constant}
-
-Considering $c_0(\eta)$ as in \eqref{eq:normalizing-constant}, we can find the derivative of $c_0(\eta)$ with respect to $\eta$ as
-
-\begin{align*}
-    \dfrac{\dd c_0(\eta)}{\dd \eta} &= \dfrac{\dd}{\dd \eta} \int_{\Theta} L(D_0 \mid t)^{\eta}\,  \dd P_0(t), \\
-    &= \int_{\Theta} \dfrac{\dd}{\dd \eta} L(D_0 \mid t)^{\eta}\,  \dd P_0(t), \\
-    &= \int_{\Theta} \log(L(D_0 \mid t)) L(D_0 \mid t)^{\eta}\,  \dd P_0(t), \\
-    &= \int_{\Theta} \log(L(D_0 \mid t)) \pi_\eta(t \mid D_0)\,  \dd P_0(t), \\
-    &= c_0(\eta)\bE_{\pi_\eta}[\log(L(D_0 \mid \theta))],
-\end{align*}
-
-where $\bE_{\pi_\eta}[\cdot]$ denotes the expectation with respect to the power prior distribution $\pi_\eta(\theta \mid D_0)$.
-
-When we're interested on the derivative of the logarithm of the normalizing constant, we can use the following expression:
-
-\begin{align}
     \label{eq:normalizing-constant-log}
-    \dfrac{\dd \log c_0(\eta)}{\dd \eta} &= \dfrac{1}{c_0(\eta)}\dfrac{\dd c_0(\eta)}{\dd \eta} = \bE_{\pi_\eta}[\log(L(D_0 \mid \theta))].
-\end{align}
+    \dv{\log c_0(\eta)}{\eta}
+    =
+    \bE_{\pi_\eta}\bigl[\log L_0(D_0 \mid \theta)\bigr],
+\end{equation}
+where $\bE_{\pi_\eta}[\cdot]$ denotes expectation under the power prior $\pi_\eta(\theta \mid D_0)$.
 
+This identity plays a central role in the exact inference methods of Chapter~\ref{sec:exact}: it expresses the log-derivative of an intractable normalising constant as a tractable posterior expectation, which can be estimated by Monte Carlo simulation.
 
 \subsection{Other Historical Data Modelling Approaches}
 
+The normalised power prior is one among several principled Bayesian approaches to incorporating historical information.
+The \textit{commensurate prior} of \cite{hobbs2011} models the relationship between historical and current parameters through a shared hierarchical structure, allowing the degree of borrowing to adapt to the compatibility between studies.
 
-\section{MCMC Methods for Intractable Normalizing Constants}
-\comEA{Unsure on how to name this section}
+\textit{Meta-analytic-predictive} (MAP) priors \cite{neuenschwander2010} derive an informative prior for the current study by fitting a hierarchical model to a collection of historical studies and marginalising over the between-study heterogeneity.
 
-Many Bayesian models involve posterior distributions whose density can only be evaluated up to a normalizing constant.
-This is not a problem for ordinary Metropolis--Hastings when the unknown normalizing constant does not depend on the parameter being updated.
-However, the situation is different harder when the normalizing constant depends on the parameter.
+\textit{Robust mixture priors} \cite{schmidli2014} address the risk of prior-data conflict by mixing an informative component derived from historical evidence with a vague component, ensuring that the prior retains a non-negligible weight in regions not supported by the historical data.
+
+Each of these alternatives makes different modelling assumptions about the exchangeability of the historical and current parameters, and each leads to different computational challenges.
+The normalised power prior is particularly appealing when a single scalar parameter $\eta \in [0,1]$ suffices to capture the degree of historical relevance, and when the historical and current data share the same likelihood structure.
+
+\section{MCMC Methods for Intractable Normalising Constants}
+
+Many Bayesian models involve posterior distributions whose density can only be evaluated up to a normalising constant.
+This is not an obstacle for ordinary Metropolis--Hastings when the unknown normalising constant does not depend on the parameter being updated.
+However, the situation is considerably harder when the normalising constant itself depends on the parameter, as is the case for the normalised power prior.
+
 This setting is usually called a doubly intractable problem, because the posterior distribution contains an intractable normalizing constant inside the likelihood or prior structure itself.
 The normalized power prior is an example of this phenomenon, since the normalizing constant $c_0(\eta)$ depends on the discount parameter $\eta$.
 
@@ -815,23 +821,22 @@ Another caveat is that the estimator must be non-negative.
 Signed unbiased estimators do not directly define a probability density on the extended space and therefore do not yield the standard pseudo-marginal guarantee.
 Moreover, pseudo-marginal Metropolis--Hastings should not be confused with plugging an unbiased estimator into an arbitrary nonlinear acceptance probability.
 For instance, replacing an exact ratio $R$ by an unbiased estimate $\widehat{R}$ inside Barker's probability $\widehat{R}/(1+\widehat{R})$ is generally biased, since
-\textcolor{red}{Does this need to be a (numbered) display?}
-\begin{equation}
-    \bE
-    \qty[
-        \dfrac{\widehat{R}}{1+\widehat{R}}
-    ]
+
+\begin{equation*}
+    \bE\qty[\frac{\widehat{R}}{1+\widehat{R}}]
     \neq
-    \dfrac{R}{1+R}.
-\end{equation}
+    \frac{R}{1+R}.
+\end{equation*}
 
 Thus, pseudo-marginal Metropolis--Hastings provides an exact route when a non-negative unbiased estimator of the unnormalised target is available, but its practical usefulness depends strongly on the stability and variance of that estimator.
 
 \section{Function Emulation Methods}
+\label{sec:function-emulation}
+
+% TODO: Make Chapter 3 reference this section.
 
 \subsection{Gaussian Processes}
+\label{subsec:gp-emulation}
 
-
-\subsection{Generalized Additive Models}
-
-\subsection{Shape-constrained Variants}
+\subsection{Shape-Constrained Additive Models}
+\label{subsec:scam-emulation}
