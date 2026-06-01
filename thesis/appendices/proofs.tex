@@ -1,7 +1,7 @@
 \chapter{Proofs}
 
 \section{Thermodynamic identity for the normalising constant}
-\label{proof:deriv-normalizing-constant}
+\label{proof:deriv-normalising-constant}
 
 \begin{proof}
 Under regularity conditions permitting differentiation under the integral sign, we have
@@ -13,7 +13,7 @@ Under regularity conditions permitting differentiation under the integral sign, 
     &= c_0(\eta) \int_{\Theta} \log L_0(D_0 \mid t)\cdot \pi_\eta(t \mid D_0)\, \dd t \\
     &= c_0(\eta)\, \bE_{\pi_\eta}\bigl[\log L_0(D_0 \mid \theta)\bigr].
 \end{align}
-Since $c_0(\eta) > 0$ whenever the initial prior is proper, dividing both sides by $c_0(\eta)$ yields \eqref{eq:normalizing-constant-log}.
+Since $c_0(\eta) > 0$ whenever the initial prior is proper, dividing both sides by $c_0(\eta)$ yields \eqref{eq:normalising-constant-log}.
 \end{proof}
 
 \section{Unbiasedness of the Poisson estimator}
@@ -101,7 +101,7 @@ Since the augmented kernel satisfies detailed balance with respect to $\widetild
 
 \begin{proof}
 We show that $\eta \mapsto \log c_0(\eta)$ is convex on $[0,1]$.
-By \eqref{eq:normalizing-constant-log}, the second derivative satisfies
+By \eqref{eq:normalising-constant-log}, the second derivative satisfies
 \begin{equation}
     \dv[2]{\log c_0(\eta)}{\eta}
     =
@@ -114,3 +114,6 @@ By \eqref{eq:normalizing-constant-log}, the second derivative satisfies
 where the identity follows by differentiating under the integral sign and recognising the resulting expression as a variance under $\pi_\eta$.
 Since the second derivative is non-negative, $\log c_0(\eta)$ is convex.
 \end{proof}
+
+
+\section{Unbiasedness of the divide-and-conquer estimator}\label{proof:dc-unbiased}

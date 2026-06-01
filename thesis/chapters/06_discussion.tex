@@ -17,7 +17,7 @@ This thesis has developed exact Markov chain Monte Carlo methods for posterior i
 The central challenge is the doubly intractable structure of the NPP posterior: the prior itself contains a normalising constant $c_0(\eta)$ that depends on the power parameter $\eta$ and cannot be evaluated in closed form for general likelihoods (Section~\ref{sec:dbl-int}).
 Previous approaches addressed this by approximating $c_0(\eta)$ through function emulation or Monte Carlo integration, but these methods lack formal guarantees and their bias is difficult to quantify without an exact reference.
 
-Our main theoretical contribution is the derivation of the thermodynamic identity \eqref{eq:normalizing-constant-log}, which expresses the log-derivative of $c_0(\eta)$ as a tractable conditional expectation under the power prior.
+Our main theoretical contribution is the derivation of the thermodynamic identity \eqref{eq:normalising-constant-log}, which expresses the log-derivative of $c_0(\eta)$ as a tractable conditional expectation under the power prior.
 This identity provides the analytical foundation for two complementary exact algorithms.
 The Poisson estimator (Section~\ref{subsec:poisson-estimator}) uses this identity to construct a non-negative unbiased estimator of the normalising constant ratio $c_0(\eta)/c_0(\eta')$, which can be embedded within a pseudo-marginal Metropolis--Hastings scheme while preserving exact invariance.
 The exchange algorithm (Section~\ref{sec:exact-exchange}) avoids evaluating $c_0(\eta)$ altogether by introducing an auxiliary draw from the proposed power prior, cancelling the intractable ratio through a careful augmentation of the target space.

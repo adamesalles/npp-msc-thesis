@@ -12,7 +12,7 @@ Our contributions in this area:
 \end{itemize}}
 
 
-\section{Emulating the normalizing constant}
+\section{Emulating the normalising constant}
 
 As established in Section~\ref{sec:npp}, the normalising constant
 
@@ -25,12 +25,12 @@ As established in Section~\ref{sec:npp}, the normalising constant
     \dd{\theta}
 \end{equation*}
 
-also defined in \eqref{eq:normalizing-constant} cannot be evaluated analytically in general.
+also defined in \eqref{eq:normalising-constant} cannot be evaluated analytically in general.
 
 As a consequence, direct evaluation of the posterior density becomes infeasible.
 A common strategy is therefore to replace $c_0(\eta)$ by a surrogate approximation constructed from evaluations at a finite collection of design points.
 
-More precisely, suppose we evaluate the log-normalizing constant
+More precisely, suppose we evaluate the log-normalising constant
 
 \begin{equation}
     g(\eta)
@@ -57,12 +57,12 @@ This yields the approximation
 
 The resulting approximation can then be plugged into the posterior density, producing an approximate MCMC scheme whose computational cost is substantially reduced after the emulator is trained.
 
-From a statistical perspective, this transforms the problem of evaluating an intractable normalizing constant into a nonparametric regression problem.
+From a statistical perspective, this transforms the problem of evaluating an intractable normalising constant into a nonparametric regression problem.
 The quality of inference then depends on the approximation properties of the emulator and on how uncertainty propagates through the posterior distribution.
 
 \subsection{Consequences}
 
-Although emulation methods can dramatically reduce computational cost, replacing the true normalizing constant by a deterministic approximation may substantially alter the resulting posterior distribution.
+Although emulation methods can dramatically reduce computational cost, replacing the true normalising constant by a deterministic approximation may substantially alter the resulting posterior distribution.
 
 Suppose the true posterior density is
 
@@ -119,6 +119,7 @@ Approximations that ignore such information may generate unrealistic artifacts, 
 These issues motivate the incorporation of structural constraints into the emulation procedure.
 
 \subsection{Introducing shape-constraints}
+\label{subsec:shape-constraints}
 
 One strategy for improving the stability of the emulator is to incorporate qualitative information about the target function directly into the model.
 
@@ -145,7 +146,7 @@ For instance,
 
 Therefore, information about monotonicity and curvature may be available analytically or estimated from Monte Carlo samples.
 
-A flexible approach consists of modelling $g$ as a Gaussian process.
+A flexible approach consists of modelling $g$ as a Gaussian process, as discussed in Section \ref{subsec:gp-emulation}.
 If
 
 \begin{equation}
@@ -169,52 +170,48 @@ In particular,
 
 This allows derivative information and shape restrictions to be incorporated directly into the posterior distribution of the Gaussian process.
 Conditioning on derivative observations or derivative sign constraints can substantially reduce unrealistic oscillatory behaviour.
+
 We refer to \citeonline{riihmaki2010, wang2016} and \citeonline{adame2025} for recent developments in shape-constrained emulation through Gaussian processes.
 
 An alternative strategy is based on shape-constrained additive models (SCAMs).
-These models extend generalized additive models (GAMs) by imposing constraints directly on the spline basis coefficients.
 
-Suppose
+Shape-constrained additive models (SCAMs) extend generalised additive models (GAMs) (as presented in Section \ref{subsec:gam-emulation}) by enforcing qualitative constraints, such as monotonicity or convexity, directly on the spline basis coefficients \cite{pya2015}.
 
+In a SCAM, the target function is modelled as
 \begin{equation}
-    g(\eta)
-    =
-    \beta_0
-    +
-    \sum_{j=1}^p
-    f_j(\eta),
+    g(\eta) = \beta_0 + \sum_{j=1}^p f_j(\eta),
 \end{equation}
+where each $f_j$ is represented by a spline expansion whose coefficients are constrained during estimation to satisfy the desired shape restriction.
 
-where the functions $f_j$ are represented through spline expansions.
-Shape constraints such as monotonicity or convexity can then be enforced by restricting the spline coefficients during estimation.
+The model is fitted by penalised likelihood under linear inequality constraints on the coefficients, using methods closely related to standard GAM estimation \cite{wood2017}.
 
-In practice, SCAMs are fitted using penalized likelihood methods analogous to standard GAM estimation procedures.
-The main difference is that the optimization is performed under linear inequality constraints on the spline coefficients.
+For the normalised power prior, the convexity and monotonicity of $\log c_0(\eta)$ established in Appendix~\ref{proof:log-c0-convex} provide a natural set of shape constraints that can be directly encoded in the SCAM.
 
-Compared with unconstrained smoothers, shape-constrained models may provide more stable extrapolation behaviour and improved uncertainty quantification in regions with sparse design points.
-These properties are particularly appealing when approximating normalizing constants, since small local errors may propagate nonlinearly into the posterior distribution.
+By incorporating this structural information, the SCAM surrogate avoids the oscillatory artefacts that unconstrained smoothers may exhibit near regions of sparse design points.
+
+Compared with GP emulation, SCAMs are generally faster to fit and less sensitive to kernel hyperparameter choices, at the cost of lacking a principled uncertainty quantification mechanism.
 
 \section{Current approaches for the NPP}
 
 The normalised power prior has received considerable attention in recent years due to its ability to incorporate historical information while preserving coherence with the likelihood principle.
 However, as established in Section~\ref{sec:npp}, the normalising constant $c_0(\eta)$ depends on $\eta$ in a non-analytic manner for most models of interest, inducing a doubly intractable posterior whose evaluation requires repeated computation of $c_0(\eta)$ across MCMC iterations.
 
-A substantial portion of the current literature therefore focuses on approximating either the normalizing constant itself or ratios involving $c_0(\eta)$.
+A substantial portion of the current literature therefore focuses on approximating either the normalising constant itself or ratios involving $c_0(\eta)$.
 The main approaches may be broadly divided into:
 \begin{enumerate}[label=(\roman*)]
-\item direct approximation of the normalizing function;
+\item direct approximation of the normalising function;
 \item Monte Carlo estimators based on importance sampling or path sampling; and
 \item exact or asymptotically exact MCMC procedures.
 \end{enumerate}
 \subsection{Approximate inference through emulation and interpolation}
 
 One of the main practical difficulties in the NPP is that evaluating $c_0(\eta)$ repeatedly during posterior simulation may become prohibitively expensive for complex models.
-Consequently, several authors have proposed constructing surrogate approximations for the normalizing function.
+Consequently, several authors have proposed constructing surrogate approximations for the normalising function.
 
 A common strategy consists of evaluating $c_0(\eta)$ or $\log c_0(\eta)$ over a finite grid of discounting parameters and then interpolating these values over the interval $\eta \in [0,1]$.
-Spline-based approximations are particularly attractive in this setting because the normalizing function is typically smooth as a function of $\eta$.
+Spline-based approximations are particularly attractive in this setting because the normalising function is typically smooth as a function of $\eta$.
 
-In the R package NPP associated with \citeonline{han2023}, efficient posterior computation is achieved by avoiding repeated evaluation of the normalizing constant during MCMC sampling.
+In the R package NPP associated with \citeonline{han2023}, efficient posterior computation is achieved by avoiding repeated evaluation of the normalising constant during MCMC sampling.
 The proposed framework exploits structural properties of the power posterior and constructs computational approximations that only require simulation from a small number of reference distributions.
 
 More generally, spline interpolation methods approximate
@@ -243,7 +240,7 @@ As a consequence, uncertainty associated with the approximation is not propagate
 This may lead to overconfident inference and distortions in posterior summaries when approximation errors accumulate near regions of high posterior mass.
 
 An important limitation of the current literature is that there is still no widely adopted exact computational baseline for assessing approximation quality in the NPP setting.
-Most existing works compare computational approximations against other approximate procedures or against simplified models where the normalizing constant is analytically available.
+Most existing works compare computational approximations against other approximate procedures or against simplified models where the normalising constant is analytically available.
 This makes it difficult to quantify the true inferential impact of approximation errors.
 
 The recent development of exact and quasi-exact MCMC procedures for doubly intractable distributions provides an opportunity to revisit these approximation methods under a more rigorous computational framework.
@@ -252,12 +249,12 @@ In particular, exact samplers may be used as gold-standard references for evalua
 \subsection{Monte Carlo approaches and exact inference}
 
 Several recent works investigate Monte Carlo estimators for posterior inference under the normalized power prior.
-These methods typically exploit the representation of the normalizing constant as an expectation under a tractable proposal distribution.
+These methods typically exploit the representation of the normalising constant as an expectation under a tractable proposal distribution.
 
-The work of \citeonline{carvalho2021} establishes several theoretical properties of the NPP and highlights the computational challenges induced by the normalizing function.
+The work of \citeonline{carvalho2021} establishes several theoretical properties of the NPP and highlights the computational challenges induced by the normalising function.
 In particular, the authors show that the normalized power prior is always proper whenever the initial prior is proper and prove smoothness and convexity properties of the map $\eta \mapsto \log c_0(\eta)$.
 
-The same work also emphasizes that posterior inference under the NPP belongs to the class of doubly intractable distributions because the posterior density depends explicitly on an unknown normalizing constant ratio.
+The same work also emphasizes that posterior inference under the NPP belongs to the class of doubly intractable distributions because the posterior density depends explicitly on an unknown normalising constant ratio.
 This observation motivates the use of advanced MCMC procedures originally developed for doubly intractable models.
 
 More recently, \citeonline{han2023} proposed efficient posterior sampling procedures based on importance sampling and power posterior representations.
@@ -291,10 +288,10 @@ This section reviews the main computational strategies available in this setting
 
 A number of Markov chain Monte Carlo (MCMC) methods have been proposed to address this problem, including auxiliary variable approaches such as the exchange algorithm and the double Metropolis--Hastings (DMH) algorithm. While these methods can target the exact posterior distribution, they typically require simulating auxiliary variables at each iteration, which becomes computationally prohibitive in high-dimensional or complex models.
 
-An alternative strategy is proposed by \citeonline{park2020}, who introduce a function emulation approach to approximate the intractable normalizing constant. Their method replaces repeated Monte Carlo estimation of $Z(\theta)$ with a two-stage surrogate model.
+An alternative strategy is proposed by \citeonline{park2020}, who introduce a function emulation approach to approximate the intractable normalising constant. Their method replaces repeated Monte Carlo estimation of $Z(\theta)$ with a two-stage surrogate model.
 First, importance sampling is used to obtain noisy estimates of $Z(\theta)$ at a finite set of parameter values.
-Then, a Gaussian process (GP) is fitted to the log-normalizing function, providing a fast interpolator that can be evaluated within an MCMC algorithm.
-This leads to two variants: one that emulates only the normalizing function (NormEm), and another that emulates the entire likelihood (LikEm).
+Then, a Gaussian process (GP) is fitted to the log-normalising function, providing a fast interpolator that can be evaluated within an MCMC algorithm.
+This leads to two variants: one that emulates only the normalising function (NormEm), and another that emulates the entire likelihood (LikEm).
 
 The main advantage of this approach is computational efficiency.
 By shifting the costly Monte Carlo approximations to a precomputation stage, the resulting MCMC algorithm avoids repeated simulation of auxiliary variables, yielding substantial speed-ups compared to exact or pseudo-marginal methods.
@@ -305,7 +302,7 @@ The resulting Markov chain targets an approximate posterior distribution, with a
 While theoretical bounds on the total variation distance are provided, they do not yield explicit rates, making it difficult to calibrate the approximation in practice.
 
 Several additional limitations remain. First, the method relies on importance sampling estimates, which can exhibit high variance in moderate to high-dimensional settings, potentially degrading the quality of the surrogate.
-Second, the Gaussian process approximation assumes a smooth structure for the log-normalizing function and typically ignores heteroskedasticity induced by Monte Carlo noise.
+Second, the Gaussian process approximation assumes a smooth structure for the log-normalising function and typically ignores heteroskedasticity induced by Monte Carlo noise.
 Third, the selection of design points (particles) is critical but performed using heuristic procedures such as short runs of DMH or approximate Bayesian computation, without a principled adaptive strategy.
 Finally, the approach does not scale well with the dimension of the parameter space due to the cubic complexity of Gaussian process regression and the increasing difficulty of covering the parameter space.
 

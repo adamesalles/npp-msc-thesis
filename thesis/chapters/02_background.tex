@@ -43,7 +43,7 @@ For any posterior-integrable function $h:\Theta\to\bR$, posterior summaries are 
 \end{equation}
 
 Examples include posterior means, posterior variances, marginal probabilities, credible intervals, and posterior predictive quantities.
-The main computational challenge is that the posterior distribution is usually available only up to a normalizing constant.
+The main computational challenge is that the posterior distribution is usually available only up to a normalising constant.
 
 Indeed, many Bayesian algorithms only require the unnormalized posterior density
 
@@ -180,10 +180,10 @@ The transition kernel $P$ satisfies detailed balance with respect to $\pi$ if
 as measures on $\Theta\times\Theta$.
 
 Detailed balance implies invariance and gives a convenient route for proving that a Markov chain targets the desired posterior distribution.
-The two classical algorithms discussed in this section are Gibbs sampling and Metropolis-Hastings.
+The two classical algorithms discussed in this section are Gibbs sampling and Metropolis--Hastings.
 
 Gibbs sampling exploits conditional distributions that can be sampled exactly.
-Metropolis-Hastings is more general and only requires evaluation of the target density up to a normalizing constant.
+Metropolis--Hastings is more general and only requires evaluation of the target density up to a normalising constant.
 
 Both algorithms are asymptotically exact in the sense that their ergodic averages converge to posterior expectations under suitable conditions.
 They are not exact in the finite-time sense, because samples obtained after a finite number of iterations still depend on the initial state.
@@ -256,11 +256,11 @@ Even when they are available, strong posterior dependence between blocks can lea
 This is especially relevant in hierarchical models, latent variable models, and models with highly correlated parameters.
 In such cases, blocking, reparameterization, or hybrid Gibbs-within-Metropolis strategies may be necessary.
 
-\subsection{Metropolis-Hastings}
+\subsection{Metropolis--Hastings}
 \label{subsec:metropolis}
 
-The Metropolis-Hastings algorithm constructs a Markov chain using a proposal distribution and an accept-reject correction.
-Let $\pi$ denote the target posterior density, known up to a normalizing constant.
+The Metropolis--Hastings algorithm constructs a Markov chain using a proposal distribution and an accept-reject correction.
+Let $\pi$ denote the target posterior density, known up to a normalising constant.
 
 Let $q(\theta'\mid\theta)$ be a proposal density for moving from the current state $\theta$ to a proposed state $\theta'$.
 Given the current state $\theta$, the algorithm first samples
@@ -305,10 +305,10 @@ Thus,
 \end{equation}
 
 The acceptance probability in \eqref{eq:mh-acceptance-background} depends only on ratios of the target density.
-Therefore, if $\pi(\theta)=\gamma(\theta)/Z$ for an unknown normalizing constant $Z$, then $Z$ cancels from the ratio.
+Therefore, if $\pi(\theta)=\gamma(\theta)/Z$ for an unknown normalising constant $Z$, then $Z$ cancels from the ratio.
 
-This cancellation is one of the main reasons why Metropolis-Hastings is useful in Bayesian computation.
-The Metropolis-Hastings transition kernel satisfies detailed balance with respect to $\pi$.
+This cancellation is one of the main reasons why Metropolis--Hastings is useful in Bayesian computation.
+The Metropolis--Hastings transition kernel satisfies detailed balance with respect to $\pi$.
 
 Indeed, the accept-reject correction symmetrizes the probability flow between $\theta$ and $\theta'$.
 Consequently, $\pi$ is invariant for the Markov chain.
@@ -336,17 +336,17 @@ The acceptance probability then reduces to
     \label{eq:random-walk-acceptance-background}
 \end{equation}
 
-The efficiency of Metropolis-Hastings depends strongly on the proposal distribution.
+The efficiency of Metropolis--Hastings depends strongly on the proposal distribution.
 If the proposal variance is too small, the chain accepts many proposals but explores the state space slowly.
 
 If the proposal variance is too large, the chain proposes distant states that are often rejected.
 This trade-off is one of the central practical issues in MCMC.
 
-Metropolis-Hastings is asymptotically exact under appropriate conditions, but it does not remove the finite-time dependence on the initial state.
+Metropolis--Hastings is asymptotically exact under appropriate conditions, but it does not remove the finite-time dependence on the initial state.
 For this reason, convergence diagnostics and burn-in choices remain important in practical applications.
-In doubly intractable models, even the ratio in \eqref{eq:mh-acceptance-background} may contain unknown normalizing constants that depend on $\theta$.
+In doubly intractable models, even the ratio in \eqref{eq:mh-acceptance-background} may contain unknown normalising constants that depend on $\theta$.
 
-This is one of the settings where standard Metropolis-Hastings is no longer directly applicable and where the methods studied in this dissertation become necessary.
+This is one of the settings where standard Metropolis--Hastings is no longer directly applicable and where the methods studied in this dissertation become necessary.
 
 \section{Doubly Intractable Distributions}
 \label{sec:dbl-int}
@@ -355,10 +355,10 @@ Doubly intractable distributions arise in Bayesian inference when the likelihood
 \begin{equation}
 \pi(\theta \mid x) \propto p(\theta)\frac{h(x \mid \theta)}{Z(\theta)},
 \end{equation}
-where the normalizing constant $Z(\theta)$ depends on the parameter $\theta$ and cannot be evaluated pointwise.
+where the normalising constant $Z(\theta)$ depends on the parameter $\theta$ and cannot be evaluated pointwise.
 
 This setting is common in models such as exponential random graph models, Markov point processes, and, more generally, in likelihoods derived from Gibbs measures.
-In the context of Normalized Power Priors (NPP), this issue naturally appears due to the presence of parameter-dependent normalizing constants, making standard Bayesian computation challenging.
+In the context of Normalized Power Priors (NPP), this issue naturally appears due to the presence of parameter-dependent normalising constants, making standard Bayesian computation challenging.
 
 \section{The Normalised Power Prior}
 \label{sec:npp}
@@ -405,7 +405,7 @@ The unnormalised joint power prior over $(\theta, \eta)$ is then
 
 To normalise this joint prior, one requires the normalising constant
 \begin{equation}
-    \label{eq:normalizing-constant}
+    \label{eq:normalising-constant}
     c_0(\eta) = \int_{\Theta} L_0(D_0 \mid t)^{\eta}\, \dd P_0(t),
 \end{equation}
 which is unavailable in closed form for general likelihoods.
@@ -423,11 +423,11 @@ Since neither $c_0(\eta)$ nor the integral in \eqref{eq:eta-marginal-posterior} 
 The computational challenge this poses, and the strategies developed to address it, are the central subject of this thesis.
 
 \subsection{The derivative of the normalising constant}
-\label{subsec:deriv-normalizing}
+\label{subsec:deriv-normalising}
 
-Under regularity conditions permitting differentiation under the integral sign, the thermodynamic identity (proved in Appendix~\ref{proof:deriv-normalizing-constant}) gives
+Under regularity conditions permitting differentiation under the integral sign, the thermodynamic identity (proved in Appendix~\ref{proof:deriv-normalising-constant}) gives
 \begin{equation}
-    \label{eq:normalizing-constant-log}
+    \label{eq:normalising-constant-log}
     \dv{\log c_0(\eta)}{\eta}
     =
     \bE_{\pi_\eta}\bigl[\log L_0(D_0 \mid \theta)\bigr],
@@ -439,7 +439,7 @@ This identity plays a central role in the exact inference methods of Chapter~\re
 \subsection{Other Historical Data Modelling Approaches}
 
 The normalised power prior is one among several principled Bayesian approaches to incorporating historical information.
-The \textit{commensurate prior} of \cite{hobbs2011} models the relationship between historical and current parameters through a shared hierarchical structure, allowing the degree of borrowing to adapt to the compatibility between studies.
+The \textit{commensurate prior} of \citeonline{hobbs2011} models the relationship between historical and current parameters through a shared hierarchical structure, allowing the degree of borrowing to adapt to the compatibility between studies.
 
 \textit{Meta-analytic-predictive} (MAP) priors \cite{neuenschwander2010} derive an informative prior for the current study by fitting a hierarchical model to a collection of historical studies and marginalising over the between-study heterogeneity.
 
@@ -454,18 +454,18 @@ Many Bayesian models involve posterior distributions whose density can only be e
 This is not an obstacle for ordinary Metropolis--Hastings when the unknown normalising constant does not depend on the parameter being updated.
 However, the situation is considerably harder when the normalising constant itself depends on the parameter, as is the case for the normalised power prior.
 
-This setting is usually called a doubly intractable problem, because the posterior distribution contains an intractable normalizing constant inside the likelihood or prior structure itself.
-The normalized power prior is an example of this phenomenon, since the normalizing constant $c_0(\eta)$ depends on the discount parameter $\eta$.
+This setting is usually called a doubly intractable problem, because the posterior distribution contains an intractable normalising constant inside the likelihood or prior structure itself.
+The normalized power prior is an example of this phenomenon, since the normalising constant $c_0(\eta)$ depends on the discount parameter $\eta$.
 
 In this section, we review three families of methods that are relevant for this thesis.
-First, we discuss the exchange algorithm, which removes the intractable ratio of normalizing constants by introducing an auxiliary draw from a proposal-dependent distribution.
+First, we discuss the exchange algorithm, which removes the intractable ratio of normalising constants by introducing an auxiliary draw from a proposal-dependent distribution.
 Second, we discuss Barker's algorithm and Bernoulli factory methods, which replace the explicit evaluation of an acceptance probability by an exact randomization procedure.
 Third, we discuss divide-and-conquer Bernoulli factories, which aim to reduce the computational cost of Bernoulli factory methods in models with many likelihood factors.
 
 \subsection{The Exchange Algorithm}
 \label{subsec:exchange-algorithm}
 
-Consider a family of unnormalized densities $f_\eta(\theta)$ with normalizing constant
+Consider a family of unnormalized densities $f_\eta(\theta)$ with normalising constant
 \begin{equation}
 c(\eta)
 =
@@ -477,7 +477,7 @@ Suppose that the target distribution has density
 \propto
 \frac{\gamma(\eta \mid y)}{c(\eta)}.
 \end{equation}
-A standard Metropolis--Hastings proposal, as discussed in section \ref{subsec:metropolis}, from $\eta$ to $\eta'$ requires the ratio
+A standard Metropolis--Hastings proposal, as discussed in Section \ref{subsec:metropolis}, from $\eta$ to $\eta'$ requires the ratio
 \begin{equation}
 \frac{\pi(\eta' \mid y)}{\pi(\eta \mid y)}
 =
@@ -494,7 +494,7 @@ x^\star
 \sim
 \frac{f_{\eta'}(x)}{c(\eta')}.
 \end{equation}
-The Metropolis--Hastings ratio is then constructed on an augmented space so that the unknown normalizing constants cancel.
+The Metropolis--Hastings ratio is then constructed on an augmented space so that the unknown normalising constants cancel.
 In its simplest form, the exchange ratio is
 \begin{equation}
 R_{\mathrm{ex}}(\eta,\eta';x^\star)
@@ -845,10 +845,38 @@ Thus, pseudo-marginal Metropolis--Hastings provides an exact route when a non-ne
 \section{Function Emulation Methods}
 \label{sec:function-emulation}
 
-% TODO: Make Chapter 3 reference this section.
+A common strategy for handling an intractable function is to replace it by a statistical surrogate constructed from a finite number of evaluations at design points.
+In the context of the normalised power prior, the target function is $g(\eta) = \log c_0(\eta)$, whose structural properties are established in Sections~\ref{subsec:deriv-normalising} and Appendix~\ref{proof:log-c0-convex}.
+These properties motivate the use of emulators that can incorporate prior structural information rather than treating $g$ as an arbitrary smooth function.
+Two families of emulators are particularly relevant here: Gaussian processes and shape-constrained additive models.
+Both are used in the experiments of Chapter~\ref{chap:approximate}, where they are assessed against the exact methods of Chapter~\ref{sec:exact}.
 
 \subsection{Gaussian Processes}
 \label{subsec:gp-emulation}
 
-\subsection{Shape-Constrained Additive Models}
-\label{subsec:scam-emulation}
+A Gaussian process (GP) is a distribution over functions such that any finite collection of function values follows a multivariate normal distribution \cite{rasmussen2006}.
+Formally, one writes $g \sim \mathcal{GP}(m, k)$, where $m: [0,1] \to \bR$ is the mean function and $k: [0,1]^2 \to \bR$ is the covariance kernel.
+Given evaluations $\{(\eta_i, g(\eta_i))\}_{i=1}^n$, the GP posterior is again a GP whose mean and covariance can be computed in closed form.
+This posterior mean serves as the surrogate $\widehat{g}(\eta)$, and the posterior variance quantifies the emulation uncertainty at unobserved values of $\eta$.
+
+A key feature of GP emulation in this setting is that, since differentiation is a linear operation, the derivative process $g'$ is also a Gaussian process. We discuss this in more detail in Section~\ref{subsec:shape-constraints}.
+
+The main practical limitation of GP emulation is its computational cost: fitting a GP to $n$ design points requires $O(n^3)$ operations for the matrix factorisation, which becomes prohibitive as $n$ grows.
+This constraint is not severe for the one-dimensional function $g: [0,1] \to \bR$ studied here, but would require sparse or inducing-point approximations in higher-dimensional settings.
+
+
+
+\subsection{Generalised Additive Models}
+\label{subsec:gam-emulation}
+
+Shape-constrained additive models (SCAMs) extend generalised additive models (GAMs) (as presented in Section \ref{subsec:gam-emulation}) by enforcing qualitative constraints, such as monotonicity or convexity, directly on the spline basis coefficients \cite{pya2015}.
+In a SCAM, the target function is modelled as
+\begin{equation}
+    g(\eta) = \beta_0 + \sum_{j=1}^p f_j(\eta),
+\end{equation}
+where each $f_j$ is represented by a spline expansion whose coefficients are constrained during estimation to satisfy the desired shape restriction.
+The model is fitted by penalised likelihood under linear inequality constraints on the coefficients, using methods closely related to standard GAM estimation \cite{wood2017}.
+
+For the normalised power prior, the convexity and monotonicity of $\log c_0(\eta)$ established in Appendix~\ref{proof:log-c0-convex} provide a natural set of shape constraints that can be directly encoded in the SCAM.
+By incorporating this structural information, the SCAM surrogate avoids the oscillatory artefacts that unconstrained smoothers may exhibit near regions of sparse design points.
+Compared with GP emulation, SCAMs are generally faster to fit and less sensitive to kernel hyperparameter choices, at the cost of lacking a principled uncertainty quantification mechanism.

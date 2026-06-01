@@ -4,9 +4,9 @@
 
 \section{Assessing exact and approximate samplers}
 
-The primary objective of this chapter is to compare exact and approximate inference procedures for the normalized power prior under controlled settings where the normalizing constant is analytically available.
+The primary objective of this chapter is to compare exact and approximate inference procedures for the normalized power prior under controlled settings where the normalising constant is analytically available.
 
-This allows us to evaluate not only computational efficiency, but also the inferential distortion introduced by noisy approximations of the normalizing constant ratio.
+This allows us to evaluate not only computational efficiency, but also the inferential distortion introduced by noisy approximations of the normalising constant ratio.
 
 A central distinction throughout the experiments is between:
 
@@ -64,7 +64,7 @@ The purpose of this experiment is not only to compare posterior distributions, b
 To accomplish this, we use a convergence-to-baseline protocol.
 
 The analytic Metropolis--Hastings sampler is used as the reference method.
-Since the Gaussian normalized power prior admits a closed-form normalizing constant ratio, this sampler directly evaluates the exact posterior density.
+Since the Gaussian normalized power prior admits a closed-form normalising constant ratio, this sampler directly evaluates the exact posterior density.
 Longer chains are used for the analytic reference in order to reduce Monte Carlo variability and provide a stable empirical baseline for posterior comparisons.
 
 The remaining methods are evaluated according to how efficiently they approach the analytic reference posterior.
@@ -78,16 +78,16 @@ We report the Wasserstein distance to the analytic baseline, total runtime, effe
 
 The Wasserstein distance is preferred over the Kolmogorov--Smirnov statistic because it provides a more stable and geometrically meaningful measure of posterior discrepancy, particularly for concentrated or skewed distributions.
 
-A central distinction between the methods is how the ratio of normalizing constants is handled.
-The Exchange MH algorithm avoids evaluating the normalizing constant entirely by introducing an auxiliary draw from the powered prior distribution at the proposed value of $\eta$.
+A central distinction between the methods is how the ratio of normalising constants is handled.
+The Exchange MH algorithm avoids evaluating the normalising constant entirely by introducing an auxiliary draw from the powered prior distribution at the proposed value of $\eta$.
 In the present Gaussian experiment, sampling from the powered prior can be performed exactly in closed form, making the exchange update computationally efficient while preserving exactness.
 
-The Prior IS and MLE-centered IS methods instead estimate the normalizing constant ratio through importance sampling constructions.
+The Prior IS and MLE-centered IS methods instead estimate the normalising constant ratio through importance sampling constructions.
 Both methods remain exact pseudo-marginal algorithms when embedded within the extended-state Metropolis--Hastings framework, provided the estimator is nonnegative and unbiased.
 The difference between the two approaches lies primarily in variance reduction.
 The MLE-centered proposal attempts to concentrate samples in regions of high likelihood in order to stabilize the importance weights.
 
-The Path Sampling PMMH method approximates the log normalizing constant ratio through thermodynamic integration along a temperature path.
+The Path Sampling PMMH method approximates the log normalising constant ratio through thermodynamic integration along a temperature path.
 Although effective in some settings, the resulting estimator is not guaranteed to satisfy the conditions required for exact pseudo-marginal inference and is therefore treated as an approximate baseline.
 
 \begin{figure}[H]
@@ -110,10 +110,10 @@ Although effective in some settings, the resulting estimator is not guaranteed t
 
 \subsubsection{Discussion of results}
 
-The results reveal a clear distinction between methods that directly target the exact posterior distribution and methods that rely on noisier approximations of the normalizing constant ratio.
+The results reveal a clear distinction between methods that directly target the exact posterior distribution and methods that rely on noisier approximations of the normalising constant ratio.
 
 First, the Exchange MH algorithm is nearly indistinguishable from the analytic reference posterior across all discrepancy regimes.
-This confirms empirically that the exchange construction correctly removes the intractable normalizing constant ratio while preserving the target posterior distribution.
+This confirms empirically that the exchange construction correctly removes the intractable normalising constant ratio while preserving the target posterior distribution.
 Moreover, because auxiliary draws from the powered prior are available analytically in the Gaussian setting, the exchange update remains computationally efficient despite being exact.
 
 The Prior IS and MLE-centered IS methods both exhibit sensitivity to the discrepancy regime.
@@ -128,14 +128,14 @@ The Path Sampling PMMH method displays the largest variability across discrepanc
 Because the thermodynamic integration estimator depends on Monte Carlo approximations along an entire temperature path, estimator variability accumulates and may degrade mixing efficiency.
 This effect is especially visible in diffuse posterior regimes.
 
-Overall, the experiments demonstrate that exact inference for the normalized power prior is computationally feasible through the Exchange algorithm, even in settings where direct evaluation of the normalizing constant ratio would otherwise be computationally prohibitive.
+Overall, the experiments demonstrate that exact inference for the normalized power prior is computationally feasible through the Exchange algorithm, even in settings where direct evaluation of the normalising constant ratio would otherwise be computationally prohibitive.
 The exchange sampler additionally provides a principled exact baseline against which approximate pseudo-marginal and future surrogate-based methods may be assessed.
 
 \subsection{Linear regression with Normal-Inverse-Gamma priors}
 \label{subsec:nig-lm-experiment}
 
 We next consider a Gaussian linear regression model with unknown variance.
-This experiment is designed to evaluate the exchange update in a setting where the normalized power prior remains analytically tractable, but the normalizing constant is no longer a simple linear function of the power parameter.
+This experiment is designed to evaluate the exchange update in a setting where the normalized power prior remains analytically tractable, but the normalising constant is no longer a simple linear function of the power parameter.
 Let $D_0 = (\bfX_0,\bfy_0)$ denote the historical data and let $D = (\bfX,\bfy)$ denote the current data.
 We assume
 \begin{equation}
@@ -161,7 +161,7 @@ For a fixed value of $\eta$, the powered prior is given by
         c_0(\eta)
     }.
 \end{equation}
-The normalizing constant is
+The normalising constant is
 \begin{equation}
     c_0(\eta)
     =
@@ -218,14 +218,14 @@ The exchange log-ratio for the $\eta$ update is
 \end{align}
 The proposal is then accepted with probability $\min\{1,\exp(\log R_{\mathrm{ex}})\}$.
 When the auxiliary draw from $\pi_{\eta'}(\bfbt,\sg \mid D_0)$ is exact, this update has the correct invariant distribution for the normalized power prior.
-This follows from the exchange algorithm for doubly-intractable distributions, where an auxiliary draw from the proposed normalized model cancels the unknown ratio of normalizing constants in the Metropolis-Hastings acceptance probability~\cite{murray2012}. 
+This follows from the exchange algorithm for doubly-intractable distributions, where an auxiliary draw from the proposed normalized model cancels the unknown ratio of normalising constants in the Metropolis--Hastings acceptance probability~\cite{murray2012}. 
 The exchange algorithm therefore provides an exact update for $\eta$ under the powered-prior simulation assumption.
 This assumption is satisfied in the present experiment because the powered prior is Normal-Inverse-Gamma.
 
 We compare three methods.
-The first method is an analytic Metropolis-Hastings reference that evaluates Equation~\eqref{eq:nig-lm-eta-marginal}.
-The second method is the exchange Metropolis-Hastings update in Equation~\eqref{eq:nig-lm-exchange-log-ratio}.
-The third method is a path-sampling pseudo-marginal method based on a Monte Carlo approximation of the normalizing constant ratio.
+The first method is an analytic Metropolis--Hastings reference that evaluates Equation~\eqref{eq:nig-lm-eta-marginal}.
+The second method is the exchange Metropolis--Hastings update in Equation~\eqref{eq:nig-lm-exchange-log-ratio}.
+The third method is a path-sampling pseudo-marginal method based on a Monte Carlo approximation of the normalising constant ratio.
 The path-sampling method is included as a computational baseline and is classified according to the exactness of the estimator used in its acceptance ratio.
 If the estimator is not non-negative and unbiased for the required marginal target, the method is treated as approximate rather than exact.
 This distinction follows the pseudo-marginal principle, where exactness requires a non-negative unbiased estimator of the target density on an extended space~\cite{andrieu2009}.
@@ -285,10 +285,10 @@ The behaviour across discrepancy regimes follows the same qualitative pattern as
 As the discrepancy between historical and current data increases, the posterior of $\eta$ shifts towards smaller values, reflecting the adaptive borrowing property of the normalised power prior.
 All three methods capture this behaviour faithfully, with no systematic distortion of the marginal posterior of $\sg$ or $\bfbt$ across regimes.
 
-\subsection{Logistic regression with surrogate normalizing constants}
+\subsection{Logistic regression with surrogate normalising constants}
 \label{subsec:logistic-surrogate-experiment}
 
-This experiment considers a logistic regression model for which the normalizing constant of the normalized power prior is not available in closed form.
+This experiment considers a logistic regression model for which the normalising constant of the normalized power prior is not available in closed form.
 The objective is to evaluate whether surrogate models can accurately emulate the function $c_0(\eta)$ and thereby provide a computationally efficient alternative to exact inference.
 
 Let $D_0=(\bfX_0,\bfy_0)$ denote the historical dataset and $D=(\bfX,\bfy)$ denote the current dataset.
@@ -331,14 +331,14 @@ For a proposed value $\eta'$, an auxiliary draw
 \end{equation}
 
 is generated using Stan.
-The resulting exchange acceptance ratio depends only on likelihood evaluations and does not require explicit computation of the normalizing constant ratio.
+The resulting exchange acceptance ratio depends only on likelihood evaluations and does not require explicit computation of the normalising constant ratio.
 Under exact simulation from the powered prior, the resulting Markov chain targets the correct normalized power prior posterior distribution.
 
 The remaining methods replace $c_0(\eta)$ by an emulator constructed from a finite set of training evaluations.
 
 We consider three surrogate models. The first is a spline emulator based on smoothing splines fitted to estimates of $\log c_0(\eta)$ over a grid of power parameters.
 The second is a Gaussian process emulator, which treats $\log c_0(\eta)$ as an unknown latent function and uses a probabilistic interpolation model to predict its value at unobserved values of $\eta$.
-The third is a shape-constrained additive model (SCAM), which incorporates structural information about the normalizing constant through monotonicity constraints.
+The third is a shape-constrained additive model (SCAM), which incorporates structural information about the normalising constant through monotonicity constraints.
 
 Since
 
@@ -355,7 +355,7 @@ Since
 the derivative process provides information about the qualitative shape of $\log c_0(\eta)$, which we incorporate through constrained smoothers, since the function $\eta \mapsto \log c_0(\eta)$ is convex, as shown in Appendix~\ref{proof:log-c0-convex}.
 These structural properties motivate the use of shape-constrained emulators in Section~\ref{subsec:scam-emulation}.
 
-In all cases, we emulate the log-normalizing constant using $K=3000$ points sampled via importance sampling.
+In all cases, we emulate the log-normalising constant using $K=3000$ points sampled via importance sampling.
 
 Three discrepancy scenarios are generated by increasing the separation between the historical and current regression coefficients.
 As in the previous experiments, increasing discrepancy is expected to shift posterior mass toward smaller values of $\eta$, indicating reduced borrowing from historical information.

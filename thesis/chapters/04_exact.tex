@@ -38,7 +38,7 @@ The remainder of this chapter focuses on the harder problem of updating $\eta$.
 \section{Exchange Metropolis--Hastings}
 \label{sec:exact-exchange}
 
-In order to apply the Exchange Algorithm, as presented in section \ref{subsec:exchange-algorithm}, we find the intractable quantity to be
+In order to apply the Exchange Algorithm, as presented in Section \ref{subsec:exchange-algorithm}, we find the intractable quantity to be
 \begin{equation}
 c_0(\eta)
 =
@@ -96,7 +96,7 @@ The Metropolis--Hastings ratio for a proposal $\eta \to \eta'$ is
 \end{equation}
 and the intractable ratio $c_0(\eta)/c_0(\eta')$ prevents direct evaluation.
 
-Recalling the thermodynamic identity established in \eqref{eq:normalizing-constant-log}, integrating from $\eta$ to $\eta'$ gives
+Recalling the thermodynamic identity established in \eqref{eq:normalising-constant-log}, integrating from $\eta$ to $\eta'$ gives
 \begin{equation}
     \label{eq:log-ratio-integral}
     \Delta(\eta, \eta')
@@ -134,7 +134,7 @@ For two values $\eta,\eta'\in[0,1]$, define
     \log\frac{c_0(\eta')}{c_0(\eta)}.
 \end{equation}
 Under the usual regularity conditions allowing differentiation under the integral sign, the thermodynamic identity gives
-% Identity is proved in Appendix~\ref{proof:deriv-normalizing-constant}.
+% Identity is proved in Appendix~\ref{proof:deriv-normalising-constant}.
 \begin{equation}
     \Delta(\eta,\eta')
     =
@@ -267,7 +267,7 @@ Using the exponential formula for a Poisson random variable, we obtain
     &=
     \exp\{-\Delta(\eta,\eta')\}.
 \end{align}
-Thus, $\widehat I(\eta,\eta')$ is an unbiased estimator of the normalizing-constant ratio $c_0(\eta)/c_0(\eta')$.
+Thus, $\widehat I(\eta,\eta')$ is an unbiased estimator of the normalising-constant ratio $c_0(\eta)/c_0(\eta')$.
 
 The efficiency of the estimator depends strongly on the envelope width $\lambda_{\eta,\eta'}=b_{\eta,\eta'}-a_{\eta,\eta'}$.
 Large envelopes lead to large Poisson counts and high estimator variability.
@@ -510,7 +510,7 @@ The expected number of Poisson factors is
 When the blockwise envelopes are much tighter than the full-data envelope, the product construction can be substantially more stable than the global estimator.
 
 This product estimator should not be confused with a genuine recursive divide-and-conquer Bernoulli factory.
-The estimator $\widehat I_{\mathrm{dc}}(\eta,\eta')$ is an unbiased estimator of a normalizing-constant ratio.
+The estimator $\widehat I_{\mathrm{dc}}(\eta,\eta')$ is an unbiased estimator of a normalising-constant ratio.
 However, using it as a noisy plug-in inside the Barker probability does not generally yield an exact Barker transition.
 A true DCBF Barker transition recursively constructs the accept--reject coin itself.
 At the leaves, one simulates smaller Bernoulli coins associated with subsets of likelihood factors.
@@ -520,7 +520,7 @@ Therefore, the recursive DCBF is a coin construction, not merely a product of ra
 \section{Pseudo-marginal via Importance Sampling}
 \label{sec:pseudo-marginal-is}
 
-An alternative to constructing an unbiased estimator of the ratio $c_0(\eta)/c_0(\eta')$ is to directly estimate the normalizing constant $c_0(\eta)$ itself and form the ratio from two independent estimates.
+An alternative to constructing an unbiased estimator of the ratio $c_0(\eta)/c_0(\eta')$ is to directly estimate the normalising constant $c_0(\eta)$ itself and form the ratio from two independent estimates.
 % While this does not resolve the Jensen bias when the log-ratio is exponentiated, it provides a practical family of estimators that are straightforward to implement.
 
 The simplest such approach is the \emph{prior Monte Carlo estimator}, which exploits the representation
@@ -530,7 +530,7 @@ The simplest such approach is the \emph{prior Monte Carlo estimator}, which expl
 Samples drawn directly from the prior $\pi_0$ are cheap to obtain and require no gradient information or auxiliary computations.
 The main limitation is that the prior and the power posterior $\pi_\eta(\theta) \propto L_0(\theta \mid D_0)^\eta \pi_0(\theta)$ can be poorly aligned, particularly when the historical data are informative, leading to high variance in the importance weights and an inefficient estimator.
 
-A more principled alternative is \emph{importance sampling} centered at the maximum likelihood estimate. Writing the normalizing constant as
+A more principled alternative is \emph{importance sampling} centered at the maximum likelihood estimate. Writing the normalising constant as
 \begin{equation*}
     c_0(\eta) = \int_{\theta\in\Theta} L_0(\theta\mid D_0)^\eta \pi_0(\theta)\dd{\theta} = \bE_{\theta\sim\pi_\text{MLE}}\qty[L_0(\theta\mid D_0)^\eta\dfrac{\pi_0(\theta)}{\pi_\text{MLE}(\theta)}],
 \end{equation*}
