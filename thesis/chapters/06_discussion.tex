@@ -1,3 +1,54 @@
 \chapter{Discussion}
 
-\subparagraph*{Code Availability} The code is available at: \url{https://github.com/adamesalles/npp-msc-thesis}. 
+\comEA{
+    Here I would like to mention the following:
+    - The NPP is a doubly-intractable problem, and the use of exact MCMC can help with this problem through a different approach than function emulating approximation.
+    - In our work, we developed the theoretical formulations to enable exact MCMC algorithms for the NPP, the Barker's method and the Exchange algorithm.
+    - The later is the most interesting and useful for the user, which we used to produce baselines to assess the performance of the approximate MCMC algorithms.
+    - We also tested the performance of the approximate MCMC algorithms on the NPP, which different approaches that surpass the current state-of-the-art methods.
+    - The empirical results have shown that the performance of the approximate MCMC algorithms is comparable to the performance of the exact MCMC algorithms and that the approximate MCMC algorithms are more efficient than the exact MCMC algorithms, in scenarios where we don't have access to the unnormalized posterior distribution.
+    - Our future work will be implementing a public R package that includes a black-box approach to approximate and exact MCMC algorithms for the NPP, which will be available on CRAN.
+    - Paper
+}
+
+\section{Summary of contributions}
+
+This thesis has developed exact Markov chain Monte Carlo methods for posterior inference under the normalised power prior (NPP), addressing a computational gap that has persisted in the literature since the NPP was formalised by \citeonline{duan2006} and further studied by \citeonline{carvalho2021}.
+The central challenge is the doubly intractable structure of the NPP posterior: the prior itself contains a normalising constant $c_0(\eta)$ that depends on the power parameter $\eta$ and cannot be evaluated in closed form for general likelihoods (Section~\ref{sec:dbl-int}).
+Previous approaches addressed this by approximating $c_0(\eta)$ through function emulation or Monte Carlo integration, but these methods lack formal guarantees and their bias is difficult to quantify without an exact reference.
+
+Our main theoretical contribution is the derivation of the thermodynamic identity \eqref{eq:normalizing-constant-log}, which expresses the log-derivative of $c_0(\eta)$ as a tractable conditional expectation under the power prior.
+This identity provides the analytical foundation for two complementary exact algorithms.
+The Poisson estimator (Section~\ref{subsec:poisson-estimator}) uses this identity to construct a non-negative unbiased estimator of the normalising constant ratio $c_0(\eta)/c_0(\eta')$, which can be embedded within a pseudo-marginal Metropolis--Hastings scheme while preserving exact invariance.
+The exchange algorithm (Section~\ref{sec:exact-exchange}) avoids evaluating $c_0(\eta)$ altogether by introducing an auxiliary draw from the proposed power prior, cancelling the intractable ratio through a careful augmentation of the target space.
+
+\section{Empirical findings}
+
+The exchange algorithm is the most practically useful of the exact methods developed here.
+When exact simulation from the powered prior $\pi_{\eta'}(\theta \mid D_0)$ is available, as it is for Gaussian and Normal--Inverse--Gamma likelihoods, the exchange update is both exact and computationally tractable, making it the natural choice for constructing reference posteriors against which other methods can be assessed.
+The experiments of Chapter~\ref{sec:exact} confirm that the exchange sampler faithfully recovers the analytic posterior across all discrepancy regimes, providing the first systematic exact baseline for the NPP in the literature.
+
+The approximate methods studied in Chapter~\ref{chap:approximate} (spline emulation, Gaussian process emulation, and shape-constrained additive models) all perform competitively with the exchange sampler when measured on the regression coefficients $\bfbt$, which are typically the primary inferential target in applications.
+Distortions in the marginal posterior of $\eta$ introduced by the surrogate approximations have limited downstream effect on $\bfbt$, suggesting that moderate approximation errors in $c_0(\eta)$ may be practically tolerable in many settings.
+Amongst the surrogate methods, the SCAM emulator stands out for its more conservative behaviour in the medium-discrepancy regime, where it better preserves posterior mass at intermediate values of $\eta$ relative to unconstrained spline and GP emulators.
+This confirms that incorporating the structural properties of $\log c_0(\eta)$, established in Appendix~\ref{proof:log-c0-convex}, into the surrogate model leads to more reliable inference.
+
+\section{Limitations and future directions}
+
+The exact methods developed here require either exact simulation from the powered prior (exchange algorithm) or the availability of deterministic bounds on the historical log-likelihood (Poisson estimator).
+Both conditions impose non-trivial requirements on the model class.
+For the exchange algorithm, exact simulation from $\pi_{\eta'}(\theta \mid D_0)$ is available in conjugate families but must be replaced by an approximate inner MCMC chain in general non-conjugate models, at the cost of exactness.
+For the Poisson estimator, the bounded-support assumption that enables tight local envelopes is satisfied for compact priors and Gaussian likelihoods on bounded domains, but fails for unbounded parameter spaces without additional truncation.
+Extending both constructions to a broader class of models, in particular to generalised linear models and hierarchical settings, is the most immediate direction for future work.
+
+A second direction concerns the relationship between the exact and approximate methods.
+The experiments demonstrate that surrogate-based methods can be computationally far more efficient than exact approaches when the cost of exact powered-prior simulation is high, as in the logistic regression experiment where auxiliary draws require running Stan at every iteration.
+Developing strategies that adaptively switch between exact and approximate methods, for instance, using a surrogate for the bulk of MCMC exploration and correcting with an occasional exact step, could provide a principled route to scalable inference with finite-sample guarantees.
+
+Finally, the methods and theory developed here are currently available as research code.
+A priority for future work is the development of a public \textsf{R} package, to be submitted to CRAN, that provides a black-box interface to both approximate and exact MCMC algorithms for the normalised power prior.
+Such a package would make these methods accessible to practitioners in clinical trial design and other applied settings where the NPP has seen the most interest.
+
+\vspace{1em}
+\subparagraph*{Code Availability}
+The code for all experiments and methods described in this thesis is available at \url{https://github.com/adamesalles/npp-msc-thesis}.

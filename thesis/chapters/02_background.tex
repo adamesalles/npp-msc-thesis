@@ -363,7 +363,19 @@ In the context of Normalized Power Priors (NPP), this issue naturally appears du
 \section{The Normalised Power Prior}
 \label{sec:npp}
 
-\comEA{Write some motivation here.}
+In many applied settings, a new study is conducted in a context where data from previous, related studies are already available.
+Clinical trials are a canonical example: regulatory agencies and trial designers routinely face the question of how much weight to give historical control data when planning or analysing a new trial \cite{spiegelhalter2004, ibrahim2015}.
+A natural Bayesian strategy is to use the historical data to construct an informative prior for the current analysis.
+However, doing so naively, i.e., by treating the historical data as part of the current dataset, ignores the possibility that the two data sources are not fully exchangeable, for instance due to changes in patient populations, measurement protocols, or underlying disease dynamics.
+
+The power prior framework of \citeonline{chen2000} addresses this by introducing a scalar parameter $\eta \in [0,1]$ that controls how much influence the historical data exert on the prior.
+Rather than fully incorporating historical evidence, the prior is formed by raising the historical likelihood to the power $\eta$ before combining it with an initial prior.
+When $\eta = 0$, the historical data are ignored entirely; when $\eta = 1$, they are weighted equally to a single observation from the current study.
+Intermediate values allow a continuum of borrowing, and treating $\eta$ as unknown and inferring it from the data provides automatic, data-driven borrowing strength.
+
+The normalised power prior \cite{duan2006, carvalho2021} is the version of the power prior that properly accounts for the normalising constant of the powered likelihood, ensuring that $\eta$ has a coherent joint prior interpretation alongside $\theta$.
+As established in Section~\ref{sec:dbl-int}, this normalisation introduces a parameter-dependent constant $c_0(\eta)$ that renders the posterior doubly intractable.
+This computational difficulty is the central challenge that this thesis addresses.
 
 \subsection{Formulation}
 

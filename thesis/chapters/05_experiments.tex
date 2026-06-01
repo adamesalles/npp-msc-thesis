@@ -267,6 +267,24 @@ The norm $\norm{\bfbt}_2$ summarizes the magnitude of the regression coefficient
 
 \input{../software/experiments/results/nig_lm_exchange/table_posterior_summaries.tex}
 
+\subsubsection{Discussion of results}
+
+The most striking finding of this experiment is the close agreement between the Exchange Metropolis--Hastings sampler and the Path Sampling PMMH method across all three discrepancy scenarios.
+
+Both methods produce posterior distributions of $\eta$, $\norm{\bfbt}_2$, and $\sg$ that are nearly indistinguishable from the analytic reference, as measured by the Wasserstein distance.
+This is a non-trivial result, because the two methods operate through fundamentally different mechanisms.
+The exchange update avoids evaluating $c_0(\eta)$ entirely by introducing an exact auxiliary draw from the powered Normal--Inverse--Gamma prior.
+
+The path-sampling method instead approximates the log-ratio $\log c_0(\eta')/c_0(\eta)$ through Monte Carlo integration along a temperature path, and is therefore only asymptotically exact when the number of integration points is large.
+The empirical equivalence of the two methods in this setting suggests that, for the Normal--Inverse--Gamma model, the path-sampling estimator achieves sufficient accuracy at the number of integration points used, and its residual bias is too small to produce discernible differences in posterior summaries.
+
+This observation is practically important: it implies that the path-sampling pseudo-marginal approach can serve as a reliable and computationally competitive alternative to the exchange algorithm in settings where the powered prior is conjugate and exact simulation is inexpensive.
+At the same time, the analytic reference confirms that both methods are correctly targeting the true posterior, lending further empirical credibility to the exchange correctness argument of Appendix~\ref{proof:exchange-correctness}.
+
+The behaviour across discrepancy regimes follows the same qualitative pattern as in the Gaussian experiment of Section~\ref{subsec:gaussian-convergence}.
+As the discrepancy between historical and current data increases, the posterior of $\eta$ shifts towards smaller values, reflecting the adaptive borrowing property of the normalised power prior.
+All three methods capture this behaviour faithfully, with no systematic distortion of the marginal posterior of $\sg$ or $\bfbt$ across regimes.
+
 \subsection{Logistic regression with surrogate normalizing constants}
 \label{subsec:logistic-surrogate-experiment}
 
