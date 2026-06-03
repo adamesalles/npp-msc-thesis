@@ -26,7 +26,7 @@ Unlike density-based divergences, the Wasserstein distance does not require kern
 \subsection{Using exact methods as baseline}
 
 The Exchange MH algorithm described in Section~\ref{sec:exact-exchange} serves as the primary exact reference throughout the experiments.
-Where the powered prior $\pi_{\eta'}(\theta \mid D_0)$ is available in closed form (Gaussian and Normal--Inverse--Gamma models), the exchange update is exact and computationally efficient.
+Where the power prior $\pi_{\eta'}(\theta \mid D_0)$ is available in closed form (Gaussian and Normal--Inverse--Gamma models), the exchange update is exact and computationally efficient.
 
 The importance sampling estimators $\delta_a$ (prior IS) and $\delta_b$ (MLE-centred IS), introduced in Section~\ref{sec:pseudo-marginal-is}, are used as pseudo-marginal baselines.
 They provide non-negative unbiased estimates of $c_0(\eta)$ and can be embedded within a Metropolis--Hastings scheme, yielding exact pseudo-marginal chains under the conditions of \citeonline{andrieu2009}.
@@ -79,8 +79,8 @@ We report the Wasserstein distance to the analytic baseline, total runtime, effe
 The Wasserstein distance is preferred over the Kolmogorov--Smirnov statistic because it provides a more stable and geometrically meaningful measure of posterior discrepancy, particularly for concentrated or skewed distributions.
 
 A central distinction between the methods is how the ratio of normalising constants is handled.
-The Exchange MH algorithm avoids evaluating the normalising constant entirely by introducing an auxiliary draw from the powered prior distribution at the proposed value of $\eta$.
-In the present Gaussian experiment, sampling from the powered prior can be performed exactly in closed form, making the exchange update computationally efficient while preserving exactness.
+The Exchange MH algorithm avoids evaluating the normalising constant entirely by introducing an auxiliary draw from the power prior distribution at the proposed value of $\eta$.
+In the present Gaussian experiment, sampling from the power prior can be performed exactly in closed form, making the exchange update computationally efficient while preserving exactness.
 
 The Prior IS and MLE-centred IS methods instead estimate the normalising constant ratio through importance sampling constructions.
 Both methods remain exact pseudo-marginal algorithms when embedded within the extended-state Metropolis--Hastings framework, provided the estimator is nonnegative and unbiased.
@@ -114,7 +114,7 @@ The results reveal a clear distinction between methods that directly target the 
 
 First, the Exchange MH algorithm is nearly indistinguishable from the analytic reference posterior across all discrepancy regimes.
 This confirms empirically that the exchange construction correctly removes the intractable normalising constant ratio while preserving the target posterior distribution.
-Moreover, because auxiliary draws from the powered prior are available analytically in the Gaussian setting, the exchange update remains computationally efficient despite being exact.
+Moreover, because auxiliary draws from the power prior are available analytically in the Gaussian setting, the exchange update remains computationally efficient despite being exact.
 
 The Prior IS and MLE-centred IS methods both exhibit sensitivity to the discrepancy regime.
 Under low discrepancy, where the posterior distribution of $\eta$ is diffuse, the variance of the importance weights becomes more pronounced and larger computational effort is required to achieve the target Wasserstein tolerance.
@@ -151,7 +151,7 @@ The initial prior is Normal-Inverse-Gamma,
     \qquad
     \sg \sim \InvGam(a,b).
 \end{equation}
-For a fixed value of $\eta$, the powered prior is given by
+For a fixed value of $\eta$, the power prior is given by
 \begin{equation}
     \pi_{\eta}(\bfbt,\sg \mid D_0)
     =
@@ -220,7 +220,7 @@ The proposal is then accepted with probability $\min\{1,\exp(\log R_{\mathrm{ex}
 When the auxiliary draw from $\pi_{\eta'}(\bfbt,\sg \mid D_0)$ is exact, this update has the correct invariant distribution for the normalised power prior.
 This follows from the exchange algorithm for doubly-intractable distributions, where an auxiliary draw from the proposed normalised model cancels the unknown ratio of normalising constants in the Metropolis--Hastings acceptance probability~\cite{murray2012}. 
 The exchange algorithm therefore provides an exact update for $\eta$ under the powered-prior simulation assumption.
-This assumption is satisfied in the present experiment because the powered prior is Normal-Inverse-Gamma.
+This assumption is satisfied in the present experiment because the power prior is Normal-Inverse-Gamma.
 
 We compare three methods.
 The first method is an analytic Metropolis--Hastings reference that evaluates Equation~\eqref{eq:nig-lm-eta-marginal}.
@@ -278,7 +278,7 @@ The exchange update avoids evaluating $c_0(\eta)$ entirely by introducing an exa
 The path-sampling method instead approximates the log-ratio $\log c_0(\eta')/c_0(\eta)$ through Monte Carlo integration along a temperature path, and is therefore only asymptotically exact when the number of integration points is large.
 The empirical equivalence of the two methods in this setting suggests that, for the Normal--Inverse--Gamma model, the path-sampling estimator achieves sufficient accuracy at the number of integration points used, and its residual bias is too small to produce discernible differences in posterior summaries.
 
-This observation is practically important: it implies that the path-sampling pseudo-marginal approach can serve as a reliable and computationally competitive alternative to the exchange algorithm in settings where the powered prior is conjugate and exact simulation is inexpensive.
+This observation is practically important: it implies that the path-sampling pseudo-marginal approach can serve as a reliable and computationally competitive alternative to the exchange algorithm in settings where the power prior is conjugate and exact simulation is inexpensive.
 At the same time, the analytic reference confirms that both methods are correctly targeting the true posterior, lending further empirical credibility to the exchange correctness argument of Appendix~\ref{proof:exchange-correctness}.
 
 The behaviour across discrepancy regimes follows the same qualitative pattern as in the Gaussian experiment of Section~\ref{subsec:gaussian-convergence}.
@@ -332,7 +332,7 @@ For a proposed value $\eta'$, an auxiliary draw
 
 is generated using Stan.
 The resulting exchange acceptance ratio depends only on likelihood evaluations and does not require explicit computation of the normalising constant ratio.
-Under exact simulation from the powered prior, the resulting Markov chain targets the correct normalised power prior posterior distribution.
+Under exact simulation from the power prior, the resulting Markov chain targets the correct normalised power prior posterior distribution.
 
 The remaining methods replace $c_0(\eta)$ by an emulator constructed from a finite set of training evaluations.
 

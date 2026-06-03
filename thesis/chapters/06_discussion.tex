@@ -25,7 +25,7 @@ The exchange algorithm (Section~\ref{sec:exact-exchange}) avoids evaluating $c_0
 \section{Empirical findings}
 
 The exchange algorithm is the most practically useful of the exact methods developed here.
-When exact simulation from the powered prior $\pi_{\eta'}(\theta \mid D_0)$ is available, as it is for Gaussian and Normal--Inverse--Gamma likelihoods, the exchange update is both exact and computationally tractable, making it the natural choice for constructing reference posteriors against which other methods can be assessed.
+When exact simulation from the power prior $\pi_{\eta'}(\theta \mid D_0)$ is available, as it is for Gaussian and Normal--Inverse--Gamma likelihoods, the exchange update is both exact and computationally tractable, making it the natural choice for constructing reference posteriors against which other methods can be assessed.
 The experiments of Chapter~\ref{sec:exact} confirm that the exchange sampler faithfully recovers the analytic posterior across all discrepancy regimes, providing the first systematic exact baseline for the NPP in the literature.
 
 The approximate methods studied in Chapter~\ref{chap:approximate} (spline emulation, Gaussian process emulation, and shape-constrained additive models) all perform competitively with the exchange sampler when measured on the regression coefficients $\bfbt$, which are typically the primary inferential target in applications.
@@ -35,7 +35,7 @@ This confirms that incorporating the structural properties of $\log c_0(\eta)$, 
 
 \section{Limitations and future directions}
 
-The exact methods developed here require either exact simulation from the powered prior (exchange algorithm) or the availability of deterministic bounds on the historical log-likelihood (Poisson estimator).
+The exact methods developed here require either exact simulation from the power prior (exchange algorithm) or the availability of deterministic bounds on the historical log-likelihood (Poisson estimator).
 Both conditions impose non-trivial requirements on the model class.
 For the exchange algorithm, exact simulation from $\pi_{\eta'}(\theta \mid D_0)$ is available in conjugate families but must be replaced by an approximate inner MCMC chain in general non-conjugate models, at the cost of exactness.
 For the Poisson estimator, the bounded-support assumption that enables tight local envelopes is satisfied for compact priors and Gaussian likelihoods on bounded domains, but fails for unbounded parameter spaces without additional truncation.
