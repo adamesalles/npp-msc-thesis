@@ -25,17 +25,12 @@
 \usepackage{mathtools}
 \usepackage{amsfonts}
 \usepackage{amssymb}
-%\usepackage{mathtools}
 \usepackage{caption}
 \usepackage{subcaption}
 \usepackage{tabularx}
 \usepackage{csquotes}
 \usepackage{makecell}
 
-% \usepackage{subfigure}
-
-%\usepackage{kbordermatrix}
-\usepackage{amsmath}
 
 % \usepackage[portuguese,ruled,lined,linesnumbered]{algorithm2e}
 \usepackage[ruled,lined,linesnumbered]{algorithm2e}
@@ -102,7 +97,6 @@
 % ---
 \newtheorem{name}{Printed output}
 
-\selectlanguage{english}
 \renewcommand{\orientadorname}{Supervisor:}
 
 
@@ -186,7 +180,7 @@
 % \usepackage{algorithm2e}
 
 \newif\ifcomments
-\commentstrue % comment out to hide comments
+% \commentstrue % comment out to hide comments
 
 \input{other/commands}
 
@@ -207,7 +201,7 @@
 % ---
 % Capa
 % ---
-{\LARGE \color{red} PRELIMINARY VERSION ({\selectlanguage{english}\today})}
+{\LARGE \color{red} PRELIMINARY VERSION ({\selectlanguage{british}\today})}
 \imprimircapa
 % ---
 \cleardoublepage
@@ -257,15 +251,15 @@ this thesis at any other institution in order to obtain a degree. \\
 % ---
 % Dedicatória
 % ---
-% \begin{dedicatoria}
-%   \vspace*{\fill}
-%   \centering
-%   \noindent
-%   \textit{ To anyone who has ever believed in Education as the main way to overcome adversity. } \\
-%   \vspace{2cm}
-%   \textit{ To the memory of Marcos Vinícius Gomes, the funniest friend I could ever have had. }
-%   \vspace*{\fill}
-% \end{dedicatoria}
+\begin{dedicatoria}
+  \vspace*{\fill}
+  \centering
+  \noindent
+  \textit{ To anyone who has ever believed in Education as the main way to overcome adversity. } \\
+  \vspace{2cm}
+  \textit{ To the memory of Marcos Vinícius Gomes, the funniest friend I could ever have had. }
+  \vspace*{\fill}
+\end{dedicatoria}
 % ---
 
 
@@ -273,29 +267,23 @@ this thesis at any other institution in order to obtain a degree. \\
 % ---
 % Agradecimentos
 % ---
-\begin{agradecimentos}
-
-I would like to thank [many people]
-
-\end{agradecimentos}
+\input{extra/acknowledgements.tex}
 % ---
 
 \newpage
 % ---
 % Epígrafe
 % ---
-% \begin{epigrafe}
-%     \vspace*{\fill}
-% 	    \begin{flushright}
-%             \noindent
-%             \textit{``Agora eu era o herói, e o meu cavalo só falava inglês...''}\\
-%             {\tiny \itshape ``Now, I was* the hero, and my horse could only speak English...''}
-            
-%             From \emph{João e Maria} (1977) by Chico Buarque and Sivuca.
-% 		\end{flushright}
-% \end{epigrafe}
+
 \begin{epigrafe}
     \vspace*{\fill}
+		\begin{flushright}
+            \noindent
+            \textit{``Se eu soubesse antes o que sei agora, erraria tudo exatamente igual.''}\\
+			{\tiny \itshape ``If I knew then what I know now, I would have made exactly the same mistakes.''}
+
+            From \emph{Surfando Karmas \& DNA} (2001) by Engenheiros do Hawaii
+		\end{flushright}
 	    \begin{flushright}
             \noindent
             \textit{``So, nobody told me what to do, and there was no preconception of what to do.''}\\
@@ -303,7 +291,6 @@ I would like to thank [many people]
 		\end{flushright}
 \end{epigrafe}
 
-% Coisas Que Eu Sei -- candidate.
 
 % ---
 \newpage

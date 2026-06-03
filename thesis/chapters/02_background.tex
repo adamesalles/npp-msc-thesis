@@ -150,7 +150,7 @@ The usual practical response is to discard an initial portion of the chain, know
 However, burn-in is an asymptotic correction rather than an exact one.
 This distinction is central to the later discussion of exact and unbiased MCMC methods.
 
-\section{Classical Markov Chain Monte Carlo methods}
+\section{Classical Markov chain Monte Carlo methods}
 
 Markov chain Monte Carlo methods construct a transition kernel $P$ on $(\Theta,\mathcal{F})$ such that the posterior distribution $\pi$ is invariant.
 
@@ -189,7 +189,7 @@ Metropolis--Hastings is more general and only requires evaluation of the target 
 Both algorithms are asymptotically exact in the sense that their ergodic averages converge to posterior expectations under suitable conditions.
 They are not exact in the finite-time sense, because samples obtained after a finite number of iterations still depend on the initial state.
 
-\subsection{Gibbs Sampling}
+\subsection{Gibbs sampling}
 
 Gibbs sampling is designed for posterior distributions whose full conditional distributions are available and easy to sample from.
 
@@ -384,8 +384,7 @@ the power parameter $\eta$.
 This is an unusual member of the doubly intractable family, in that the intractable
 constant arises through the Bayesian modelling choice rather than through the likelihood
 structure itself.
-The methods reviewed and developed in
-Chapter~\ref{sec:exact} are designed to handle precisely this setting.
+The methods reviewed in Section~\ref{sec:mcmc-intractable} and developed in Chapter~\ref{sec:exact} are designed to handle precisely this setting.
 
 \section{The Normalised Power Prior}
 \label{sec:npp}
@@ -476,6 +475,7 @@ Each of these alternatives makes different modelling assumptions about the excha
 The normalised power prior is particularly appealing when a single scalar parameter $\eta \in [0,1]$ suffices to capture the degree of historical relevance, and when the historical and current data share the same likelihood structure.
 
 \section{MCMC methods for intractable normalising constants}
+\label{sec:mcmc-intractable}
 
 Many Bayesian models involve posterior distributions whose density can only be evaluated up to a normalising constant.
 This is not an obstacle for ordinary Metropolis--Hastings when the unknown normalising constant does not depend on the parameter being updated.
@@ -486,7 +486,7 @@ First, we discuss the exchange algorithm, which removes the intractable ratio of
 Second, we discuss Barker's algorithm and Bernoulli factory methods, which replace the explicit evaluation of an acceptance probability by an exact randomisation procedure.
 Third, we discuss divide-and-conquer Bernoulli factories, which aim to reduce the computational cost of Bernoulli factory methods in models with many likelihood factors.
 
-\subsection{The Exchange algorithm}
+\subsection{The exchange algorithm}
 \label{subsec:exchange-algorithm}
 
 Consider a family of unnormalised densities $f_\eta(\theta)$ with normalising constant
@@ -542,7 +542,7 @@ Therefore, the intractable ratio $c(\eta)/c(\eta')$ is not evaluated directly.
 
 The exchange algorithm is particularly well-suited to settings where exact simulation from the normalised model is available.
 
-\subsection{Barker's algorithm for exact inference}
+\subsection{Barker's algorithm}
 
 Barker's algorithm \cite{barker1965} is an alternative accept--reject rule for Markov chain Monte Carlo.
 For a target distribution $\pi(\theta)$ and proposal density $q(\theta' \mid \theta)$, define the usual Metropolis--Hastings odds ratio as
@@ -889,7 +889,7 @@ This constraint is not severe for the one-dimensional function $g: [0,1] \to \bR
 
 
 
-\subsection{Generalised Additive Models}
+\subsection{Generalised additive models}
 \label{subsec:gam-emulation}
 
 Generalised additive models (GAMs) \cite{hastie1990, wood2017} provide a flexible semiparametric framework for regression in which the response is modelled as a sum of smooth functions of the predictors.

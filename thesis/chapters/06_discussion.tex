@@ -30,7 +30,7 @@ The experiments of Chapter~\ref{sec:exact} confirm that the exchange sampler fai
 
 The approximate methods studied in Chapter~\ref{chap:approximate} (spline emulation, Gaussian process emulation, and shape-constrained additive models) all perform competitively with the exchange sampler when measured on the regression coefficients $\bfbt$, which are typically the primary inferential target in applications.
 Distortions in the marginal posterior of $\eta$ introduced by the surrogate approximations have limited downstream effect on $\bfbt$, suggesting that moderate approximation errors in $c_0(\eta)$ may be practically tolerable in many settings.
-Amongst the surrogate methods, the SCAM emulator stands out for its more conservative behaviour in the medium-discrepancy regime, where it better preserves posterior mass at intermediate values of $\eta$ relative to unconstrained spline and GP emulators.
+Among the surrogate methods, the SCAM emulator stands out for its more conservative behaviour in the medium-discrepancy regime, where it better preserves posterior mass at intermediate values of $\eta$ relative to unconstrained spline and GP emulators.
 This confirms that incorporating the structural properties of $\log c_0(\eta)$, established in Appendix~\ref{proof:log-c0-convex}, into the surrogate model leads to more reliable inference.
 
 \section{Limitations and future directions}

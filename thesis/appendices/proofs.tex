@@ -93,20 +93,22 @@ The factors $c_0(\eta)$ and $c_0(\eta')$ cancel, yielding
          {L_0(D_0 \mid \theta^\star)^{\eta' - \eta}},
 \end{equation}
 which is exactly the ratio in Section~\ref{sec:exact-exchange}.
-To confirm that marginalising $\widetilde\pi(\eta, \theta^\star)$ over $\theta^\star$ recovers
-  the desired target, note that
-  \begin{align}
-      \int \widetilde\pi(\eta, \theta^\star) \, \dd\theta^\star
-      &\propto
-      \pi(\eta \mid \theta) \int \pi_{\eta'}(\theta^\star \mid D_0) \, \dd\theta^\star
-      =
-      \pi(\eta \mid \theta),
-  \end{align}
-  since $\pi_{\eta'}(\cdot \mid D_0)$ is a proper density.
-As the augmented kernel satisfies detailed balance with respect to $\widetilde\pi$, and since the marginal of $\widetilde\pi$ over $\theta^\star$ recovers $\pi(\eta \mid \theta)$, the exchange update has the correct invariant distribution.
+The augmented kernel therefore satisfies detailed balance with respect to $\widetilde\pi$.
+It remains to verify that the marginal of $\widetilde\pi$ over $\theta^\star$ equals the desired target $\pi(\eta \mid \theta)$.
+Indeed,
+\begin{align}
+    \int_\Theta \widetilde\pi(\eta, \theta^\star) \, \dd\theta^\star
+    &\propto
+    \pi(\eta \mid \theta)
+    \int_\Theta \pi_{\eta'}(\theta^\star \mid D_0) \, \dd\theta^\star
+    =
+    \pi(\eta \mid \theta),
+\end{align}
+since $\pi_{\eta'}(\cdot \mid D_0)$ is a proper probability density integrating to one.
+Hence the marginal invariant distribution of $\eta$ under the augmented kernel is $\pi(\eta \mid \theta)$, as required.
 \end{proof}
 
-\section{Convexity of $\log c_0(\eta)$}
+\section{Convexity of log-normalising constant}
 \label{proof:log-c0-convex}
 
 \begin{proof}

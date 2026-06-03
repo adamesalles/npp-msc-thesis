@@ -1,0 +1,17 @@
+Na modelagem estatística com dados históricos, um desafio central é integrar efetivamente evidências prévias com observações correntes.
+Essa questão é especialmente relevante em ensaios clínicos e aplicações médicas, nos quais o uso de dados históricos pode aumentar tanto a eficiência quanto a robustez da inferência.
+Uma estratégia bayesiana natural para esse fim é o uso de prioris informativas.
+Dentre elas, a Normalised Power Prior tem atraído interesse considerável por oferecer uma forma principiada de controlar a influência das informações históricas.
+O método introduz um parâmetro de potência, $\eta \in [0, 1]$, que governa o grau de incorporação: $\eta = 0$ descarta os dados passados, ao passo que $\eta = 1$ os incorpora integralmente.
+Essa flexibilidade torna o arcabouço bastante atraente na prática.
+Apesar de suas vantagens, a Normalised Power Prior induz uma posteriori duplamente intratável: a priori em si contém uma constante normalizadora $c_0(\eta)$ que depende do parâmetro de potência $\eta$ e não está disponível em forma fechada para a maioria dos modelos de interesse, inviabilizando a aplicação direta do algoritmo Metropolis--Hastings padrão.
+As abordagens existentes dependem, portanto, de métodos de inferência aproximada que frequentemente carecem de garantias teóricas e propriedades de convergência explícitas.
+Para superar essas limitações, propomos algoritmos exatos de Markov chain Monte Carlo que evitam a avaliação direta da razão de constantes de normalização.
+A ideia central é uma identidade termodinâmica que expressa a log-razão das constantes de normalização como uma esperança condicional tratável sob a power prior.
+Explorando essa identidade, construímos estimadores não negativos e não viesados da razão de constantes de normalização via integração de Monte Carlo, os quais são incorporados em um esquema Exchange Metropolis--Hastings e em um método pseudo-marginal.
+Avaliamos o método em modelos gaussianos sob diferentes graus de compatibilidade entre dados históricos e correntes.
+Os resultados demonstram que o algoritmo reflete adequadamente o conflito entre os dados ao encolher $\eta$ quando os conjuntos são incompatíveis, ao mesmo tempo que recupera o comportamento \textit{a posteriori} correto quando estão alinhados.
+Comparações com referenciais analíticos confirmam que o método obtém estimativas confiáveis tanto dos parâmetros do modelo quanto do parâmetro de potência, com eficiência adequada ao uso prático.
+Isso fornece uma alternativa exata e rigorosa às abordagens aproximadas, oferecendo garantias mais sólidas para aplicações como o planejamento adaptativo de ensaios clínicos.
+
+\textbf{Palavras-chave:} Inferência Bayesiana; Power Prior; Distribuições Duplamente Intratáveis; MCMC Exato; Análise de Dados Históricos

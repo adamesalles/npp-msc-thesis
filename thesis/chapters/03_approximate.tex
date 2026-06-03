@@ -14,22 +14,8 @@ Our contributions in this area:
 
 \section{Emulating the normalising constant}
 
-As established in Section~\ref{sec:npp}, the normalising constant
-
-\begin{equation*}
-    c_0(\eta)
-    =
-    \int_{\Theta}
-    L(D_0 \mid \theta)^\eta
-    \pi_0(\theta)
-    \dd{\theta}
-\end{equation*}
-
-also defined in \eqref{eq:normalising-constant} cannot be evaluated analytically in general.
-
-As a consequence, direct evaluation of the posterior density becomes infeasible.
-A common strategy is therefore to replace $c_0(\eta)$ by a surrogate approximation constructed from evaluations at a finite collection of design points.
-
+As established in Section~\ref{sec:npp}, the normalising constant $c_0(\eta)$ of \eqref{eq:normalising-constant} cannot be evaluated analytically in general.
+Direct evaluation of the posterior density is therefore infeasible.
 More precisely, suppose we evaluate the log-normalising constant
 
 \begin{equation}
@@ -112,7 +98,7 @@ Approximations that ignore such information may generate unrealistic artifacts, 
 These issues motivate the incorporation of structural constraints into the emulation procedure.
 
 \subsection{Shape-constrained Gaussian process emulation}
-\label{subsec:shape-constraints-gps}
+\label{subsec:gp-shape-constrained}
 
 One strategy for improving the stability of the emulator is to incorporate qualitative information about the target function directly into the model.
 
@@ -164,9 +150,7 @@ We refer to \citeonline{riihmaki2010, wang2016} and \citeonline{adame2025} for r
 \subsection{Shape-constrained additive models}
 \label{subsec:scam-emulation}
 
-An alternative strategy is based on shape-constrained additive models (SCAMs).
-
-Shape-constrained additive models (SCAMs) extend generalised additive models (GAMs) (as presented in Section \ref{subsec:gam-emulation}) by enforcing qualitative constraints, such as monotonicity or convexity, directly on the spline basis coefficients \cite{pya2015}.
+An alternative strategy is based on shape-constrained additive models (SCAMs), which extend generalised additive models (GAMs) (as presented in Section \ref{subsec:gam-emulation}) by enforcing qualitative constraints, such as monotonicity or convexity, directly on the spline basis coefficients \cite{pya2015}.
 
 In a SCAM, the target function is modelled as
 \begin{equation}
@@ -268,7 +252,7 @@ As established in Section~\ref{sec:dbl-int}, doubly intractable distributions ar
 The normalised power prior is a canonical example of this phenomenon.
 This section reviews the main computational strategies available in this setting, with a focus on the emulation approach of \citeonline{park2020} and its applicability to the NPP.
 
-A number of MCMC methods have been proposed to address this problem, including auxiliary variable approaches such as the exchange algorithm and the double Metropolis--Hastings algorithm \cite{liang2010}.
+A number of MCMC methods have been proposed to address this problem, including auxiliary variable approaches such as the exchange algorithm and the double Metropolis--Hastings algorithm \cite{liang2009}.
 While these methods target the exact posterior distribution, they require simulating auxiliary variables at each MCMC iteration, which becomes computationally expensive in complex or high-dimensional models.
 
 An alternative strategy is proposed by \citeonline{park2020}, who introduce a function emulation approach to approximate the intractable normalising constant. Their method replaces repeated Monte Carlo estimation of $Z(\theta)$ with a two-stage surrogate model.
