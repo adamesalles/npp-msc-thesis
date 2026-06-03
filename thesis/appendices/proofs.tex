@@ -54,7 +54,7 @@ which establishes the claim.
 \begin{proof}
 We verify detailed balance for the augmented kernel.
 Let $\pi(\eta \mid \theta) \propto \pi_A(\eta)\, L_0(D_0 \mid \theta)^\eta / c_0(\eta)$ denote the conditional target for $\eta$.
-The exchange algorithm augments the state space with $\theta^\star$ drawn from the proposed normalized model:
+The exchange algorithm augments the state space with $\theta^\star$ drawn from the proposed normalised model:
 \begin{equation}
     \theta^\star \sim \pi_{\eta'}(\theta \mid D_0)
     =
@@ -93,7 +93,17 @@ The factors $c_0(\eta)$ and $c_0(\eta')$ cancel, yielding
          {L_0(D_0 \mid \theta^\star)^{\eta' - \eta}},
 \end{equation}
 which is exactly the ratio in Section~\ref{sec:exact-exchange}.
-Since the augmented kernel satisfies detailed balance with respect to $\widetilde\pi$, and since the marginal of $\widetilde\pi$ over $\theta^\star$ recovers $\pi(\eta \mid \theta)$, the exchange update has the correct invariant distribution.
+To confirm that marginalising $\widetilde\pi(\eta, \theta^\star)$ over $\theta^\star$ recovers
+  the desired target, note that
+  \begin{align}
+      \int \widetilde\pi(\eta, \theta^\star) \, \dd\theta^\star
+      &\propto
+      \pi(\eta \mid \theta) \int \pi_{\eta'}(\theta^\star \mid D_0) \, \dd\theta^\star
+      =
+      \pi(\eta \mid \theta),
+  \end{align}
+  since $\pi_{\eta'}(\cdot \mid D_0)$ is a proper density.
+As the augmented kernel satisfies detailed balance with respect to $\widetilde\pi$, and since the marginal of $\widetilde\pi$ over $\theta^\star$ recovers $\pi(\eta \mid \theta)$, the exchange update has the correct invariant distribution.
 \end{proof}
 
 \section{Convexity of $\log c_0(\eta)$}
@@ -114,6 +124,3 @@ By \eqref{eq:normalising-constant-log}, the second derivative satisfies
 where the identity follows by differentiating under the integral sign and recognising the resulting expression as a variance under $\pi_\eta$.
 Since the second derivative is non-negative, $\log c_0(\eta)$ is convex.
 \end{proof}
-
-
-\section{Unbiasedness of the divide-and-conquer estimator}\label{proof:dc-unbiased}

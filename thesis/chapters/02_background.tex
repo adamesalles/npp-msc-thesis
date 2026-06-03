@@ -1,6 +1,6 @@
 \chapter{Background}
 
-\section{Bayesian Inference}
+\section{Bayesian inference}
 \label{sec:bayesian-inference}
 
 \subsection{Principles}
@@ -31,7 +31,7 @@ The denominator in \eqref{eq:bayes-theorem-background} is the marginal likelihoo
 \end{equation}
 
 When $m(D)<\infty$, the posterior distribution is well-defined and integrates to one.
-In this sense, Bayesian inference can be understood as a normalization procedure that transforms the unnormalized density $L(D\mid\theta)\pi_0(\theta)$ into a probability distribution over $\Theta$.
+In this sense, Bayesian inference can be understood as a normalization procedure that transforms the unnormalised density $L(D\mid\theta)\pi_0(\theta)$ into a probability distribution over $\Theta$.
 
 For any posterior-integrable function $h:\Theta\to\bR$, posterior summaries are often expressed through expectations of the form
 
@@ -45,13 +45,13 @@ For any posterior-integrable function $h:\Theta\to\bR$, posterior summaries are 
 Examples include posterior means, posterior variances, marginal probabilities, credible intervals, and posterior predictive quantities.
 The main computational challenge is that the posterior distribution is usually available only up to a normalising constant.
 
-Indeed, many Bayesian algorithms only require the unnormalized posterior density
+Indeed, many Bayesian algorithms only require the unnormalised posterior density
 
 \begin{equation}
     \gamma(\theta)
     =
     L(D\mid\theta)\pi_0(\theta),
-    \label{eq:unnormalized-posterior-background}
+    \label{eq:unnormalised-posterior-background}
 \end{equation}
 
 because the marginal likelihood $m(D)$ does not depend on $\theta$.
@@ -59,9 +59,10 @@ because the marginal likelihood $m(D)$ does not depend on $\theta$.
 However, the marginal likelihood is still important for model comparison, empirical Bayes procedures, and doubly intractable models.
 In low-dimensional conjugate models, the integral in \eqref{eq:marginal-likelihood-background} may be available analytically.
 
-In modern Bayesian models, this integral is often unavailable, and posterior expectations such as \eqref{eq:posterior-expectation-background} must be approximated numerically. This motivates the use of simulation-based methods.
+In modern Bayesian models, this integral is often unavailable, and posterior expectations such as \eqref{eq:posterior-expectation-background} must be approximated numerically.
+This motivates the use of simulation-based methods.
 
-\subsection{Monte Carlo Methods}
+\subsection{Monte Carlo methods}
 
 Monte Carlo methods approximate integrals by random sampling.
 
@@ -149,7 +150,7 @@ The usual practical response is to discard an initial portion of the chain, know
 However, burn-in is an asymptotic correction rather than an exact one.
 This distinction is central to the later discussion of exact and unbiased MCMC methods.
 
-\section{Classical Markov Chain Monte Carlo Methods}
+\section{Classical Markov Chain Monte Carlo methods}
 
 Markov chain Monte Carlo methods construct a transition kernel $P$ on $(\Theta,\mathcal{F})$ such that the posterior distribution $\pi$ is invariant.
 
@@ -348,17 +349,43 @@ In doubly intractable models, even the ratio in \eqref{eq:mh-acceptance-backgrou
 
 This is one of the settings where standard Metropolis--Hastings is no longer directly applicable and where the methods studied in this dissertation become necessary.
 
-\section{Doubly Intractable Distributions}
+\section{Doubly intractable distributions}
 \label{sec:dbl-int}
 
-Doubly intractable distributions arise in Bayesian inference when the likelihood takes the form
+A posterior distribution is called \textit{doubly intractable} when its unnormalised
+density cannot be computed pointwise \cite{murray2012, park2020}.
+The difficulty is distinct from the ordinary intractability of the marginal likelihood
+$m(D)$, which cancels from the Metropolis--Hastings ratio and therefore poses no
+algorithmic obstacle.
+In a doubly intractable model, the posterior density takes the form
 \begin{equation}
-\pi(\theta \mid x) \propto p(\theta)\frac{h(x \mid \theta)}{Z(\theta)},
+    \label{eq:doubly-intractable-general}
+    \pi(\theta \mid D)
+    \propto
+    \frac{\pi_0(\theta)\, h(D \mid \theta)}{Z(\theta)},
 \end{equation}
-where the normalising constant $Z(\theta)$ depends on the parameter $\theta$ and cannot be evaluated pointwise.
+where $Z(\theta) = \int h(D \mid \theta') \, \dd\theta'$ depends on the parameter $\theta$
+and cannot be evaluated.
+The ratio $Z(\theta) / Z(\theta')$ required by the Metropolis--Hastings acceptance step
+is therefore itself intractable: both the numerator and the denominator involve the same
+unknown normalising function evaluated at different parameter values.
+This is the second source of intractability, in addition to the marginal likelihood.
 
-This setting is common in models such as exponential random graph models, Markov point processes, and, more generally, in likelihoods derived from Gibbs measures.
-In the context of Normalized Power Priors (NPP), this issue naturally appears due to the presence of parameter-dependent normalising constants, making standard Bayesian computation challenging.
+Doubly intractable models arise naturally in several important classes.
+Exponential random graph models have a likelihood of the form $\exp\{\theta^\top t(y)\} / Z(\theta)$,
+where $Z(\theta)$ sums over all graphs of a given size and is computationally infeasible
+for all but very small networks.
+Gibbs random field models and Markov point processes share the same structure.
+
+The normalised power prior, introduced in Section~\ref{sec:npp}, belongs to this class
+for a different reason: here $Z(\theta)$ is not a partition function of the likelihood but
+the normalising constant $c_0(\eta)$ of the \textit{prior} distribution, which depends on
+the power parameter $\eta$.
+This is an unusual member of the doubly intractable family, in that the intractable
+constant arises through the Bayesian modelling choice rather than through the likelihood
+structure itself.
+The methods reviewed and developed in
+Chapter~\ref{sec:exact} are designed to handle precisely this setting.
 
 \section{The Normalised Power Prior}
 \label{sec:npp}
@@ -436,7 +463,7 @@ where $\bE_{\pi_\eta}[\cdot]$ denotes expectation under the power prior $\pi_\et
 
 This identity plays a central role in the exact inference methods of Chapter~\ref{sec:exact}: it expresses the log-derivative of an intractable normalising constant as a tractable posterior expectation, which can be estimated by Monte Carlo simulation.
 
-\subsection{Other Historical Data Modelling Approaches}
+\subsection{Other historical data modelling approaches}
 
 The normalised power prior is one among several principled Bayesian approaches to incorporating historical information.
 The \textit{commensurate prior} of \citeonline{hobbs2011} models the relationship between historical and current parameters through a shared hierarchical structure, allowing the degree of borrowing to adapt to the compatibility between studies.
@@ -448,24 +475,21 @@ The \textit{commensurate prior} of \citeonline{hobbs2011} models the relationshi
 Each of these alternatives makes different modelling assumptions about the exchangeability of the historical and current parameters, and each leads to different computational challenges.
 The normalised power prior is particularly appealing when a single scalar parameter $\eta \in [0,1]$ suffices to capture the degree of historical relevance, and when the historical and current data share the same likelihood structure.
 
-\section{MCMC Methods for Intractable Normalising Constants}
+\section{MCMC methods for intractable normalising constants}
 
 Many Bayesian models involve posterior distributions whose density can only be evaluated up to a normalising constant.
 This is not an obstacle for ordinary Metropolis--Hastings when the unknown normalising constant does not depend on the parameter being updated.
 However, the situation is considerably harder when the normalising constant itself depends on the parameter, as is the case for the normalised power prior.
 
-This setting is usually called a doubly intractable problem, because the posterior distribution contains an intractable normalising constant inside the likelihood or prior structure itself.
-The normalized power prior is an example of this phenomenon, since the normalising constant $c_0(\eta)$ depends on the discount parameter $\eta$.
-
 In this section, we review three families of methods that are relevant for this thesis.
 First, we discuss the exchange algorithm, which removes the intractable ratio of normalising constants by introducing an auxiliary draw from a proposal-dependent distribution.
-Second, we discuss Barker's algorithm and Bernoulli factory methods, which replace the explicit evaluation of an acceptance probability by an exact randomization procedure.
+Second, we discuss Barker's algorithm and Bernoulli factory methods, which replace the explicit evaluation of an acceptance probability by an exact randomisation procedure.
 Third, we discuss divide-and-conquer Bernoulli factories, which aim to reduce the computational cost of Bernoulli factory methods in models with many likelihood factors.
 
-\subsection{The Exchange Algorithm}
+\subsection{The Exchange algorithm}
 \label{subsec:exchange-algorithm}
 
-Consider a family of unnormalized densities $f_\eta(\theta)$ with normalising constant
+Consider a family of unnormalised densities $f_\eta(\theta)$ with normalising constant
 \begin{equation}
 c(\eta)
 =
@@ -487,7 +511,7 @@ A standard Metropolis--Hastings proposal, as discussed in Section \ref{subsec:me
 The ratio $c(\eta)/c(\eta')$ is generally unavailable.
 This prevents the direct application of ordinary Metropolis--Hastings.
 
-The exchange algorithm of \citeonline{murray2012} introduces an auxiliary variable $x^\star$ sampled exactly from the normalized model at the proposed value $\eta'$.
+The exchange algorithm of \citeonline{murray2012} introduces an auxiliary variable $x^\star$ sampled exactly from the normalised model at the proposed value $\eta'$.
 That is,
 \begin{equation}
 x^\star
@@ -513,13 +537,12 @@ The corresponding acceptance probability is
 R_{\mathrm{ex}}(\eta,\eta';x^\star)
 \right\}.
 \end{equation}
-The key point is that $R_{\mathrm{ex}}$ contains only unnormalized densities and proposal terms.
+The key point is that $R_{\mathrm{ex}}$ contains only unnormalised densities and proposal terms.
 Therefore, the intractable ratio $c(\eta)/c(\eta')$ is not evaluated directly.
 
-In this thesis, the exchange algorithm is used as a benchmark exact method whenever exact simulation from the powered historical posterior is available.
-This provides a clean reference point for comparing approximate estimators and Bernoulli factory constructions.
+The exchange algorithm is particularly well-suited to settings where exact simulation from the normalised model is available.
 
-\subsection{Barker's Algorithm for Exact Inference}
+\subsection{Barker's algorithm for exact inference}
 
 Barker's algorithm \cite{barker1965} is an alternative accept--reject rule for Markov chain Monte Carlo.
 For a target distribution $\pi(\theta)$ and proposal density $q(\theta' \mid \theta)$, define the usual Metropolis--Hastings odds ratio as
@@ -561,7 +584,7 @@ The important distinction is that Barker's algorithm is not required for the exc
 The exchange algorithm can be combined with the ordinary Metropolis--Hastings acceptance probability.
 Barker's rule becomes useful when the goal is to implement an accept--reject step through Bernoulli factories rather than through direct numerical evaluation of the acceptance probability.
 
-\subsubsection{The Two-Coin Algorithm}
+\subsubsection{The two-coin algorithm}
 
 The two-coin algorithm is a basic Bernoulli factory construction used to implement Barker-type accept--reject probabilities \cite{goncalves2017}.
 Suppose that the odds ratio can be factorized as
@@ -610,7 +633,7 @@ The practical difficulty is that the expected number of loops can be large.
 This happens when the decisive events are rare.
 In models with many likelihood factors, this cost can grow rapidly with the data size.
 
-\subsection{Divide-and-Conquer Bernoulli Factory}
+\subsection{Divide-and-conquer Bernoulli factory}
 
 For models with independent observations, the likelihood often factorizes as
 \begin{equation}
@@ -635,7 +658,7 @@ The leaves correspond to individual factors or small batches of factors.
 The internal nodes merge the coins produced by their children.
 The root returns the final Bernoulli variable required by the Barker accept--reject step.
 
-\subsubsection{The Coin Merge Procedure}
+\subsubsection{The coin merge procedure}
 
 The basic merge identity can be described in terms of odds.
 Suppose that two independent coins have success probabilities
@@ -685,7 +708,7 @@ The probability that the merged coin returns one is
 \end{align}
 Thus, the merge operation multiplies the odds represented by the two child coins.
 
-\subsubsection{Hierarchical Factorization}
+\subsubsection{Hierarchical factorization}
 
 Given $n$ factors, the DCBF organizes them in a binary tree.
 At the leaves, each node represents either one likelihood factor or a small batch of likelihood factors.
@@ -713,13 +736,13 @@ In other applications, it requires an unbiased estimator or an auxiliary constru
 The exactness of the full DCBF depends on the exactness of every leaf coin and every merge operation.
 If a leaf coin is only approximate, then the full DCBF is also approximate.
 
-For the normalized power prior, the DCBF can be combined with an exchange construction.
+For the normalised power prior, the DCBF can be combined with an exchange construction.
 The exchange step first removes the ratio $c_0(\eta)/c_0(\eta')$ by drawing $\theta^\star$ from the powered historical posterior at $\eta'$.
 The remaining exchange odds can be factorized over historical observations or over batches.
 The DCBF can then be used to simulate the Barker coin associated with this factorized exchange ratio.
 This route is exact only when the auxiliary exchange draw is exact and the leaf coins are exact.
 
-\subsubsection{Computational Complexity}
+\subsubsection{Computational complexity}
 
 The motivation for the DCBF is that a balanced tree can reduce the cost of simulating product-form Bernoulli probabilities.
 The vanilla two-coin algorithm may have exponential cost in the number of factors.
@@ -823,7 +846,7 @@ Under the non-negativity and unbiasedness assumptions, the algorithm is exact in
 This result is the central guarantee of the pseudo-marginal approach of \citeonline{andrieu2009}.
 
 The method is especially useful when $\gamma(\theta)$ contains an intractable likelihood or an intractable normalising constant ratio for which an unbiased non-negative estimator is available.
-In the context of normalized power priors, one may use pseudo-marginal ideas when the ratio involving $c_0(\eta)$ is replaced by a positive unbiased estimator of the corresponding ratio.
+In the context of normalised power priors, one may use pseudo-marginal ideas when the ratio involving $c_0(\eta)$ is replaced by a positive unbiased estimator of the corresponding ratio.
 
 The main caveat is that unbiasedness alone is not sufficient for good computational performance.
 If the estimator $\widehat{\gamma}(\theta, U)$ has high variance, the chain may become sticky because unusually large estimates at the current state are difficult to move away from.
@@ -842,7 +865,7 @@ For instance, replacing an exact ratio $R$ by an unbiased estimate $\widehat{R}$
 
 Thus, pseudo-marginal Metropolis--Hastings provides an exact route when a non-negative unbiased estimator of the unnormalised target is available, but its practical usefulness depends strongly on the stability and variance of that estimator.
 
-\section{Function Emulation Methods}
+\section{Function emulation methods}
 \label{sec:function-emulation}
 
 A common strategy for handling an intractable function is to replace it by a statistical surrogate constructed from a finite number of evaluations at design points.
@@ -851,7 +874,7 @@ These properties motivate the use of emulators that can incorporate prior struct
 Two families of emulators are particularly relevant here: Gaussian processes and shape-constrained additive models.
 Both are used in the experiments of Chapter~\ref{chap:approximate}, where they are assessed against the exact methods of Chapter~\ref{sec:exact}.
 
-\subsection{Gaussian Processes}
+\subsection{Gaussian processes}
 \label{subsec:gp-emulation}
 
 A Gaussian process (GP) is a distribution over functions such that any finite collection of function values follows a multivariate normal distribution \cite{rasmussen2006}.
@@ -869,14 +892,18 @@ This constraint is not severe for the one-dimensional function $g: [0,1] \to \bR
 \subsection{Generalised Additive Models}
 \label{subsec:gam-emulation}
 
-Shape-constrained additive models (SCAMs) extend generalised additive models (GAMs) (as presented in Section \ref{subsec:gam-emulation}) by enforcing qualitative constraints, such as monotonicity or convexity, directly on the spline basis coefficients \cite{pya2015}.
-In a SCAM, the target function is modelled as
+Generalised additive models (GAMs) \cite{hastie1990, wood2017} provide a flexible semiparametric framework for regression in which the response is modelled as a sum of smooth functions of the predictors.
+For a scalar covariate $x$, a GAM takes the form
 \begin{equation}
-    g(\eta) = \beta_0 + \sum_{j=1}^p f_j(\eta),
+    f(x) = \beta_0 + \sum_{j=1}^{p} s_j(x),
 \end{equation}
-where each $f_j$ is represented by a spline expansion whose coefficients are constrained during estimation to satisfy the desired shape restriction.
-The model is fitted by penalised likelihood under linear inequality constraints on the coefficients, using methods closely related to standard GAM estimation \cite{wood2017}.
+where each $s_j$ is an unknown smooth function represented through a spline basis expansion.
+The basis functions are chosen to span a rich function space while remaining computationally tractable; common choices include thin-plate splines, cubic regression splines, and B-splines \cite{wood2017}.
 
-For the normalised power prior, the convexity and monotonicity of $\log c_0(\eta)$ established in Appendix~\ref{proof:log-c0-convex} provide a natural set of shape constraints that can be directly encoded in the SCAM.
-By incorporating this structural information, the SCAM surrogate avoids the oscillatory artefacts that unconstrained smoothers may exhibit near regions of sparse design points.
-Compared with GP emulation, SCAMs are generally faster to fit and less sensitive to kernel hyperparameter choices, at the cost of lacking a principled uncertainty quantification mechanism.
+Model fitting proceeds by penalised likelihood maximisation, where a roughness penalty is added to the log-likelihood to control the complexity of each smooth component and prevent overfitting.
+The penalty is typically of the form $\lambda_j \int [s_j''(x)]^2 \dd x$, and the smoothing parameter $\lambda_j$ is selected by cross-validation or by restricted maximum likelihood (REML).
+This yields a smooth, data-adaptive approximation to $f$ that does not require specifying a parametric form.
+
+The main limitation of standard GAMs for function emulation is that they impose no qualitative constraints on the fitted function.
+In settings where the target function is known to satisfy structural properties such as monotonicity or convexity, unconstrained smoothers may produce artefacts — oscillations, sign violations, or locally inconsistent curvature — particularly in regions with sparse design points.
+This motivates the shape-constrained extensions discussed in Section~\ref{subsec:scam-emulation}.

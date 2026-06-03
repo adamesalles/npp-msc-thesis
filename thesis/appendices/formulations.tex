@@ -41,7 +41,7 @@ On the other hand, we can show that $\bE_{\pi_\eta}[\log(L(D_0 \mid \theta))]$ m
 \end{align*}
 
 
-\subsection{Adding a Gaussian Initial Prior}
+\subsection{Adding a Gaussian initial prior}
 
 Consider again $d_{0j} \sim \cN(\theta, \sg)$ with known variance $\sg$ for all $j \in 0,\ldots, p$, but now let $P_0 \equiv \cN(0, \sz)$, where $\sz$ is a known initial prior variance.
     % The power prior is given by
@@ -116,7 +116,7 @@ Consider again $d_{0j} \sim \cN(\theta, \sg)$ with known variance $\sg$ for all 
 
     and compare it with the importance sampling reformulation.
 
-\section{Linear Regression with NIG priors}
+\section{Linear regression with NIG priors}
 
     \label{example:nig_lm}
     Suppose we observe $\bfy_{0} = \bX_0 \bfbt + \eps_0, \ \bfy = \bX \bfbt + \eps$ with $\eps_0 \sim \cN(0, \sg I_{n_0}), \ \eps \sim \cN(0, \sg I_{n})$ and unknown variance $\sg$. Now let $P_0 \equiv \cN(\bfmu_0, \ \bfV_0) \cdot \InvGam(a,b)$, where $\bfmu_0, \bfV_0, a$ and $b$ are known hyperparameters. 

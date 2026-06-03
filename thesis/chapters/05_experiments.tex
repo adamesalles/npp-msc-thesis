@@ -4,7 +4,7 @@
 
 \section{Assessing exact and approximate samplers}
 
-The primary objective of this chapter is to compare exact and approximate inference procedures for the normalized power prior under controlled settings where the normalising constant is analytically available.
+The primary objective of this chapter is to compare exact and approximate inference procedures for the normalised power prior under controlled settings where the normalising constant is analytically available.
 
 This allows us to evaluate not only computational efficiency, but also the inferential distortion introduced by noisy approximations of the normalising constant ratio.
 
@@ -23,7 +23,7 @@ Since the posterior distribution of $\eta$ is one-dimensional, we use the empiri
 
 Unlike density-based divergences, the Wasserstein distance does not require kernel density estimation and remains numerically stable even when posterior samples concentrate near the boundary of the parameter space.
 
-\subsection{Using Exact Methods as Baseline}
+\subsection{Using exact methods as baseline}
 
 The Exchange MH algorithm described in Section~\ref{sec:exact-exchange} serves as the primary exact reference throughout the experiments.
 Where the powered prior $\pi_{\eta'}(\theta \mid D_0)$ is available in closed form (Gaussian and Normal--Inverse--Gamma models), the exchange update is exact and computationally efficient.
@@ -57,14 +57,14 @@ Historical and current datasets each contain $N_0 = N = 50$ observations.
 
 Three discrepancy scenarios are considered.
 In the small-discrepancy regime, the historical and current datasets are generated from nearby means.
-The medium-discrepancy regime introduces a moderate shift between the datasets, while the large-discrepancy regime generates substantial disagreement between the historical and current information.
-As the discrepancy increases, the posterior distribution of $\eta$ is expected to concentrate closer to zero, reflecting reduced borrowing from the historical data.
+The medium-discrepancy regime introduces a moderate shift between the datasets.
+The large-discrepancy regime generates substantial disagreement between the historical and current information.
 
 The purpose of this experiment is not only to compare posterior distributions, but also to assess the computational efficiency required for each method to approximate the exact posterior distribution.
 To accomplish this, we use a convergence-to-baseline protocol.
 
 The analytic Metropolis--Hastings sampler is used as the reference method.
-Since the Gaussian normalized power prior admits a closed-form normalising constant ratio, this sampler directly evaluates the exact posterior density.
+Since the Gaussian normalised power prior admits a closed-form normalising constant ratio, this sampler directly evaluates the exact posterior density.
 Longer chains are used for the analytic reference in order to reduce Monte Carlo variability and provide a stable empirical baseline for posterior comparisons.
 
 The remaining methods are evaluated according to how efficiently they approach the analytic reference posterior.
@@ -82,10 +82,10 @@ A central distinction between the methods is how the ratio of normalising consta
 The Exchange MH algorithm avoids evaluating the normalising constant entirely by introducing an auxiliary draw from the powered prior distribution at the proposed value of $\eta$.
 In the present Gaussian experiment, sampling from the powered prior can be performed exactly in closed form, making the exchange update computationally efficient while preserving exactness.
 
-The Prior IS and MLE-centered IS methods instead estimate the normalising constant ratio through importance sampling constructions.
+The Prior IS and MLE-centred IS methods instead estimate the normalising constant ratio through importance sampling constructions.
 Both methods remain exact pseudo-marginal algorithms when embedded within the extended-state Metropolis--Hastings framework, provided the estimator is nonnegative and unbiased.
 The difference between the two approaches lies primarily in variance reduction.
-The MLE-centered proposal attempts to concentrate samples in regions of high likelihood in order to stabilize the importance weights.
+The MLE-centred proposal attempts to concentrate samples in regions of high likelihood in order to stabilize the importance weights.
 
 The Path Sampling PMMH method approximates the log normalising constant ratio through thermodynamic integration along a temperature path.
 Although effective in some settings, the resulting estimator is not guaranteed to satisfy the conditions required for exact pseudo-marginal inference and is therefore treated as an approximate baseline.
@@ -93,14 +93,14 @@ Although effective in some settings, the resulting estimator is not guaranteed t
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{../software/experiments/results/final_clean/posterior_eta_all_discrepancies.png}
-    \caption{Posterior density of $\eta$ across discrepancy regimes for the Gaussian normalized power prior experiment.}
+    \caption{Posterior density of $\eta$ across discrepancy regimes for the Gaussian normalised power prior experiment.}
     \label{fig:gaussian-eta-density}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{../software/experiments/results/final_clean/posterior_theta_norm_all_discrepancies.png}
-    \caption{Posterior density of $\norm{\theta}_2$ across discrepancy regimes for the Gaussian normalized power prior experiment.}
+    \caption{Posterior density of $\norm{\theta}_2$ across discrepancy regimes for the Gaussian normalised power prior experiment.}
     \label{fig:gaussian-theta-density}
 \end{figure}
 
@@ -116,9 +116,9 @@ First, the Exchange MH algorithm is nearly indistinguishable from the analytic r
 This confirms empirically that the exchange construction correctly removes the intractable normalising constant ratio while preserving the target posterior distribution.
 Moreover, because auxiliary draws from the powered prior are available analytically in the Gaussian setting, the exchange update remains computationally efficient despite being exact.
 
-The Prior IS and MLE-centered IS methods both exhibit sensitivity to the discrepancy regime.
+The Prior IS and MLE-centred IS methods both exhibit sensitivity to the discrepancy regime.
 Under low discrepancy, where the posterior distribution of $\eta$ is diffuse, the variance of the importance weights becomes more pronounced and larger computational effort is required to achieve the target Wasserstein tolerance.
-The MLE-centered proposal generally improves stability relative to Prior IS by concentrating importance samples near regions of higher likelihood support.
+The MLE-centred proposal generally improves stability relative to Prior IS by concentrating importance samples near regions of higher likelihood support.
 
 As the discrepancy increases, the posterior distribution of $\eta$ concentrates near zero.
 In this regime, all methods become substantially easier to stabilize because the relevant range of powered likelihoods becomes smaller.
@@ -128,14 +128,14 @@ The Path Sampling PMMH method displays the largest variability across discrepanc
 Because the thermodynamic integration estimator depends on Monte Carlo approximations along an entire temperature path, estimator variability accumulates and may degrade mixing efficiency.
 This effect is especially visible in diffuse posterior regimes.
 
-Overall, the experiments demonstrate that exact inference for the normalized power prior is computationally feasible through the Exchange algorithm, even in settings where direct evaluation of the normalising constant ratio would otherwise be computationally prohibitive.
+Overall, the experiments demonstrate that exact inference for the normalised power prior is computationally feasible through the Exchange algorithm, even in settings where direct evaluation of the normalising constant ratio would otherwise be computationally prohibitive.
 The exchange sampler additionally provides a principled exact baseline against which approximate pseudo-marginal and future surrogate-based methods may be assessed.
 
 \subsection{Linear regression with Normal-Inverse-Gamma priors}
 \label{subsec:nig-lm-experiment}
 
 We next consider a Gaussian linear regression model with unknown variance.
-This experiment is designed to evaluate the exchange update in a setting where the normalized power prior remains analytically tractable, but the normalising constant is no longer a simple linear function of the power parameter.
+This experiment is designed to evaluate the exchange update in a setting where the normalised power prior remains analytically tractable, but the normalising constant is no longer a simple linear function of the power parameter.
 Let $D_0 = (\bfX_0,\bfy_0)$ denote the historical data and let $D = (\bfX,\bfy)$ denote the current data.
 We assume
 \begin{equation}
@@ -217,8 +217,8 @@ The exchange log-ratio for the $\eta$ update is
     \label{eq:nig-lm-exchange-log-ratio}
 \end{align}
 The proposal is then accepted with probability $\min\{1,\exp(\log R_{\mathrm{ex}})\}$.
-When the auxiliary draw from $\pi_{\eta'}(\bfbt,\sg \mid D_0)$ is exact, this update has the correct invariant distribution for the normalized power prior.
-This follows from the exchange algorithm for doubly-intractable distributions, where an auxiliary draw from the proposed normalized model cancels the unknown ratio of normalising constants in the Metropolis--Hastings acceptance probability~\cite{murray2012}. 
+When the auxiliary draw from $\pi_{\eta'}(\bfbt,\sg \mid D_0)$ is exact, this update has the correct invariant distribution for the normalised power prior.
+This follows from the exchange algorithm for doubly-intractable distributions, where an auxiliary draw from the proposed normalised model cancels the unknown ratio of normalising constants in the Metropolis--Hastings acceptance probability~\cite{murray2012}. 
 The exchange algorithm therefore provides an exact update for $\eta$ under the powered-prior simulation assumption.
 This assumption is satisfied in the present experiment because the powered prior is Normal-Inverse-Gamma.
 
@@ -288,7 +288,7 @@ All three methods capture this behaviour faithfully, with no systematic distorti
 \subsection{Logistic regression with surrogate normalising constants}
 \label{subsec:logistic-surrogate-experiment}
 
-This experiment considers a logistic regression model for which the normalising constant of the normalized power prior is not available in closed form.
+This experiment considers a logistic regression model for which the normalising constant of the normalised power prior is not available in closed form.
 The objective is to evaluate whether surrogate models can accurately emulate the function $c_0(\eta)$ and thereby provide a computationally efficient alternative to exact inference.
 
 Let $D_0=(\bfX_0,\bfy_0)$ denote the historical dataset and $D=(\bfX,\bfy)$ denote the current dataset.
@@ -332,7 +332,7 @@ For a proposed value $\eta'$, an auxiliary draw
 
 is generated using Stan.
 The resulting exchange acceptance ratio depends only on likelihood evaluations and does not require explicit computation of the normalising constant ratio.
-Under exact simulation from the powered prior, the resulting Markov chain targets the correct normalized power prior posterior distribution.
+Under exact simulation from the powered prior, the resulting Markov chain targets the correct normalised power prior posterior distribution.
 
 The remaining methods replace $c_0(\eta)$ by an emulator constructed from a finite set of training evaluations.
 
@@ -369,7 +369,7 @@ This allows distortions introduced by the surrogate approximation to be localize
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{../software/experiments/results/logistic_surrogates/posterior_eta_all_discrepancies.png}
-    \caption{Posterior density of $\eta$ across discrepancy scenarios for the logistic regression normalized power prior experiment.}
+    \caption{Posterior density of $\eta$ across discrepancy scenarios for the logistic regression normalised power prior experiment.}
     \label{fig:logistic-eta-density}
 \end{figure}
 
