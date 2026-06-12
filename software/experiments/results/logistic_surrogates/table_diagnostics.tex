@@ -4,20 +4,20 @@
   \hline
   Scenario & Method & $W_\eta$ & $W_{\beta_1}$ & $W_{\beta_2}$ & $W_{\beta_3}$ & ESS$_\eta$ & Acc.\ $\eta$ & Time (s) \\
   \hline
-  Small & Exchange MH & 0.000 & 0.000 & 0.000 & 0.000 & 56 & 0.947 & 2543.7 \\
+  Small & Exchange MH & 0.000 & 0.000 & 0.000 & 0.000 & 56 & 0.947 & 3598.9 \\
   Small & Spline Emulator & 0.074 & 0.017 & 0.018 & 0.015 & 33 & 0.955 & 1.1 \\
-  Small & GP Emulator & 0.070 & 0.019 & 0.017 & 0.013 & 33 & 0.956 & 6.5 \\
-  Small & SCAM Emulator & 0.091 & 0.023 & 0.023 & 0.025 & 30 & 0.957 & 15.2 \\
+  Small & GP Emulator & 0.070 & 0.019 & 0.017 & 0.013 & 33 & 0.956 & 7.5 \\
+  Small & SCAM Emulator & 0.106 & 0.018 & 0.022 & 0.027 & 39 & 0.955 & 19.6 \\
   \hline
-  Medium & Exchange MH & 0.000 & 0.000 & 0.000 & 0.000 & 33 & 0.918 & 2619.5 \\
-  Medium & Spline Emulator & 0.087 & 0.052 & 0.016 & 0.029 & 26 & 0.921 & 0.9 \\
-  Medium & GP Emulator & 0.145 & 0.080 & 0.019 & 0.016 & 29 & 0.920 & 6.1 \\
-  Medium & SCAM Emulator & 0.041 & 0.015 & 0.010 & 0.025 & 41 & 0.933 & 15.7 \\
+  Moderate & Exchange MH & 0.000 & 0.000 & 0.000 & 0.000 & 33 & 0.918 & 3564.4 \\
+  Moderate & Spline Emulator & 0.087 & 0.052 & 0.016 & 0.029 & 26 & 0.921 & 1.1 \\
+  Moderate & GP Emulator & 0.145 & 0.080 & 0.019 & 0.016 & 29 & 0.920 & 6.5 \\
+  Moderate & SCAM Emulator & 0.014 & 0.017 & 0.011 & 0.015 & 37 & 0.938 & 15.8 \\
   \hline
-  Large & Exchange MH & 0.000 & 0.000 & 0.000 & 0.000 & 309 & 0.604 & 2353.0 \\
-  Large & Spline Emulator & 0.002 & 0.024 & 0.030 & 0.021 & 411 & 0.700 & 0.9 \\
-  Large & GP Emulator & 0.002 & 0.061 & 0.028 & 0.020 & 397 & 0.682 & 5.8 \\
-  Large & SCAM Emulator & 0.005 & 0.044 & 0.024 & 0.038 & 252 & 0.715 & 14.1 \\
+  Large & Exchange MH & 0.000 & 0.000 & 0.000 & 0.000 & 309 & 0.604 & 3180.1 \\
+  Large & Spline Emulator & 0.002 & 0.024 & 0.030 & 0.021 & 411 & 0.700 & 1.1 \\
+  Large & GP Emulator & 0.002 & 0.061 & 0.028 & 0.020 & 397 & 0.682 & 5.5 \\
+  Large & SCAM Emulator & 0.013 & 0.123 & 0.016 & 0.066 & 72 & 0.716 & 14.2 \\
   \hline
   \end{tabular}
   \caption{Diagnostic comparison for the logistic regression NPP experiment. Wasserstein distances are computed against the exchange MH reference within each discrepancy scenario.}

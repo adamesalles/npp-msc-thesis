@@ -197,16 +197,15 @@ as measures on $\Theta\times\Theta$.
 
 Detailed balance implies invariance and gives a convenient route for proving that a Markov chain targets the desired posterior distribution.
 The two classical algorithms discussed in this section are Gibbs sampling and Metropolis--Hastings.
+Gibbs sampling exploits conditional distributions that can be exactly sampled from.
 
-Gibbs sampling exploits conditional distributions that can be sampled exactly.
 Metropolis--Hastings is more general and only requires evaluation of the target density up to a normalising constant.
-
 Both algorithms are asymptotically exact in the sense that their ergodic averages converge to posterior expectations under suitable conditions.
 They are not exact in the finite-time sense, because samples obtained after a finite number of iterations still depend on the initial state.
 
 \subsection{Gibbs sampling}
 
-Gibbs sampling is designed for posterior distributions whose full conditional distributions are available and easy to sample from.
+Gibbs sampling~\cite{geman1984, gelfand1990} is designed for posterior distributions whose full conditional distributions are available and easy to sample from.
 
 Suppose that the parameter can be partitioned into $K$ blocks,
 
@@ -262,20 +261,18 @@ Starting from $\theta^{(n)}=\qty(\theta_1^{(n)},\dots,\theta_K^{(n)})$, one iter
 
 Each update leaves the posterior distribution invariant because it samples exactly from a conditional distribution of the target.
 The composition of these invariant updates also leaves the posterior distribution invariant.
-
 The main advantage of Gibbs sampling is that every proposed block update is accepted automatically.
 In this sense, the algorithm avoids the tuning of an acceptance probability.
 
 On the other hand, the most relevant limitation is that the required full conditional distributions may not be available in closed form.
 Even when they are available, strong posterior dependence between blocks can lead to slow mixing.
-
 This is especially relevant in hierarchical models, latent variable models, and models with highly correlated parameters.
-In such cases, blocking, reparameterization, or hybrid Gibbs-within-Metropolis strategies may be necessary.
+In such cases, blocking, reparameterization, or hybrid Gibbs-within-Metropolis strategies may be necessary~\cite{gilks1995}.
 
 \subsection{Metropolis--Hastings}
 \label{subsec:metropolis}
 
-The Metropolis--Hastings algorithm constructs a Markov chain using a proposal distribution and an accept-reject correction.
+The Metropolis--Hastings~\cite{metropolis1953, hastings1970} algorithm constructs a Markov chain using a proposal distribution and an accept-reject correction.
 Let $\pi$ denote the target posterior density, known up to a normalising constant.
 
 Let $q(\theta'\mid\theta)$ be a proposal density for moving from the current state $\theta$ to a proposed state $\theta'$.
@@ -322,13 +319,11 @@ Thus,
 
 The acceptance probability in \eqref{eq:mh-acceptance-background} depends only on ratios of the target density.
 Therefore, if $\pi(\theta)=\gamma(\theta)/Z$ for an unknown normalising constant $Z$, then $Z$ cancels from the ratio.
-
 This cancellation is one of the main reasons why Metropolis--Hastings is useful in Bayesian computation.
-The Metropolis--Hastings transition kernel satisfies detailed balance with respect to $\pi$.
 
+The Metropolis--Hastings transition kernel satisfies detailed balance with respect to $\pi$.
 Indeed, the accept-reject correction symmetrizes the probability flow between $\theta$ and $\theta'$.
 Consequently, $\pi$ is invariant for the Markov chain.
-
 A common special case is the random-walk Metropolis algorithm.
 In this case,
 
@@ -354,14 +349,12 @@ The acceptance probability then reduces to
 
 The efficiency of Metropolis--Hastings depends strongly on the proposal distribution.
 If the proposal variance is too small, the chain accepts many proposals but explores the state space slowly.
-
 If the proposal variance is too large, the chain proposes distant states that are often rejected.
 This trade-off is one of the central practical issues in MCMC.
 
 Metropolis--Hastings is asymptotically exact under appropriate conditions, but it does not remove the finite-time dependence on the initial state.
 For this reason, convergence diagnostics and burn-in choices remain important in practical applications.
 In doubly intractable models, even the ratio in \eqref{eq:mh-acceptance-background} may contain unknown normalising constants that depend on $\theta$.
-
 This is one of the settings where standard Metropolis--Hastings is no longer directly applicable and where the methods studied in this dissertation become necessary.
 
 \section{Doubly intractable distributions}
@@ -379,7 +372,7 @@ In a doubly intractable model, the posterior density takes the form
     \propto
     \frac{\pi_0(\theta)\, h(D \mid \theta)}{Z(\theta)},
 \end{equation}
-where $Z(\theta) = \int h(D \mid \theta') \, \dd\theta'$ depends on the parameter $\theta$
+where $Z(\theta)$ depends on the parameter $\theta$
 and cannot be evaluated.
 The ratio $Z(\theta) / Z(\theta')$ required by the Metropolis--Hastings acceptance step
 is therefore itself intractable: both the numerator and the denominator involve the same
@@ -399,7 +392,7 @@ the power parameter $\eta$.
 This is an unusual member of the doubly intractable family, in that the intractable
 constant arises through the Bayesian modelling choice rather than through the likelihood
 structure itself.
-The methods reviewed in Section~\ref{sec:mcmc-intractable} and developed in Chapter~\ref{sec:exact} are designed to handle precisely this setting.
+The methods reviewed in Section~\ref{sec:mcmc-intractable} and those developed in Chapter~\ref{sec:exact} are designed to handle precisely this setting.
 
 \section{The Normalised Power Prior}
 \label{sec:npp}
@@ -414,7 +407,7 @@ Rather than fully incorporating historical evidence, the prior is formed by rais
 When $\eta = 0$, the historical data are ignored entirely; when $\eta = 1$, they are weighted equally to a single observation from the current study.
 Intermediate values allow a continuum of borrowing, and treating $\eta$ as unknown and inferring it from the data provides automatic, data-driven borrowing strength.
 
-The normalised power prior \cite{duan2006, carvalho2021} is the version of the power prior that properly accounts for the normalising constant of the powered likelihood, ensuring that $\eta$ has a coherent joint prior interpretation alongside $\theta$.
+The normalised power prior~\cite{duan2006, neuenschwander2009, carvalho2021} is the version of the power prior that properly accounts for the normalising constant of the powered likelihood, ensuring that $\eta$ has a coherent joint prior interpretation alongside $\theta$.
 As established in Section~\ref{sec:dbl-int}, this normalisation introduces a parameter-dependent constant $c_0(\eta)$ that renders the posterior doubly intractable.
 This computational difficulty is the central challenge that this thesis addresses.
 
@@ -466,7 +459,7 @@ The computational challenge this poses, and the strategies developed to address 
 \subsection{The derivative of the normalising constant}
 \label{subsec:deriv-normalising}
 
-Under regularity conditions permitting differentiation under the integral sign, the thermodynamic identity (proved in Appendix~\ref{proof:deriv-normalising-constant}) gives
+Under regularity conditions permitting differentiation under the integral sign, the thermodynamic identity (proved in Appendix~\ref{proof:deriv-normalising-constant} and discussed by~\citeonline{friel2008}) gives
 \begin{equation}
     \label{eq:normalising-constant-log}
     \dv{\log c_0(\eta)}{\eta}
@@ -594,7 +587,7 @@ Barker's algorithm is usually less efficient than Metropolis--Hastings in the Pe
 \cite{goncalves2017}.
 However, its acceptance probability has a useful algebraic form.
 In particular, it can be implemented by Bernoulli factory methods when the odds ratio can be represented through probabilities that can be simulated but not evaluated.
-This makes Barker's algorithm useful for some intractable likelihood problems \cite{goncalves2017,vats2021,}.
+This makes Barker's algorithm useful for some intractable likelihood problems \cite{goncalves2017, vats2021}.
 
 The important distinction is that Barker's algorithm is not required for the exchange algorithm.
 The exchange algorithm can be combined with the ordinary Metropolis--Hastings acceptance probability.

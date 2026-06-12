@@ -5,23 +5,23 @@
   \hline
   Scenario & Method & Batches & Time (s) & $W_\eta$ & $W_{\|\theta\|}$ & ESS$_\eta$ & ESS$_{\|\theta\|}$ & Acc.\ $\eta$ \\
   \hline
-  Small & Analytic MH (exact reference) & 5 & 100.6 & 0.000 & 0.000 & 552 & 2327 & 0.978 \\
-   & Exchange MH & 1 & 9.5 & 0.005 & 0.006 & 63 & 226 & 0.953 \\
-   & Prior IS & 10 & 2278.2 & 0.072 & 0.002 & 517 & 2111 & 0.965 \\
-   & MLE-centered IS & 7 & 4614.7 & 0.005 & 0.003 & 387 & 1421 & 0.978 \\
-   & Path-sampling PMMH & 6 & 5812.2 & 0.008 & 0.003 & 333 & 1234 & 0.978 \\
+  Small & Analytic MH (exact reference) & 5 & 103.5 & 0.000 & 0.000 & 552 & 2327 & 0.978 \\
+   & Exchange MH & 1 & 9.4 & 0.005 & 0.006 & 63 & 226 & 0.953 \\
+   & Prior IS & 10 & 2271.1 & 0.072 & 0.002 & 517 & 2111 & 0.965 \\
+   & MLE-centered IS & 7 & 4515.5 & 0.005 & 0.003 & 387 & 1421 & 0.978 \\
+   & Path-sampling PMMH & 6 & 5717.8 & 0.008 & 0.003 & 333 & 1234 & 0.978 \\
   \hline
-  Medium & Analytic MH (exact reference) & 5 & 97.7 & 0.000 & 0.000 & 1046 & 2677 & 0.907 \\
-   & Exchange MH & 1 & 9.7 & 0.008 & 0.004 & 123 & 266 & 0.847 \\
-   & Prior IS & 1 & 221.5 & 0.006 & 0.007 & 175 & 362 & 0.909 \\
-   & MLE-centered IS & 4 & 2553.1 & 0.009 & 0.003 & 229 & 945 & 0.907 \\
-   & Path-sampling PMMH & 1 & 968.2 & 0.008 & 0.011 & 161 & 272 & 0.911 \\
+  Moderate & Analytic MH (exact reference) & 5 & 94.4 & 0.000 & 0.000 & 1046 & 2677 & 0.907 \\
+   & Exchange MH & 1 & 9.4 & 0.008 & 0.004 & 123 & 266 & 0.847 \\
+   & Prior IS & 1 & 209.7 & 0.006 & 0.007 & 175 & 362 & 0.909 \\
+   & MLE-centered IS & 4 & 2424.3 & 0.009 & 0.003 & 229 & 945 & 0.907 \\
+   & Path-sampling PMMH & 1 & 922.8 & 0.008 & 0.011 & 161 & 272 & 0.911 \\
   \hline
-  Large & Analytic MH (exact reference) & 5 & 94.5 & 0.000 & 0.000 & 18361 & 3474 & 0.749 \\
-   & Exchange MH & 1 & 9.2 & 0.001 & 0.007 & 1474 & 401 & 0.448 \\
-   & Prior IS & 1 & 178.9 & 0.001 & 0.006 & 872 & 390 & 0.748 \\
-   & MLE-centered IS & 1 & 513.6 & 0.000 & 0.004 & 1923 & 350 & 0.748 \\
-   & Path-sampling PMMH & 1 & 775.7 & 0.000 & 0.004 & 1954 & 398 & 0.753 \\
+  Large & Analytic MH (exact reference) & 5 & 90.7 & 0.000 & 0.000 & 18361 & 3474 & 0.749 \\
+   & Exchange MH & 1 & 8.9 & 0.001 & 0.007 & 1474 & 401 & 0.448 \\
+   & Prior IS & 1 & 168.8 & 0.001 & 0.006 & 872 & 390 & 0.748 \\
+   & MLE-centered IS & 1 & 484.9 & 0.000 & 0.004 & 1923 & 350 & 0.748 \\
+   & Path-sampling PMMH & 1 & 739.1 & 0.000 & 0.004 & 1954 & 398 & 0.753 \\
   \hline
   \end{tabular}}
   \caption{Experiment 1 convergence diagnostics. Batches: number of batches of 4 chains $\times$ 5000 iterations required to reach $W_1(\eta) <0.01$. Wasserstein distances computed against the analytic MH reference.}

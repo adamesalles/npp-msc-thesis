@@ -1,22 +1,23 @@
 \begin{table}[ht]
   \centering
-  \begin{tabular}{llcccccc}
+  \resizebox{\textwidth}{!}{%
+  \begin{tabular}{llccccccccc}
   \hline
-  Scenario & Method & $\bar{\eta}$ & $\mathrm{sd}(\eta)$ & $\overline{\|\beta\|}$ & $\mathrm{sd}(\|\beta\|)$ & $\bar{\sigma}$ & $\mathrm{sd}(\sigma)$ \\
+  Scenario & Method & $\bar{\eta}$ & $\mathrm{sd}(\eta)$ & $\mathrm{MCSE}(\eta)$ & $\overline{\|\beta\|}$ & $\mathrm{sd}(\|\beta\|)$ & $\mathrm{MCSE}(\|\beta\|)$ & $\bar{\sigma}$ & $\mathrm{sd}(\sigma)$ & $\mathrm{MCSE}(\sigma)$ \\
   \hline
-  Small & Analytic MH & 0.697 & 0.208 & 1.227 & 0.076 & 0.820 & 0.101 \\
-  Small & Exchange MH & 0.679 & 0.217 & 1.228 & 0.075 & 0.818 & 0.101 \\
-  Small & Path PMMH & 0.705 & 0.227 & 1.229 & 0.075 & 0.821 & 0.101 \\
+  Small & Analytic MH & 0.697 & 0.208 & 0.0149 & 1.227 & 0.076 & 0.0006 & 0.820 & 0.101 & 0.0008 \\
+  Small & Exchange MH & 0.679 & 0.217 & 0.0146 & 1.228 & 0.075 & 0.0006 & 0.818 & 0.101 & 0.0008 \\
+  Small & Path PMMH & 0.705 & 0.227 & 0.0161 & 1.229 & 0.075 & 0.0006 & 0.821 & 0.101 & 0.0008 \\
   \hline
-  Medium & Analytic MH & 0.077 & 0.049 & 1.984 & 0.102 & 0.862 & 0.137 \\
-  Medium & Exchange MH & 0.080 & 0.051 & 1.981 & 0.101 & 0.863 & 0.137 \\
-  Medium & Path PMMH & 0.078 & 0.047 & 1.983 & 0.102 & 0.863 & 0.138 \\
+  Moderate & Analytic MH & 0.077 & 0.049 & 0.0018 & 1.984 & 0.102 & 0.0014 & 0.862 & 0.137 & 0.0015 \\
+  Moderate & Exchange MH & 0.080 & 0.051 & 0.0021 & 1.981 & 0.101 & 0.0011 & 0.863 & 0.137 & 0.0014 \\
+  Moderate & Path PMMH & 0.078 & 0.047 & 0.0017 & 1.983 & 0.102 & 0.0012 & 0.863 & 0.138 & 0.0015 \\
   \hline
-  Large & Analytic MH & 0.007 & 0.005 & 3.912 & 0.102 & 0.863 & 0.142 \\
-  Large & Exchange MH & 0.007 & 0.005 & 3.915 & 0.101 & 0.854 & 0.140 \\
-  Large & Path PMMH & 0.007 & 0.005 & 3.915 & 0.103 & 0.860 & 0.141 \\
+  Large & Analytic MH & 0.007 & 0.005 & 0.0002 & 3.912 & 0.102 & 0.0009 & 0.863 & 0.142 & 0.0012 \\
+  Large & Exchange MH & 0.007 & 0.005 & 0.0002 & 3.915 & 0.101 & 0.0008 & 0.854 & 0.140 & 0.0014 \\
+  Large & Path PMMH & 0.007 & 0.005 & 0.0002 & 3.915 & 0.103 & 0.0008 & 0.860 & 0.141 & 0.0013 \\
   \hline
-  \end{tabular}
+  \end{tabular}}
   \caption{Posterior summaries for the NIG linear regression NPP experiment.}
   \label{tab:nig-lm-exchange-summaries}
 \end{table}

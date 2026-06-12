@@ -1,23 +1,23 @@
 \begin{table}[ht]
   \centering
-  \begin{tabular}{llcccccccc}
+  \begin{tabular}{llcccccc}
   \hline
-  Scenario & Method & $\bar{\eta}$ & $\mathrm{sd}(\eta)$ & $\bar{\beta}_1$ & $\mathrm{sd}(\beta_1)$ & $\bar{\beta}_2$ & $\mathrm{sd}(\beta_2)$ & $\bar{\beta}_3$ & $\mathrm{sd}(\beta_3)$ \\
+  Scenario & Method & $\bar{\eta}$ & $\mathrm{sd}(\eta)$ & $\mathrm{MCSE}(\eta)$ & $\bar{\beta}_1$ & $\mathrm{sd}(\beta_1)$ & $\mathrm{MCSE}(\beta_1)$ \\
   \hline
-  Small & Exchange MH & 0.681 & 0.227 & 0.860 & 0.198 & -0.246 & 0.190 & 0.922 & 0.192 \\
-  Small & Spline Emulator & 0.608 & 0.254 & 0.875 & 0.189 & -0.229 & 0.191 & 0.934 & 0.201 \\
-  Small & GP Emulator & 0.611 & 0.254 & 0.874 & 0.187 & -0.231 & 0.187 & 0.932 & 0.199 \\
-  Small & SCAM Emulator & 0.590 & 0.248 & 0.882 & 0.200 & -0.224 & 0.195 & 0.944 & 0.207 \\
+  Small & Exchange MH & 0.681 & 0.227 & 0.0305 & 0.860 & 0.198 & 0.0081 \\
+  Small & Spline Emulator & 0.608 & 0.254 & 0.0442 & 0.875 & 0.189 & 0.0080 \\
+  Small & GP Emulator & 0.611 & 0.254 & 0.0443 & 0.874 & 0.187 & 0.0080 \\
+  Small & SCAM Emulator & 0.575 & 0.257 & 0.0410 & 0.878 & 0.200 & 0.0083 \\
   \hline
-  Medium & Exchange MH & 0.395 & 0.245 & 1.437 & 0.270 & -0.146 & 0.225 & 0.698 & 0.222 \\
-  Medium & Spline Emulator & 0.308 & 0.229 & 1.489 & 0.284 & -0.140 & 0.234 & 0.669 & 0.241 \\
-  Medium & GP Emulator & 0.250 & 0.177 & 1.517 & 0.281 & -0.132 & 0.237 & 0.684 & 0.231 \\
-  Medium & SCAM Emulator & 0.355 & 0.230 & 1.448 & 0.267 & -0.153 & 0.228 & 0.674 & 0.226 \\
+  Moderate & Exchange MH & 0.395 & 0.245 & 0.0426 & 1.437 & 0.270 & 0.0145 \\
+  Moderate & Spline Emulator & 0.308 & 0.229 & 0.0446 & 1.489 & 0.284 & 0.0146 \\
+  Moderate & GP Emulator & 0.250 & 0.177 & 0.0327 & 1.517 & 0.281 & 0.0140 \\
+  Moderate & SCAM Emulator & 0.396 & 0.234 & 0.0383 & 1.421 & 0.272 & 0.0190 \\
   \hline
-  Large & Exchange MH & 0.059 & 0.044 & 3.383 & 0.687 & -0.235 & 0.452 & 1.062 & 0.473 \\
-  Large & Spline Emulator & 0.059 & 0.043 & 3.370 & 0.675 & -0.261 & 0.432 & 1.047 & 0.455 \\
-  Large & GP Emulator & 0.060 & 0.044 & 3.444 & 0.753 & -0.263 & 0.457 & 1.075 & 0.496 \\
-  Large & SCAM Emulator & 0.063 & 0.050 & 3.340 & 0.661 & -0.254 & 0.425 & 1.026 & 0.448 \\
+  Large & Exchange MH & 0.059 & 0.044 & 0.0025 & 3.383 & 0.687 & 0.0418 \\
+  Large & Spline Emulator & 0.059 & 0.043 & 0.0021 & 3.370 & 0.675 & 0.0377 \\
+  Large & GP Emulator & 0.060 & 0.044 & 0.0022 & 3.444 & 0.753 & 0.0502 \\
+  Large & SCAM Emulator & 0.072 & 0.083 & 0.0098 & 3.259 & 0.645 & 0.0387 \\
   \hline
   \end{tabular}
   \caption{Posterior summaries for the logistic regression NPP experiment across three discrepancy levels.}

@@ -55,26 +55,23 @@ Historical and current datasets each contain $N_0 = N = 50$ observations.
 
 Three discrepancy scenarios are considered.
 In the small-discrepancy regime, the historical and current datasets are generated from nearby means.
-The medium-discrepancy regime introduces a moderate shift between the datasets.
+The moderate-discrepancy regime introduces a moderate shift between the datasets.
 The large-discrepancy regime generates substantial disagreement between the historical and current information.
-
 The purpose of this experiment is not only to compare posterior distributions, but also to assess the computational budget required for each method to approximate the exact posterior distribution.
 To accomplish this, we use a convergence-to-baseline protocol.
 
 The analytic Metropolis--Hastings sampler is used as the reference method.
 Since the Gaussian normalised power prior admits a closed-form normalising constant ratio, this sampler directly evaluates the exact posterior density.
 Longer chains are used for the analytic reference in order to reduce Monte Carlo variability and provide a stable empirical baseline for posterior comparisons.
-
 The remaining methods are evaluated according to how efficiently they approach the analytic reference posterior.
 We compare four methods: Exchange MH, Prior IS, MLE-centred IS, and Path Sampling PMMH.
 
 For each method, chains are accumulated until the one-dimensional Wasserstein distance between the empirical posterior distribution of $\eta$ and the analytic reference posterior falls below a fixed tolerance threshold.
 We additionally monitor the Wasserstein distance for $\norm{\theta}_2$ in order to assess agreement in the parameter space.
-
 The primary performance metric is therefore the computational effort required to achieve a prescribed approximation accuracy.
 We report the Wasserstein distance to the analytic baseline, total runtime, effective sample size, posterior means and standard deviations, and acceptance rates.
 
-The Wasserstein distance is preferred over the Kolmogorov--Smirnov statistic because it provides a more stable and geometrically meaningful measure of posterior discrepancy, particularly for concentrated or skewed distributions.
+% The Wasserstein distance is preferred over the Kolmogorov--Smirnov statistic because it provides a more stable and geometrically meaningful measure of posterior discrepancy, particularly for concentrated or skewed distributions.
 
 A central distinction between the methods is how the ratio of normalising constants is handled.
 The Exchange MH algorithm avoids evaluating the normalising constant entirely by introducing an auxiliary draw from the power prior distribution at the proposed value of $\eta$.
@@ -230,7 +227,7 @@ This distinction follows the pseudo-marginal principle, where exactness requires
 
 We generate three discrepancy scenarios between the historical and current regression coefficients.
 In the small-discrepancy scenario, the current coefficient vector is close to the historical coefficient vector.
-In the medium-discrepancy scenario, the current coefficient vector is moderately shifted.
+In the moderate-discrepancy scenario, the current coefficient vector is moderately shifted.
 In the large-discrepancy scenario, the current coefficient vector is substantially shifted.
 The expected qualitative behavior is that the posterior distribution of $\eta$ moves toward smaller values as the discrepancy increases.
 This reflects reduced borrowing from the historical data when the historical and current data-generating mechanisms are less compatible.
@@ -268,11 +265,10 @@ The norm $\norm{\bfbt}_2$ summarizes the magnitude of the regression coefficient
 \subsubsection{Discussion of results}
 
 The most striking finding of this experiment is the close agreement between the Exchange Metropolis--Hastings sampler and the Path Sampling PMMH method across all three discrepancy scenarios.
-
 Both methods produce posterior distributions of $\eta$, $\norm{\bfbt}_2$, and $\sg$ that are nearly indistinguishable from the analytic reference, as measured by the Wasserstein distance.
 This is a non-trivial result, because the two methods operate through fundamentally different mechanisms.
-The exchange update avoids evaluating $c_0(\eta)$ entirely by introducing an exact auxiliary draw from the powered Normal--Inverse--Gamma prior.
 
+The exchange update avoids evaluating $c_0(\eta)$ entirely by introducing an exact auxiliary draw from the powered Normal--Inverse--Gamma prior.
 The path-sampling method instead approximates the log-ratio $\log c_0(\eta')/c_0(\eta)$ through Monte Carlo integration along a temperature path, and is therefore only asymptotically exact when the number of integration points is large.
 The empirical equivalence of the two methods in this setting suggests that, for the Normal--Inverse--Gamma model, the path-sampling estimator achieves sufficient accuracy at the number of integration points used, and its residual bias is too small to produce discernible differences in posterior summaries.
 
@@ -320,18 +316,9 @@ Unlike the Gaussian and Normal--Inverse--Gamma examples considered previously, n
 Consequently, direct Metropolis--Hastings updates involving the ratio $c_0(\eta')/c_0(\eta)$ are not feasible.
 
 To obtain an exact reference posterior, we employ the Exchange algorithm.
-For a proposed value $\eta'$, an auxiliary draw
-
-\begin{equation}
-    \bfbt^\star
-    \sim
-    \pi_{\eta'}(\bfbt\mid D_0)
-\end{equation}
-
-is generated using Stan \comLM{CITATION NEEDED}.
+For a proposed value $\eta'$, an auxiliary draw $\bfbt^\star \sim \pi_{\eta'}(\bfbt\mid D_0)$ is generated using Stan~\cite{carpenter2017}.
 The resulting exchange acceptance ratio depends only on likelihood evaluations and does not require explicit computation of the normalising constant ratio.
 Under exact simulation from the power prior, the resulting Markov chain targets the correct normalised power prior posterior distribution.
-
 The remaining methods replace $c_0(\eta)$ by an emulator constructed from a finite set of training evaluations.
 
 We consider three surrogate models. The first is a spline emulator based on smoothing splines fitted to estimates of $\log c_0(\eta)$ over a grid of power parameters.
@@ -354,14 +341,12 @@ the derivative process provides information about the qualitative shape of $\log
 The convexity of $\eta \mapsto \log c_0(\eta)$, established in Appendix~\ref{proof:log-c0-convex}, provides a principled basis for shape-constrained emulators; monotonicity holds empirically in all experiments but is not proved in general.
 
 These structural properties motivate the use of shape-constrained emulators in Section~\ref{subsec:scam-emulation}.
-In all cases, we emulate the log-normalising constant using $K=3000$ points sampled via importance sampling.
-
+In all cases, we emulate the log-normalising constant using $K=40$ points sampled via importance sampling.
 Three discrepancy scenarios are generated by increasing the separation between the historical and current regression coefficients.
 As in the previous experiments, increasing discrepancy is expected to shift posterior mass toward smaller values of $\eta$, indicating reduced borrowing from historical information.
 
 The Exchange sampler is treated as the reference method.
-For each surrogate model, we report Wasserstein distances relative to the Exchange posterior, together with effective sample sizes, acceptance rates, posterior means, posterior standard deviations, and computational runtime.
-
+For each surrogate model, we report Wasserstein distances relative to the Exchange posterior, together with effective sample sizes, acceptance rates, posterior means, posterior standard deviations, and computational runtime (including the time required for fitting the surrogate model).
 Posterior agreement is assessed for $\eta$ and for each regression coefficient separately.
 This allows distortions introduced by the surrogate approximation to be localized to specific components of the parameter vector.
 
@@ -401,14 +386,14 @@ This allows distortions introduced by the surrogate approximation to be localize
 
 \subsubsection{Discussion of results}
 \comEA{Discuss here the results. For me, the most important is that the betas (that are the quantitiy of interest) do not change much even when the eta inteference does not match.
-Also, the Exact is way more slow, and we can only see a difference between them all when the discrepancy is medium, which suggests that the surrogate methods tend to concentrate on 0 more easily (splines and GP, compared to SCAM and Exchange).
+Also, the Exact is way more slow, and we can only see a difference between them all when the discrepancy is moderate, which suggests that the surrogate methods tend to concentrate on 0 more easily (splines and GP, compared to SCAM and Exchange).
 }
 
 The results reveal an important asymmetry between the inferential impact of approximation errors on $\eta$ and on $\bfbt$.
 Even in cases where the surrogate model introduces notable distortion in the marginal posterior of $\eta$, the posterior distributions of the regression coefficients $\bfbt$ remain largely unaffected.
 This suggests that, for the quantity of primary inferential interest in regression applications, moderate errors in the approximation of $c_0(\eta)$ may be practically tolerable.
 
-A further notable finding is that all methods produce the most discernible differences under the medium-discrepancy scenario.
+A further notable finding is that all methods produce the most discernible differences under the moderate-discrepancy scenario.
 Under large discrepancy, the posterior of $\eta$ concentrates near zero regardless of the method, reducing the sensitivity to approximation errors.Under small discrepancy, all posteriors are diffuse and similar.
 
 It is precisely the intermediate regime, where the posterior of $\eta$ is neither degenerate nor flat, that discriminates most sharply between exact and approximate approaches.
