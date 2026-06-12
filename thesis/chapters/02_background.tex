@@ -7,9 +7,24 @@
 
 Bayesian inference provides a probabilistic framework for updating uncertainty about unknown quantities after observing data.
 
-Let $D$ denote the observed data, and let $\theta \in \Theta$ denote an unknown parameter defined on a measurable parameter space $(\Theta,\mathcal{F})$.
-The Bayesian model is specified by a likelihood function $L(D\mid\theta)$ and a prior distribution $\pi_0(\theta)$.
+Let $(\Theta,\cF)$ denote the parameter space and let $D$ denote the observed data.
+Assume that the statistical model
+$\{P_\theta : \theta \in \Theta\}$
+is dominated by a common measure $\mu$, with likelihood
+$L(D \mid \theta)$.
+Let $P_0$ denote a prior distribution on $(\Theta,\cF)$.
+Whenever $P_0$ admits a density $\pi_0$ with respect to a reference measure $\nu$ on $\Theta$, we write
 
+\begin{equation}
+P_0(\dd\theta)
+=
+\pi_0(\theta)\,\nu(\dd\theta).
+\end{equation}
+
+The Bayesian model is then specified by the likelihood function
+$L(D\mid\theta)$
+and the prior density
+$\pi_0(\theta)$.
 The likelihood describes the information about $\theta$ contained in the data, while the prior represents information available before observing $D$.
 Bayes' theorem combines these two sources of information through the posterior distribution
 
@@ -31,7 +46,7 @@ The denominator in \eqref{eq:bayes-theorem-background} is the marginal likelihoo
 \end{equation}
 
 When $m(D)<\infty$, the posterior distribution is well-defined and integrates to one.
-In this sense, Bayesian inference can be understood as a normalization procedure that transforms the unnormalised density $L(D\mid\theta)\pi_0(\theta)$ into a probability distribution over $\Theta$.
+In this sense, Bayes' theorem updates the prior distribution through the likelihood, with the marginal likelihood ensuring that the resulting posterior is a proper probability distribution on $\Theta$.
 
 For any posterior-integrable function $h:\Theta\to\bR$, posterior summaries are often expressed through expectations of the form
 
@@ -129,7 +144,7 @@ If $(\theta_n)_{n\geq 0}$ is a Markov chain with invariant distribution $\pi$, t
     \label{eq:mcmc-estimator-background}
 \end{equation}
 
-Under suitable irreducibility, recurrence, and integrability conditions, the ergodic theorem gives
+Under suitable irreducibility, recurrence, and integrability conditions, the ergodic theorem gives \cite{robert2004, meyn2009, polasek2012}
 
 \begin{equation}
     \widehat{\mu}_N^{\operatorname{MCMC}}
@@ -167,7 +182,7 @@ Equivalently, if $\theta_n\sim\pi$ and $\theta_{n+1}\mid\theta_n\sim P(\theta_n,
 Invariance alone does not guarantee convergence from arbitrary starting points.
 
 For convergence, the Markov chain must also satisfy appropriate irreducibility and recurrence conditions.
-A common sufficient condition used to establish invariance is detailed balance.
+A common sufficient condition used to establish invariance is detailed balance \cite{meyn2009}.
 
 The transition kernel $P$ satisfies detailed balance with respect to $\pi$ if
 
@@ -575,10 +590,11 @@ R(\theta,\theta').
 \end{equation}
 Therefore, Barker's algorithm leaves the target distribution invariant.
 
-Barker's algorithm is usually less efficient than Metropolis--Hastings in the Peskun ordering.
+Barker's algorithm is usually less efficient than Metropolis--Hastings in the Peskun ordering 
+\cite{goncalves2017}.
 However, its acceptance probability has a useful algebraic form.
 In particular, it can be implemented by Bernoulli factory methods when the odds ratio can be represented through probabilities that can be simulated but not evaluated.
-This makes Barker's algorithm useful for some intractable likelihood problems \cite{goncalves2017,vats2021}.
+This makes Barker's algorithm useful for some intractable likelihood problems \cite{goncalves2017,vats2021,}.
 
 The important distinction is that Barker's algorithm is not required for the exchange algorithm.
 The exchange algorithm can be combined with the ordinary Metropolis--Hastings acceptance probability.
@@ -892,7 +908,7 @@ This constraint is not severe for the one-dimensional function $g: [0,1] \to \bR
 \subsection{Generalised additive models}
 \label{subsec:gam-emulation}
 
-Generalised additive models (GAMs) \cite{hastie1990, wood2017} provide a flexible semiparametric framework for regression in which the response is modelled as a sum of smooth functions of the predictors.
+Generalised additive models (GAMs) \cite{hastie1986, wood2017} provide a flexible semiparametric framework for regression in which the response is modelled as a sum of smooth functions of the predictors.
 For a scalar covariate $x$, a GAM takes the form
 \begin{equation}
     f(x) = \beta_0 + \sum_{j=1}^{p} s_j(x),
@@ -905,5 +921,5 @@ The penalty is typically of the form $\lambda_j \int [s_j''(x)]^2 \dd x$, and th
 This yields a smooth, data-adaptive approximation to $f$ that does not require specifying a parametric form.
 
 The main limitation of standard GAMs for function emulation is that they impose no qualitative constraints on the fitted function.
-In settings where the target function is known to satisfy structural properties such as monotonicity or convexity, unconstrained smoothers may produce artefacts — oscillations, sign violations, or locally inconsistent curvature — particularly in regions with sparse design points.
+In settings where the target function is known to satisfy structural properties such as monotonicity or convexity, unconstrained smoothers may produce artefacts, such as oscillations, sign violations, or locally inconsistent curvature, particularly in regions with sparse design points.
 This motivates the shape-constrained extensions discussed in Section~\ref{subsec:scam-emulation}.

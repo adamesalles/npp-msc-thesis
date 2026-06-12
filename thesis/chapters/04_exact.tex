@@ -450,10 +450,7 @@ Thus, the divide-and-conquer product estimator is unbiased for $c_0(\eta)/c_0(\e
 
 The main advantage of this construction is variance and cost control.
 Instead of using one global envelope with width $\lambda_{\eta,\eta'}$, the method uses several smaller envelopes with widths $\lambda_{g,\eta,\eta'}$.
-The expected number of Poisson factors is
-\begin{equation}
-    \sum_{g=1}^{G}\lambda_{g,\eta,\eta'}.
-\end{equation}
+The expected number of Poisson factors is $\sum_{g=1}^{G}\lambda_{g,\eta,\eta'}$.
 When the blockwise envelopes are much tighter than the full-data envelope, the product construction can be substantially more stable than the global estimator.
 
 This product estimator should not be confused with a genuine recursive divide-and-conquer Bernoulli factory.

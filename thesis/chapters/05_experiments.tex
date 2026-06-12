@@ -16,11 +16,9 @@ A central distinction throughout the experiments is between:
 \end{enumerate}
 
 Rather than comparing methods exclusively through asymptotic guarantees, we focus on their finite-sample practical behaviour.
-
 In particular, we evaluate posterior agreement with the analytic baseline, computational efficiency, acceptance rates, Monte Carlo variability, and stability of the normalising-constant estimators.
 
 Since the posterior distribution of $\eta$ is one-dimensional, we use the empirical Wasserstein distance relative to the exact analytic sampler as the primary discrepancy measure.
-
 Unlike density-based divergences, the Wasserstein distance does not require kernel density estimation and remains numerically stable even when posterior samples concentrate near the boundary of the parameter space.
 
 \subsection{Using exact methods as baseline}
@@ -60,7 +58,7 @@ In the small-discrepancy regime, the historical and current datasets are generat
 The medium-discrepancy regime introduces a moderate shift between the datasets.
 The large-discrepancy regime generates substantial disagreement between the historical and current information.
 
-The purpose of this experiment is not only to compare posterior distributions, but also to assess the computational efficiency required for each method to approximate the exact posterior distribution.
+The purpose of this experiment is not only to compare posterior distributions, but also to assess the computational budget required for each method to approximate the exact posterior distribution.
 To accomplish this, we use a convergence-to-baseline protocol.
 
 The analytic Metropolis--Hastings sampler is used as the reference method.
@@ -191,7 +189,7 @@ The marginal posterior density of $\eta$ is proportional to
     \label{eq:nig-lm-eta-marginal}
 \end{equation}
 The quantities $\nu_0$, $\Lambda_0$, $H_0(\eta)$, $\Lambda$, and $H(\eta)$ are defined in Appendix~\ref{example:nig_lm}.
-Although the analytic expression is available here, the exchange algorithm does not require evaluating $c_0(\eta)$.
+% Although the analytic expression is available here, the exchange algorithm does not require evaluating $c_0(\eta)$.
 Given the current state $(\bfbt,\sg,\eta)$, we propose $\eta'$ and draw an auxiliary value
 \begin{equation}
     ({\bfbt}^\star,{\sg}^\star)
@@ -330,7 +328,7 @@ For a proposed value $\eta'$, an auxiliary draw
     \pi_{\eta'}(\bfbt\mid D_0)
 \end{equation}
 
-is generated using Stan.
+is generated using Stan \comLM{CITATION NEEDED}.
 The resulting exchange acceptance ratio depends only on likelihood evaluations and does not require explicit computation of the normalising constant ratio.
 Under exact simulation from the power prior, the resulting Markov chain targets the correct normalised power prior posterior distribution.
 

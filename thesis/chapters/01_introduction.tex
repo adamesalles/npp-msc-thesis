@@ -16,10 +16,10 @@ This is particularly relevant in clinical trials and medical research, where lev
 A natural approach in this setting is the use of \textit{informative priors}, which incorporate prior knowledge into the analysis, thereby enhancing parameter estimation and decision-making \cite{spiegelhalter2004, gelman2013, ibrahim2015}.
 
 % Here we talk about power priors
-Among the various methods for constructing informative priors, \textit{power priors} \cite{ibrahim2015} have gained significant attention.
+Among the various methods for constructing informative priors, \textit{power priors} \cite{ibrahim2000, ibrahim2015} have gained significant attention.
 They allow for controlled borrowing of information from historical data by adjusting a power parameter, $\eta$, which typically ranges between 0 and 1.
 When $\eta = 0$, no historical information is incorporated, whereas $\eta = 1$ fully integrates the historical data into the current analysis.
-This flexibility makes power priors particularly appealing in adaptive clinical trial design and other settings where historical evidence is available but its relevance is uncertain.
+This flexibility makes power priors particularly appealing in adaptive clinical trial design and other settings where historical evidence is available, but its relevance is uncertain.
 
 However, when $\eta$ is itself treated as unknown and assigned a prior distribution, the resulting posterior is \textit{doubly intractable}: the normalised power prior contains a normalising constant $c_0(\eta)$ that depends on $\eta$ and cannot be evaluated in closed form for general likelihoods, preventing direct use of Metropolis--Hastings.
 Current approaches rely on \textit{approximate methods} \cite{carvalho2021} that lack theoretical guarantees and explicit convergence bounds.
